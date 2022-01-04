@@ -9,7 +9,7 @@
 
 String.prototype.toTaraskConvert = function(value1, value2, value3) {return toTaraskConvert(this, value1, value2, value3)};
 String.prototype.toBel = function() {return toBel(this)};
-String.prototype.toTarask = function() {return toTarask(this)}
+String.prototype.toTarask = function() {return toTarask(this)};
 String.prototype.toArab = function() {return toArab(this)};
 String.prototype.toLatin = function(value) {return toLatin(this, value)};
 String.prototype.toJ = function(value) {return toJ(this, value)};
