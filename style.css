@@ -1,0 +1,408 @@
+* {
+  margin: 0;
+  padding: 0;
+  color: #000;
+}
+
+body {
+  background-color: #cbd;
+  text-align: center;
+  text-align: -webkit-center;
+  font-family: sans-serif;
+  transition: background-color .2s;
+
+  --fontSize: 1.25rem;
+}
+
+.textfield::-webkit-scrollbar {width: 0.625rem}
+.textfield::-webkit-scrollbar-track {
+  background-color: #fd7;
+  border-radius: 0.375rem;
+}
+.textfield::-webkit-scrollbar-thumb {
+  background-color: #fb7;
+  border-radius: 0.375rem;
+}
+.textfield::-webkit-scrollbar-thumb:hover {background-color: #fa7}
+
+header {
+  display: flex;
+  margin-left: 10%;
+  padding: 10px;
+}
+header > div {text-align: left}
+
+#info {
+  font-size: 1.625rem;
+  font-family: monospace;
+  color: whitesmoke;
+  height: 2.5rem;
+  width: 2.5rem;
+  background: linear-gradient(#ff6600, #ff9900);
+  opacity: .9;
+  margin-left: auto;
+  margin-right: 10%;
+  user-select: none;
+}
+
+.modal {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #00000033;
+  z-index: 1;
+  transition: backdrop-filter .2s;
+  backdrop-filter: blur(5px)
+}
+.modal.hidden {backdrop-filter: none; visibility: hidden}
+
+.modal > div {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: fit-content;
+  height: fit-content;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.25rem;
+  background: linear-gradient(#fb7c, #fd79);
+  text-align: left;
+  padding: 60px 20px 40px 20px;
+  border-radius: 1.25rem;
+  margin-right: 10vw;
+}
+.close {
+  position: absolute;
+  right: 0.75rem;
+  top: 1rem;
+  width: 2rem;
+  height: 2rem;
+  opacity: 0.5;
+  background-color: transparent;
+  padding: 5px;
+}
+.close:before, .close:after {
+  position: absolute;
+  left: 1rem;
+  content: ' ';
+  height: 2rem;
+  width: 0.25rem;
+  background-color: #ff6600;
+  border-radius: 0.125rem;
+}
+.close:before {transform: rotate(45deg)}
+.close:after {transform: rotate(-45deg)}
+
+.global-card {
+  width: 90%;
+  margin-bottom: 20px;
+}
+
+.card-name {
+  position: relative;
+  background: linear-gradient(#fb7, #fd7);
+  display: flex;
+  border-radius: 0.625rem 0.625rem 0 0;
+}
+
+.card-name > h2 {
+  margin: 0.5rem 0 0.5rem 6%;
+  font-size: 1.875rem;
+  font-weight: bold;
+}
+
+.modal button {
+  background: linear-gradient(#f61, #f81);
+  margin: 10% 0 0 0;
+  opacity: .8;
+  transition: none;
+}
+.modal button.active {opacity: 1}
+
+#abc > div {
+  align-items: center;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.copy, #edit {
+  background: linear-gradient(#f60, #f90);
+  height: fit-content;
+  width: fit-content;
+}
+
+.copy {
+  padding: 0.5rem;
+  margin: 0.5rem 2% 0.5rem auto;
+  opacity: .8;
+  user-select: none;
+}
+
+#edit {
+  opacity: .5;
+  padding: 0.25rem 0.375rem 0.25rem 0.375rem;
+  margin: 0 0 0 5px;
+}
+#edit.disable {opacity: .9}
+
+tarF {color: green}
+tarL {color: darkorange}
+tarG {color: blueviolet}
+
+.demo {
+  background: whitesmoke;
+  padding: 2px;
+  border-radius: 0.375rem;
+}
+
+.textfield-cont {
+  background-color: #fd7;
+  padding: 4px;
+}
+
+.textfield {
+  resize: none;
+  outline: none;
+  text-align: left;
+  background-color: whitesmoke;
+  border: whitesmoke solid 2px;
+  border-radius: 0.375rem;
+  padding: 3px;
+  width: 100%;
+  min-height: 8.125rem;
+  height: 20vh;
+  font-size: var(--fontSize);
+  font-family: sans-serif;
+  box-sizing: border-box;
+}
+
+#output {
+  word-break: break-word;
+  overflow: auto;
+}
+
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  src: url('./fonts/NotoSansArabic-SemiBold.ttf');
+}
+
+#output.arab {
+  font-family: 'Noto Sans Arabic', sans-serif;
+  text-align: right;
+  direction: rtl;
+}
+
+.counter-card {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  text-align: right;
+  padding: 5px;
+  padding-right: 5%;
+  background: linear-gradient(#fd7, #fb7);
+  border-radius: 0 0 0.625rem 0.625rem;
+}
+
+details {margin-left: auto}
+summary {outline: none}
+
+#middle-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  align-items: center;
+  position: relative;
+  flex-wrap: wrap-reverse;
+}
+
+.btn-cont, button {
+  border: none;
+  font-size: 1rem;
+  height: 3.125rem;
+  width: 8.75rem;
+  margin: 10px;
+  margin-right: 0;
+  border-radius: 0.625rem;
+  transition: opacity .2s
+}
+
+button, .close, summary, #font-size > b, tarL, tarG {cursor: pointer}
+
+#convert {
+  background: linear-gradient(#1cf, skyblue);
+  margin-right: 0;
+  opacity: .8;
+  user-select: none;
+}
+
+#select-abc {
+  background: linear-gradient(#f64, #fa2);
+  opacity: .8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  user-select: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+#current-abc {
+  background-color: #fff5;
+  padding: 2px;
+  margin-top: 2px;
+  font-size: 0.825rem;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+#convert:hover, #select-abc:hover, #itoj input:hover, #itoj input:checked,
+#info:hover, #tg:hover, #vk:hover, .copy:hover, #edit.disable:hover,
+.modal button:hover, .close:hover, fieldset input:hover, fieldset input:checked {opacity: 1}
+
+#itoj {
+  position: relative;
+  background: linear-gradient(#3c3, #6e6);
+  user-select: none;
+  transition: opacity .2s
+}
+
+#theme {
+  position: relative;
+  background: linear-gradient(#fb7, #fd7, #fd7);
+  margin-right: auto;
+  margin-left: 0;
+}
+
+#tg, #vk {
+  padding: 0.125rem;
+  border-radius: 0.4rem;
+  color: whitesmoke;
+  opacity: .9;
+}
+#tg {background-color: #3ad}
+#vk {background-color: #48c}
+
+footer {padding: 5px}
+
+#c {font-family: -webkit-pictograph}
+
+#font-size {
+  user-select: none;
+  margin-left: 5px;
+  white-space: nowrap;
+}
+
+#font-size > b:hover {color: red}
+
+a {
+  text-decoration: none;
+  color: #28f;
+  font-weight: bold;
+  contain: content
+}
+
+a:hover {color: #26f}
+
+@media (max-height: 37.5em) {
+  header {padding: 5px}
+  .copy {
+    font-size: 0.875rem;
+    padding: 5px;
+  }
+}
+
+@media (max-width: 37.5em) {
+  .card-name, .counter-card, .textfield {border-radius: 0}
+  #middle-card {justify-content: center}
+  .global-card {width: 100%}
+  .textfield-cont {padding: 0}
+  header {margin-left: 5%}
+  #info {margin-right: 0}
+  #theme {margin-right: 0}
+}
+
+@media (max-width: 34.375em) {
+  h1 {font-size: 1.875rem}
+  p {font-size: 0.875rem}
+  .modal p {font-size: 1.25rem}
+  #theme {margin-left: 10px}
+  .btn-cont, button {transform: translateX(-5px)}
+}
+
+@media (max-width: 20em) {
+  .copy {
+    font-size: 0.875rem;
+    padding: 5px;
+  }
+}
+
+fieldset {
+  position: absolute;
+  bottom: 2.125rem;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  padding: 0.2rem;
+  display: grid;
+  gap: 0.325rem;
+  grid-template-columns: 1fr 1fr 1fr;
+  border: none;
+}
+
+fieldset > legend {
+  opacity: 0;
+  pointer-events: none;
+}
+
+fieldset > input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 2rem;
+  height: 2rem;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 1.5rem;
+  cursor: pointer;
+  transition: opacity .2s;
+  opacity: .8;
+}
+
+fieldset > input:focus {outline: none}
+
+#theme--light {background-image: url('./themeIco/light.svg')}
+#theme--auto {background-image: url('./themeIco/auto.svg')}
+#theme--dark {background-image: url('./themeIco/dark.svg')}
+
+#itoj input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  transition: opacity .2s
+}
+
+#itoj--never::before {content: 'і'}
+#itoj--random::before {content: 'і ? й'}
+#itoj--ever::before {content: 'і > й'}
+
+.switcher__status {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  background: no-repeat url('./themeIco/status.svg') center/2.325rem;
+  transition: background-position 0.1s ease-in;
+  filter: invert(1);
+}
+
+fieldset > input:focus-visible ~ .switcher__status {box-shadow: 0 0 0 2px black}
+.radio-1:checked ~ .switcher__status {background-position: left 1px center}
+.radio-2:checked ~ .switcher__status {background-position: center center}
+.radio-3:checked ~ .switcher__status {background-position: right 1px center}
