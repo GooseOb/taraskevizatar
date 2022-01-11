@@ -187,3 +187,19 @@ function convert() {
 		spans[i].addEventListener('click', () => changeList[i] = !changeList[i]);
 	};
 }
+
+// let resize = false
+// let height = textOutput.offsetHeight;
+// textOutput.onmousedown = function(e) {
+// 	resize = true;
+// 	pos = e.pageY;
+// 	document.onmouseup = () => {
+// 		resize = false;
+// 		height = +this.style.height.slice(0, -2);
+// 	};
+// 	document.onmousemove = e => {
+// 		if (!resize) return;
+// 		let res = height + e.pageY-pos;
+// 		this.style.height = res+"px";
+// 	};
+// }

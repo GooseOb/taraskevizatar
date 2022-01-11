@@ -129,6 +129,11 @@ header > div {text-align: left}
   padding-right: 40px;
 }
 
+#abc h3 {
+  font-size: 1.25rem;
+  font-weight: normal;
+}
+
 .copy, #edit {
   background: linear-gradient(#f60, #f90);
   height: fit-content;

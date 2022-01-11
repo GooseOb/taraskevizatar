@@ -164,10 +164,10 @@ function addColor(text, orig) {
 				text[i] = text[i].slice(0, -1).replace(/ь/g, `<tarF>ь</tarF>`)+'ь';
 				continue;
 			case text[i].replace(/(у|ю)/g, 'ір$1'):
-				text[i] = text[i].replace(/([уюо])/g, `<tarF>$1</tarF>`);
+				text[i] = text[i].replace(/(у|ю)/g, `<tarF>$1</tarF>`);
 				continue;
 		};
-		if (orig[i].length !== text[i].replace(/\((.+)\)\(.+\)/, '$1').length)
+		if (orig[i].length !== text[i].replace(/\((\p{L}+)\)\(\p{L}+\)/gu, '$1').length)
 			text[i] = `<tarF>${text[i]}</tarF>`;
 	};
 
