@@ -124,10 +124,7 @@ function convert() {
 	text = text.toTaraskConvert(
 		currAbc,
 		+localStorage.j,
-		text.length > 1000 ? [
-			localStorage.text,
-			textOutput.innerHTML
-		] : false
+		[localStorage.text, textOutput.innerHTML]
 	);
 	localStorage.text = textInput.value.trim();
 	const inputText = textInput.value;

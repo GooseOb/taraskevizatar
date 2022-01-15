@@ -22,15 +22,9 @@ const latinLettersUpCase = {};
 for (const key in latinLetters) latinLettersUpCase[key] = RegExp(latinLetters[key].toUpperCase(), 'g');
 for (const key in latinLetters) latinLetters[key] = RegExp(latinLetters[key], 'g');
 for (const key in arabLetters) arabLetters[key] = RegExp(arabLetters[key], 'g');
-for (let i=0; i < shortwords.length; i++) {
-	let word = shortwords[i];
-	const lLetter = word[word.length-1];
-	wordlist[' ' + word.slice(0, -1) + (lLetter==='ў' ? 'ваў ' : /[ьй]/.test(lLetter) ? 'яў ' : lLetter + 'аў ')] =
-	RegExp(` ${word} `, 'g');
-};
 for (let i=0; i < gwords.length; i++) wordlist[gwords[i]] = RegExp(gwords[i].replace(/ґ/g, 'г'), 'g');
 
-els1 = els2 = els3 = iwords = gwords = shortwords = soft = presoft = undefined;
+els1 = els2 = els3 = iwords = gwords = soft = presoft = undefined;
 
 function toTaraskConvert(text, abc = 0, checkJ = 2, cache = false) {
 	const noFix = Array(text.match(/ !>/g)?.length || 0);
@@ -87,7 +81,6 @@ function toTaraskConvert(text, abc = 0, checkJ = 2, cache = false) {
 	switch (abc) {
 		case 0:
 			text = text
-				.replace(/([АЕЁІОУЫЭЮЯ])(?:<tarF>)?Ў(?:<\/tarF>)?/g, '$1У')
 				.replace(/ґ/g, `<tarG>г</tarG>`)
 				.replace(/Ґ/g, `<tarG>Г</tarG>`);
 			break;
