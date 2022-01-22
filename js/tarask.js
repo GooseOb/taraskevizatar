@@ -26,7 +26,7 @@ for (let i=0; i < gwords.length; i++) wordlist[gwords[i]] = RegExp(gwords[i].rep
 
 els1 = els2 = els3 = iwords = gwords = soft = presoft = undefined;
 
-function toTaraskConvert(text, abc = 0, checkJ = 2, cache = false) {
+function toTaraskConvert(text, abc = 0, checkJ = 2/*, cache = false*/) {
 	const noFix = Array(text.match(/ !>/g)?.length || 0);
 	while (noFix.length > text.match(/<! /g)) noFix.pop();
 	if (noFix.length) {
@@ -36,22 +36,6 @@ function toTaraskConvert(text, abc = 0, checkJ = 2, cache = false) {
 			noFix[i] = text.match(/<!\d+(.+)\d+!>/)[1];
 			text = text.replace(/<!\d+.+\d+!>/, '౦');
 		};
-	};
-	if (cache && cache[1].length > 1000) {
-		let [cText, cHtml] = cache;
-		cHtml = cHtml.replace(/<tarl /g, '<tarl').split(' ');
-		cText = cText.split(' ');
-		text = text.split(' ');
-		const forlen = Math.min(text.length, cText.length);
-		let wordI = forlen;
-		for (let i = 0; i < forlen; i++) {
-			if (text[i] === cText[i]) continue;
-			wordI = i-1;
-			if (/б[ея]з|н[ея]|зь$/.test(text[wordI-1])) wordI--;
-			break;
-		};
-		noFix.unshift((cHtml.slice(0, wordI).join(' ')).replace(/<tarld/g, '<tarl d'));
-		text = '౦ ' + text.slice(wordI).join(' ');
 	};
 	text = ` ${text.trim()}  `
 		.replace(/(\n|	)/g, ' $1 ')
@@ -93,12 +77,19 @@ function toTaraskConvert(text, abc = 0, checkJ = 2, cache = false) {
 		default: text = text.replace(/غ/g, `<tarG>ه</tarG>`);
 	};
 	if (noFix.length) text = text.replace(/౦/g, () => noFix.shift());
-	return text
-		// .replace(/\((\S+)\)\((\S+)\)\((\S+)\)/g, `<tarL data-l='$2,$3'>$1</tarL>`)
-		.replace(/\(([\p{L}’ \u0600-\u06FF\-]+)\)\(([\p{L}’ \u0600-\u06FF\-]+)\)/gu, `<tarL data-l='$2'>$1</tarL>`)
-		// .replace(/\((\S+)\)\((\S+)\)/g, `<tarL data-l='$2'>$1</tarL>`)
-		.replace(/ \n /g, '<br>')
-		.trim();
+		return abc === 2 ?
+			text
+			// .replace(/\((\S+)\)\((\S+)\)\((\S+)\)/g, `<tarL data-l='$2,$3'>$1</tarL>`)
+			.replace(/\(([\p{L}’ \u0600-\u06FF\-]+)\)\(([\p{L}’ \u0600-\u06FF\-]+)\)\(([\p{L}’ \u0600-\u06FF\-]+)\)/gu, `<tarL data-l='$2,$3'>$1</tarL>`)
+			.replace(/\(([\p{L}’ \u0600-\u06FF\-]+)\)\(([\p{L}’ \u0600-\u06FF\-]+)\)/gu, `<tarL data-l='$2'>$1</tarL>`)
+			// .replace(/\((\S+)\)\((\S+)\)/g, `<tarL data-l='$2'>$1</tarL>`)
+			.replace(/ \n /g, '<br>')
+			.trim()
+			:
+			text.replace(/\((\S+)\)\((\S+)\)\((\S+)\)/g, `<tarL data-l='$2,$3'>$1</tarL>`)
+			.replace(/\((\S+)\)\((\S+)\)/g, `<tarL data-l='$2'>$1</tarL>`)
+			.replace(/ \n /g, '<br>')
+			.trim();
 }
 function restoreRegister(text, orig) {
 	for (let i = 0; i < text.length; i++) {
@@ -126,8 +117,10 @@ function restoreRegister(text, orig) {
 			};
 			continue;
 		};
+		try {
 		if (lastLetter === lastLetter.toUpperCase()) text[i] = word.toUpperCase()
 		else text[i] = word[0].toUpperCase() + word.slice(1);
+		} catch(e) {console.log(text[i], text[i+1])};
 	};
 
 	return text;
@@ -135,8 +128,8 @@ function restoreRegister(text, orig) {
 function addColor(text, orig) {
 	for (let i = 0; i < text.length; i++) {
 		switch (text[i]) {
-			case '<': text[i] = '&#60;'; continue;
-			case '>': text[i] = '&#62;'; continue;
+			case '<': if (text[i+1] !== 'br') text[i] = '&#60;'; continue;
+			case '>': if (text[i-1] !== 'br') text[i] = '&#62;'; continue;
 			case orig[i]: continue;
 		};
 		if (text[i].length === orig[i].length) {
@@ -190,7 +183,7 @@ function toTarask(text) {
 				b.length < 2 ||
 				/\p{P}|ір[ауо]/u.test(b) ||
 				b[0] === 'і' ||
-				/^(ві|да|з?бы|маг|мя|налі|раў|ўзя)л[аі]|магу/.test(b))
+				/^(?:(?:ві|да|з?бы|маг|мя|налі|раў|ўзя)л[аі]|магу|ха[цч]|пач)/.test(b))
 				return a;
 			if (/(вы)?к(ла|і)да\S/.test(b))
 				return /мі?$/.test(b) ? ' ня ' + b : a;
@@ -254,9 +247,13 @@ function toBel(text) {
 function toLatin(text, upCase = true) {
 	for (const key in latinLetters)
 		text = text.replace(latinLetters[key], key);
-	if (upCase)
+	if (upCase) {
 		for (const key in latinLettersUpCase)
 			text = text.replace(latinLettersUpCase[key], key.toUpperCase());
+		text = text
+			.replace(/ CH(\p{Ll})/gu, ' Ch$1')
+			.replace(/ J[AEOU]\p{Ll}/gu, a => ' J' + a[2].toLowerCase() + a[3]);
+	};
 
 	return text;
 }

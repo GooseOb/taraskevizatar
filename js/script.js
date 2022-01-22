@@ -83,11 +83,7 @@ for (let i=0; i < modals.length; i++) {
 const abcBtns = modals[1].querySelectorAll('button');
 const currentAbc = document.querySelector('#current-abc');
 if (localStorage.j) {
-	if (localStorage.latin) {
-		localStorage.abc = localStorage.latin;
-		delete localStorage.latin;
-	};
-	textInput.value = localStorage.text;
+	textInput.value = localStorage.text.split('<!<sep>!>').join(' ').replace(/<br>/g, '\n');
 	currAbc = +localStorage.abc;
 	currentAbc.textContent = abcBtns[currAbc].innerHTML;
 	fixFont();
@@ -111,7 +107,7 @@ for (let i = 0; i < abcBtns.length; i++) abcBtns[i].addEventListener('click', ()
 function convert() {
 	let text = textInput.value.trim();
 	if (!text) {
-		textOutput.textContent = ['Тэкст', 'Tekst', 'طَقْصْطْ'][currAbc];
+		textOutput.innerHTML = '<span>' + ['Тэкст', 'Tekst', 'طَقْصْطْ'][currAbc] + '</span>';
 		count.S[0].textContent =
 		count.W.textContent =
 		count.P.textContent =
@@ -120,31 +116,47 @@ function convert() {
 		localStorage.text = '';
 		return;
 	};
-	textOutput.innerHTML =
-	text = text.toTaraskConvert(
-		currAbc,
-		+localStorage.j,
-		[localStorage.text, textOutput.innerHTML]
-	);
-	localStorage.text = textInput.value.trim();
+	text = text.replace(/\n/g, '<br>').match(/[^\s]+/g);
+	const result = [];
+	while (text.length) {
+		let wordI = text.length < 99 ? text.length-1 : 99;
+		let word = text[wordI].toLowerCase();
+		if (wordI !== text.length)
+			while ((word === 'не' || word[word.length] === 'з') && wordI > 0)
+				word = text[wordI--].toLowerCase();
+		result[result.length] = text.splice(0, wordI+1).join(' ');
+	};
+	const textOutputEmpty = textOutput.textContent.length < 10;
+	let outps = textOutput.querySelectorAll('span');
+	while (outps.length !== result.length) {
+		if (outps.length < result.length) textOutput.append(document.createElement('span'))
+		else outps[outps.length-1].remove();
+		outps = textOutput.querySelectorAll('span');
+	};
+	const localStorageText = localStorage.text.split('<!<sep>!>');
+	for (let i=0; i < result.length; i++) {
+		if (result[i] !== localStorageText[i] || textOutputEmpty)
+			outps[i].innerHTML = result[i].toTaraskConvert(currAbc, +localStorage.j);
+	};
+	localStorage.text = result.join('<!<sep>!>');
 	const inputText = textInput.value;
 	count.S[0].textContent = inputText.length;
 	count.W.textContent = inputText.match(/[^\s]+/g).length;
 	count.P.textContent = inputText.match(/\p{P}/gu)?.length ||0;
 	count.S[1].textContent = textOutput.textContent.trim().length;
-	count.F.textContent = text.match(/<tarF>/g)?.length ||0;
+	count.F.textContent = inputText.trim().match(/<tarF>/g)?.length ||0;
 	const l = textOutput.querySelectorAll('tarL');
 	for (let i=0; i < l.length; i++) {
 		const item = l[i];
 		item.addEventListener('click', () => {
 			let data = item.dataset.l;
-			// if (/\,/.test(data)) {
-			// 	data = data.split(',');
-			// 	data.push(item.textContent);
-			// 	item.textContent = data.shift();
-			// 	item.dataset.l = data;
-			// 	return;
-			// };
+			if (data.indexOf(',') !== -1) {
+				data = data.split(',');
+				data[data.length] = item.textContent;
+				item.textContent = data.shift();
+				item.dataset.l = data;
+				return;
+			};
 			const a = item.textContent;
 			item.textContent = data;
 			item.dataset.l = a;
@@ -174,7 +186,7 @@ function convert() {
 				item.addEventListener('click', () => item.textContent = item.textContent === 'غ' ? 'ه' : 'غ');
 		}
 	};
-	spans = textOutput.querySelectorAll('tarG, tarL');
+	const spans = textOutput.querySelectorAll('tarG, tarL');
 	for (let i=0; i < changeList.length; i++) {
 		if (changeList[i]) spans[i].click();
 	};
