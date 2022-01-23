@@ -133,10 +133,10 @@ function convert() {
 		else outps[outps.length-1].remove();
 		outps = textOutput.querySelectorAll('span');
 	};
-	const localStorageText = localStorage.text.split('<!<sep>!>');
+	const storageText = localStorage.text.split('<!<sep>!>');
 	for (let i=0; i < result.length; i++) {
-		if (result[i] !== localStorageText[i] || textOutputEmpty)
-			outps[i].innerHTML = result[i].toTaraskConvert(currAbc, +localStorage.j);
+		if (result[i] !== storageText[i] || textOutputEmpty)
+			outps[i].innerHTML = result[i].toTaraskConvert(currAbc, +localStorage.j) + ' ';
 	};
 	localStorage.text = result.join('<!<sep>!>');
 	const inputText = textInput.value;
@@ -144,7 +144,8 @@ function convert() {
 	count.W.textContent = inputText.match(/[^\s]+/g).length;
 	count.P.textContent = inputText.match(/\p{P}/gu)?.length ||0;
 	count.S[1].textContent = textOutput.textContent.trim().length;
-	count.F.textContent = inputText.trim().match(/<tarF>/g)?.length ||0;
+	// count.F.textContent = inputText.trim().match(/<tarF>/g)?.length ||0;
+	count.F.textContent = textOutput.querySelectorAll('tarF').length;
 	const l = textOutput.querySelectorAll('tarL');
 	for (let i=0; i < l.length; i++) {
 		const item = l[i];
