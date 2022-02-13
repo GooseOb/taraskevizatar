@@ -22,11 +22,11 @@ const latinLettersUpCase = {};
 for (const key in latinLetters) latinLettersUpCase[key] = RegExp(latinLetters[key].toUpperCase(), 'g');
 for (const key in latinLetters) latinLetters[key] = RegExp(latinLetters[key], 'g');
 for (const key in arabLetters) arabLetters[key] = RegExp(arabLetters[key], 'g');
-for (let i=0; i < gwords.length; i++) wordlist[gwords[i]] = RegExp(gwords[i].replace(/ґ/g, 'г'), 'g');
+for (let i = 0; i < gwords.length; i++) wordlist[gwords[i]] = RegExp(gwords[i].replace(/ґ/g, 'г'), 'g');
 
 els1 = els2 = els3 = iwords = gwords = soft = presoft = undefined;
 
-function toTaraskConvert(text, abc = 0, checkJ = 2/*, cache = false*/) {
+function toTaraskConvert(text, abc = 0, checkJ = 2) {
 	const noFix = Array(text.match(/ !>/g)?.length || 0);
 	while (noFix.length > text.match(/<! /g)) noFix.pop();
 	if (noFix.length) {
@@ -76,7 +76,7 @@ function toTaraskConvert(text, abc = 0, checkJ = 2/*, cache = false*/) {
 			break;
 		default: text = text.replace(/غ/g, `<tarG>ه</tarG>`);
 	};
-	if (noFix.length) text = text.replace(/౦/g, () => noFix.shift());
+	if (noFix.length) text = text.replace(/౦/g, noFix.shift);
 		return abc === 2 ?
 			text
 			// .replace(/\((\S+)\)\((\S+)\)\((\S+)\)/g, `<tarL data-l='$2,$3'>$1</tarL>`)
@@ -86,8 +86,8 @@ function toTaraskConvert(text, abc = 0, checkJ = 2/*, cache = false*/) {
 			.replace(/ \n /g, '<br>')
 			.trim()
 			:
-			text.replace(/\((\S+)\)\((\S+)\)\((\S+)\)/g, `<tarL data-l='$2,$3'>$1</tarL>`)
-			.replace(/\((\S+)\)\((\S+)\)/g, `<tarL data-l='$2'>$1</tarL>`)
+			text.replace(/\((\p{L}+)\)\((\p{L}+)\)\((\p{L}+)\)/gu, `<tarL data-l='$2,$3'>$1</tarL>`)
+			.replace(/\((\p{L}+)\)\((\p{L}+)\)/gu, `<tarL data-l='$2'>$1</tarL>`)
 			.replace(/ \n /g, '<br>')
 			.trim();
 }

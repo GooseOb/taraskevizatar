@@ -55,12 +55,12 @@ document.querySelector('footer').innerHTML += `<br>
 
 const fixFont = () => textOutput.className = 'textfield' + (currAbc===2 ? ' arab' : '');
 
-textInput.addEventListener('input', () => {if (textInput.value.trim() !== localStorage.text) convert()});
+textInput.addEventListener('input', convert);
 document.querySelector('#convert').addEventListener('click', convert);
 for (let i=0; i < selectJ.length; i++) selectJ[i].addEventListener('click', () => {
 	if (localStorage.j == i) return;
 	localStorage.j = i;
-	localStorage.text = '';
+	localStorage.text = '[]';
 	if (/ [іи] /.test(textInput.value)) convert();
 });
 fontSizes[0].addEventListener('click', () => {
@@ -79,11 +79,59 @@ for (let i=0; i < modals.length; i++) {
 	exit[i].addEventListener('click', () => closeModal(i));
 	modals[i].addEventListener('click', e => {if (e.target === modals[i]) closeModal(i)});
 };
+textOutput.addEventListener('click', e => {
+	const item = e.target;
+	switch(item.tagName) {
+		case 'TARL':
+			let data = item.dataset.l;
+			if (data.indexOf(',') !== -1) {
+				data = data.split(',');
+				data[data.length] = item.textContent;
+				item.textContent = data.shift();
+				item.dataset.l = data;
+				return;
+			};
+			item.dataset.l = item.textContent;
+			item.textContent = data;
+			return;
+		case 'TARG':
+			switch (currAbc) {
+				case 0:
+						switch (item.textContent) {
+							case 'г': item.textContent = 'ґ'; break;
+							case 'ґ': item.textContent = 'г'; break;
+							case 'Г': item.textContent = 'Ґ'; break;
+							default: item.textContent = 'Г';
+					}; return;
+				case 1:
+						switch (item.textContent) {
+							case 'h': item.textContent = 'g'; break;
+							case 'g': item.textContent = 'h'; break;
+							case 'H': item.textContent = 'G'; break;
+							default: item.textContent = 'H';
+					}; return;
+				case 2:
+					item.textContent = item.textContent === 'غ' ? 'ه' : 'غ';
+					return;
+			};
+	};
+});
+
+const LSText = {
+	get: () => localStorage.text ? JSON.parse(localStorage.text) : [],
+	set: text => localStorage.text = JSON.stringify(text)
+};
 
 const abcBtns = modals[1].querySelectorAll('button');
 const currentAbc = document.querySelector('#current-abc');
 if (localStorage.j) {
-	textInput.value = localStorage.text.split('<!<sep>!>').join(' ').replace(/<br>/g, '\n');
+	if (localStorage.text[0] !== '[')
+		LSText.set(
+			/<!<sep>!>/.test(localStorage.text)
+			? localStorage.text.split('<!<sep>!>')
+			: [localStorage.text]
+		);
+	textInput.value = LSText.get()?.join(' ').replace(/<br>/g, '\n');
 	currAbc = +localStorage.abc;
 	currentAbc.textContent = abcBtns[currAbc].innerHTML;
 	fixFont();
@@ -97,7 +145,7 @@ for (let i = 0; i < abcBtns.length; i++) abcBtns[i].addEventListener('click', ()
 	abcBtns[currAbc].className = '';
 	currentAbc.textContent = abcBtns[i].textContent;
 	localStorage.abc = currAbc = i;
-	localStorage.text = '';
+	localStorage.text = '[]';
 	closeModal(1);
 	fixFont();
 	convert();
@@ -113,7 +161,7 @@ function convert() {
 		count.P.textContent =
 		count.S[1].textContent =
 		count.F.textContent = 0;
-		localStorage.text = '';
+		localStorage.text = '[]';
 		return;
 	};
 	text = text.replace(/\n/g, '<br>').match(/[^\s]+/g);
@@ -133,60 +181,17 @@ function convert() {
 		else outps[outps.length-1].remove();
 		outps = textOutput.querySelectorAll('span');
 	};
-	const storageText = localStorage.text.split('<!<sep>!>');
-	for (let i=0; i < result.length; i++) {
+	const storageText = LSText.get();
+	for (let i=0; i < result.length; i++)
 		if (result[i] !== storageText[i] || textOutputEmpty)
 			outps[i].innerHTML = result[i].toTaraskConvert(currAbc, +localStorage.j) + ' ';
-	};
-	localStorage.text = result.join('<!<sep>!>');
+	LSText.set(result);
 	const inputText = textInput.value;
 	count.S[0].textContent = inputText.length;
 	count.W.textContent = inputText.match(/[^\s]+/g).length;
 	count.P.textContent = inputText.match(/\p{P}/gu)?.length ||0;
 	count.S[1].textContent = textOutput.textContent.trim().length;
-	// count.F.textContent = inputText.trim().match(/<tarF>/g)?.length ||0;
 	count.F.textContent = textOutput.querySelectorAll('tarF').length;
-	const l = textOutput.querySelectorAll('tarL');
-	for (let i=0; i < l.length; i++) {
-		const item = l[i];
-		item.addEventListener('click', () => {
-			let data = item.dataset.l;
-			if (data.indexOf(',') !== -1) {
-				data = data.split(',');
-				data[data.length] = item.textContent;
-				item.textContent = data.shift();
-				item.dataset.l = data;
-				return;
-			};
-			const a = item.textContent;
-			item.textContent = data;
-			item.dataset.l = a;
-		});
-	};
-	const g = textOutput.querySelectorAll('tarG');
-	for (let i=0; i < g.length; i++) {
-		const item = g[i];
-		switch (currAbc) {
-			case 0:
-				item.addEventListener('click', () => {
-					switch (item.textContent) {
-						case 'г': item.textContent = 'ґ'; break;
-						case 'ґ': item.textContent = 'г'; break;
-						case 'Г': item.textContent = 'Ґ'; break;
-						default: item.textContent = 'Г';
-				}}); break;
-			case 1:
-				item.addEventListener('click', () => {
-					switch (item.textContent) {
-						case 'h': item.textContent = 'g'; break;
-						case 'g': item.textContent = 'h'; break;
-						case 'H': item.textContent = 'G'; break;
-						default: item.textContent = 'H';
-				}}); break;
-			case 2:
-				item.addEventListener('click', () => item.textContent = item.textContent === 'غ' ? 'ه' : 'غ');
-		}
-	};
 	const spans = textOutput.querySelectorAll('tarG, tarL');
 	for (let i=0; i < changeList.length; i++) {
 		if (changeList[i]) spans[i].click();
