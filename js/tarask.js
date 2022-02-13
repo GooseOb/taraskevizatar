@@ -179,8 +179,9 @@ function toTarask(text) {
 
 	return text
 		.replace(/ не (\S+)/g, (a, b) => {
-			if (!/[аеёіоуыэюя]/.test(b) ||
-				b.length < 2 ||
+			if (/[оё]/.test(b) ||
+				c.length < 2 ||
+				!/[аеёіоуыэюя]/.test(b) ||
 				/\p{P}|ір[ауо]/u.test(b) ||
 				b[0] === 'і' ||
 				/^(?:(?:ві|да|з?бы|маг|мя|налі|раў|ўзя)л[аі]|магу|ха[цч]|пач)/.test(b))
@@ -210,8 +211,9 @@ function toTarask(text) {
 			return a;
 		})
 		.replace(/ без(ь? )(\S+)/g, (a, b, c) => {
-			if (!/[аеёіоуыэюя]/.test(c) ||
+			if (/[оё]/.test(b) ||
 				c.length < 2 ||
+				!/[аеёіоуыэюя]/.test(c) ||
 				c[0] === 'і' ||
 				/\p{P}|ір[ауо]/u.test(c))
 				return a;
@@ -232,6 +234,8 @@ function toTarask(text) {
 			};
 			return a;
 		})
+		.replace(/без(ь? \S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g).length === 1 ? 'бяз' + b : a)
+		.replace(/не (\S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g).length === 1 ? 'ня ' + b : a)
 		.replace(/( (?:б[ея]|пра|цера)?з) і(\S*)/g, (a, b, c) => /([ая]ў|ну)$/.test(c) ? b + 'ь і' + c : a);
 }
 function toBel(text) {
