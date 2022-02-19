@@ -127,34 +127,39 @@ function restoreRegister(text, orig) {
 }
 function addColor(text, orig) {
 	for (let i = 0; i < text.length; i++) {
-		switch (text[i]) {
-			case '<': if (text[i+1] !== 'br') text[i] = '&#60;'; continue;
-			case '>': if (text[i-1] !== 'br') text[i] = '&#62;'; continue;
-			case orig[i]: continue;
-		};
-		if (text[i].length === orig[i].length) {
-			const LettersText = text[i].split('');
-			const LettersOrig = orig[i].split('');
-			for (x = 0; x < LettersText.length; x++) {
+		const  word = text[i];
+		const oword = orig[i];
+		if (word === oword) continue;
+		if (word.length === oword.length) {
+			const LettersText = word.split('');
+			const LettersOrig = oword.split('');
+			for (let x = 0; x < LettersText.length; x++) {
 				if (LettersText[x] !== LettersOrig[x])
 					LettersText[x] = `<tarF>${LettersText[x]}</tarF>`;
 			};
 			text[i] = LettersText.join('');
 			continue;
 		};
-		switch (orig[i]) {
-			case text[i].replace(/ь/g, ''):
-				text[i] = text[i].replace(/ь/g, `<tarF>ь</tarF>`);
+		const word1 = word.replace(/ь/g, '')
+		switch (oword) {
+			case word1:
+				text[i] = word.replace(/ь/g, `<tarF>ь</tarF>`);
 				continue;
-			case text[i].replace(/ь/g, '')+'ь':
-				text[i] = text[i].slice(0, -1).replace(/ь/g, `<tarF>ь</tarF>`)+'ь';
+			case word1+'ь':
+				text[i] = word.slice(0, -1).replace(/ь/g, `<tarF>ь</tarF>`)+'ь';
 				continue;
-			case text[i].replace(/(у|ю)/g, 'ір$1'):
-				text[i] = text[i].replace(/(у|ю)/g, `<tarF>$1</tarF>`);
+			case word.replace(/(у|ю)/g, 'ір$1'):
+				text[i] = word.replace(/(у|ю)/g, `<tarF>$1</tarF>`);
 				continue;
 		};
-		if (orig[i].length !== text[i].replace(/\((\p{L}+)\)\(\p{L}+\)/gu, '$1').length)
-			text[i] = `<tarF>${text[i]}</tarF>`;
+		if (oword.length !== word.replace(/\((\p{L}+)\)\(\p{L}+\)/gu, '$1').length) {
+			let x = 0;
+			let x1 = word.length-1;
+			let x2 = oword.length-1;
+			while (word[x] === oword[x]) x++;
+			while (word[x1] === oword[x2]) x1--, x2--;
+			text[i] = word.slice(0, x) + `<tarF>${word.slice(x, x1+1)}</tarF>` + word.slice(x1+1);
+		};
 	};
 
 	return text;
@@ -193,21 +198,13 @@ function toTarask(text) {
 				return ' ня ' + b;
 			const wordstart = b[0] + b[1] === 'вы';
 			const wordend = /(ў|[еуы]|а[мх]|л[аі]|не|дзе|уць)$/.test(b);
-			switch (vowNum) {
-				case 2:
-					if (wordstart || wordend)
-						return ' ня ' + b;
-					return a;
-				case 3:
-					if (wordstart && wordend)
-						return ' ня ' + b;
-					return a;
-				case 4:
-					const blen = b.length;
-					if (wordstart && b[blen - 1] + b[blen - 2] + b[blen - 3] === 'амі')
-						return ' ня ' + b;
-					return a;
-			};
+			if (
+				vowNum === 2 && (wordstart || wordend) ||
+				wordstart && (
+					vowNum === 3 && wordend ||
+					vowNum === 4 && b.slice(-3) === 'амі'
+				)
+			) return ' ня ' + b;
 			return a;
 		})
 		.replace(/ без(ь? )(\S+)/g, (a, b, c) => {
@@ -222,20 +219,14 @@ function toTarask(text) {
 				return ' бяз' + b + c;
 			const wordstart = /^вы/.test(c);
 			const wordend = /([ая]ў|у)$/.test(c);
-			switch (vowNum) {
-				case 2:
-					if (wordstart || wordend)
-						return ' бяз' + b + c;
-					return a;
-				case 3:
-					if (wordstart && wordend)
-						return ' бяз' + b + c;
-					return a;
-			};
+			if (
+				vowNum === 2 && (wordstart || wordend) ||
+				vowNum === 3 && (wordstart && wordend)
+			) return ' бяз' + b + c;
 			return a;
 		})
-		.replace(/без(ь? \S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g).length === 1 ? 'бяз' + b : a)
-		.replace(/не (\S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g).length === 1 ? 'ня ' + b : a)
+		.replace(/без(ь? \S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g)?.length === 1 ? 'бяз' + b : a)
+		.replace(/не (\S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g)?.length === 1 ? 'ня ' + b : a)
 		.replace(/( (?:б[ея]|пра|цера)?з) і(\S*)/g, (a, b, c) => /([ая]ў|ну)$/.test(c) ? b + 'ь і' + c : a);
 }
 function toBel(text) {
