@@ -28,7 +28,7 @@ els1 = els2 = els3 = iwords = gwords = soft = presoft = undefined;
 
 function toTaraskConvert(text, abc = 0, checkJ = 2) {
 	const noFix = Array(text.match(/ !>/g)?.length || 0);
-	while (noFix.length > text.match(/<! /g)) noFix.pop();
+	while (noFix.length > text.match(/<! /g)?.length) noFix.pop();
 	if (noFix.length) {
 		text = text.replace(/౦/g, '');
 		for (let i = 0; i < noFix.length; i++) {
@@ -77,7 +77,7 @@ function toTaraskConvert(text, abc = 0, checkJ = 2) {
 			break;
 		default: text = text.replace(/غ/g, '<tarG>ه</tarG>');
 	};
-	if (noFix.length) text = text.replace(/౦/g, noFix.shift);
+	if (noFix.length) text = text.replace(/౦/g, () => noFix.shift());
 		return abc === 2 ?
 			text
 			// .replace(/\((\S+)\)\((\S+)\)\((\S+)\)/g, `<tarL data-l='$2,$3'>$1</tarL>`)
