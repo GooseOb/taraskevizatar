@@ -61,20 +61,21 @@ function toTaraskConvert(text, abc = 0, checkJ = 2) {
 	text = text
 		.addColor(textSplit)
 		.join(' ')
-		.replace(/ (\p{P}|\p{S}|\d|&#6[02];) /gu, '$1');
+		.replace(/&#160;/g, ' ')
+		.replace(/ (\p{P}|\p{S}|\d) /gu, '$1');
 	switch (abc) {
 		case 0:
 			text = text
-				.replace(/ґ/g, `<tarG>г</tarG>`)
-				.replace(/Ґ/g, `<tarG>Г</tarG>`);
+				.replace(/ґ/g, '<tarG>г</tarG>')
+				.replace(/Ґ/g, '<tarG>Г</tarG>');
 			break;
 		case 1:
 			text = text
 				.replace(/([AEIOUY])(?:<tarF>)?Ŭ(?:<\/tarF>)?/g, '$1U')
-				.replace(/g/g, `<tarG>h</tarG>`)
-				.replace(/>G/g, `><tarG>H</tarG>`);
+				.replace(/g/g, '<tarG>h</tarG>')
+				.replace(/>G/g, '><tarG>H</tarG>');
 			break;
-		default: text = text.replace(/غ/g, `<tarG>ه</tarG>`);
+		default: text = text.replace(/غ/g, '<tarG>ه</tarG>');
 	};
 	if (noFix.length) text = text.replace(/౦/g, noFix.shift);
 		return abc === 2 ?
@@ -93,34 +94,32 @@ function toTaraskConvert(text, abc = 0, checkJ = 2) {
 }
 function restoreRegister(text, orig) {
 	for (let i = 0; i < text.length; i++) {
-		const origWord = orig[i];
-		const word = text[i];
-		if (word === origWord) continue;
-		if (word === origWord.toLowerCase()) {
-			text[i] = origWord;
+		const  word = text[i];
+		const oWord = orig[i];
+		if (word === oWord) continue;
+		if (word === oWord.toLowerCase()) {
+			text[i] = oWord;
 			continue;
 		};
 		if (
-			!origWord[0] ||
-			origWord[0] === origWord[0].toLowerCase()
+			!oWord[0] ||
+			oWord[0] === oWord[0].toLowerCase()
 		) continue;
 		if (word === 'зь') {
 			const nextWord = orig[i + 1];
 			text[i] = nextWord[1] === nextWord[1].toUpperCase() ? 'ЗЬ' : 'Зь';
 			continue;
 		};
-		const lastLetter = origWord[origWord.length - 1];
+		const lastLetter = oWord[oWord.length - 1];
 		if (word[0] === '(') {
-			if (origWord[0] === origWord[0].toUpperCase()) {
+			if (oWord[0] === oWord[0].toUpperCase()) {
 				text[i] = word.replace(/\(./g, a => a.toUpperCase());
 				if (lastLetter === lastLetter.toUpperCase()) text[i] = word.toUpperCase();
 			};
 			continue;
 		};
-		try {
 		if (lastLetter === lastLetter.toUpperCase()) text[i] = word.toUpperCase()
 		else text[i] = word[0].toUpperCase() + word.slice(1);
-		} catch(e) {console.log(text[i], text[i+1])};
 	};
 
 	return text;
@@ -128,11 +127,11 @@ function restoreRegister(text, orig) {
 function addColor(text, orig) {
 	for (let i = 0; i < text.length; i++) {
 		const  word = text[i];
-		const oword = orig[i];
-		if (word === oword) continue;
-		if (word.length === oword.length) {
+		const oWord = orig[i];
+		if (word === oWord) continue;
+		if (word.length === oWord.length) {
 			const LettersText = word.split('');
-			const LettersOrig = oword.split('');
+			const LettersOrig = oWord.split('');
 			for (let x = 0; x < LettersText.length; x++) {
 				if (LettersText[x] !== LettersOrig[x])
 					LettersText[x] = `<tarF>${LettersText[x]}</tarF>`;
@@ -141,24 +140,24 @@ function addColor(text, orig) {
 			continue;
 		};
 		const word1 = word.replace(/ь/g, '')
-		switch (oword) {
+		switch (oWord) {
 			case word1:
-				text[i] = word.replace(/ь/g, `<tarF>ь</tarF>`);
+				text[i] = word.replace(/ь/g, '<tarF>ь</tarF>');
 				continue;
 			case word1+'ь':
-				text[i] = word.slice(0, -1).replace(/ь/g, `<tarF>ь</tarF>`)+'ь';
+				text[i] = word.slice(0, -1).replace(/ь/g, '<tarF>ь</tarF>')+'ь';
 				continue;
 			case word.replace(/(у|ю)/g, 'ір$1'):
-				text[i] = word.replace(/(у|ю)/g, `<tarF>$1</tarF>`);
+				text[i] = word.replace(/(у|ю)/g, '<tarF>$1</tarF>');
 				continue;
 		};
-		if (oword.length !== word.replace(/\((\p{L}+)\)\(\p{L}+\)/gu, '$1').length) {
+		if (oWord.length !== word.replace(/\((\p{L}+)\)\(\p{L}+\)/gu, '$1').length) {
 			let x = 0;
 			let x1 = word.length-1;
-			let x2 = oword.length-1;
-			while (word[x] === oword[x]) x++;
-			while (word[x1] === oword[x2]) x1--, x2--;
-			text[i] = word.slice(0, x) + `<tarF>${word.slice(x, x1+1)}</tarF>` + word.slice(x1+1);
+			let x2 = oWord.length-1;
+			while (word[x] === oWord[x]) x++;
+			while (word[x1] === oWord[x2]) x1--, x2--;
+			text[i] = word.slice(0, x) + '<tarF>' + word.slice(x, x1+1) + '</tarF>' + word.slice(x1+1);
 		};
 	};
 
@@ -234,6 +233,7 @@ function toBel(text) {
 		.replace(/[иi]/g, 'і')
 		.replace(/([аеёіоуыэюя] ?)у/g, '$1ў')
 		.replace(/ўм /g, 'ум ')
+		.replace(/ўс /g, 'ус ')
 		.replace(/ іўд(ай?|ав[аы]|у|зе) /g, ' іуд$1 ')
 		.replace(/ ілеўс/g, ' ілеус')
 		.replace(/щ/g, 'ў')
