@@ -157,6 +157,7 @@ function addColor(text, orig) {
 			let x2 = oWord.length-1;
 			while (word[x] === oWord[x]) x++;
 			while (word[x1] === oWord[x2]) x1--, x2--;
+			if (x1 < x2) x1 += 2; // калі ў зыходным слове больш літар
 			text[i] = word.slice(0, x) + '<tarF>' + word.slice(x, x1+1) + '</tarF>' + word.slice(x1+1);
 		};
 	};
@@ -224,13 +225,13 @@ function toTarask(text) {
 			) return ' бяз' + b + c;
 			return a;
 		})
-		.replace(/без(ь? \S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g)?.length === 1 ? 'бяз' + b : a)
-		.replace(/не (\S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g)?.length === 1 ? 'ня ' + b : a)
+		.replace(/ без(ь? \S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' бяз' + b : a)
+		.replace(/ не (\S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' ня ' + b : a)
 		.replace(/( (?:б[ея]|пра|цера)?з) і(\S*)/g, (a, b, c) => /([ая]ў|ну)$/.test(c) ? b + 'ь і' + c : a);
 }
 function toBel(text) {
 	return text
-		.replace(/[иi]/g, 'і')
+		.replace(/и/g, 'і')
 		.replace(/([аеёіоуыэюя] ?)у/g, '$1ў')
 		.replace(/ўм /g, 'ум ')
 		.replace(/ўс /g, 'ус ')
