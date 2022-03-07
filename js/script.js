@@ -1,143 +1,137 @@
-const darkTheme = document.querySelector('link[href=\'dark.css\']');
+const darkTheme = document.querySelector('link[href="./styles/dark.css"]');
 const checkTheme = document.querySelectorAll('#theme input');
-switch (+localStorage.theme) {
-	case 1:
-		darkTheme.media = 'not all';
-		checkTheme[0].checked = true;
-		break;
-	case 2: 
-		darkTheme.media = 'all';
-		checkTheme[2].checked = true;
-		break;
+const themeStates = ['not all', '(prefers-color-scheme: dark)', 'all'];
+if (localStorage.theme) {
+	const {theme} = localStorage;
+	darkTheme.media = themeStates[theme];
+	checkTheme[theme].checked = true;
 };
 
-function changeTheme(media, value) {
-	darkTheme.media = media;
-	localStorage.theme = value;
-}
-
-checkTheme[0].addEventListener('click', () => changeTheme('not all', 1));
-checkTheme[1].addEventListener('click', () => changeTheme('(prefers-color-scheme: dark)', 0));
-checkTheme[2].addEventListener('click', () => changeTheme('all', 2));
+document.querySelector('#theme > fieldset').addEventListener('click', ({target: el}) => {
+	if (el.tagName === 'INPUT')
+		darkTheme.media = themeStates[localStorage.theme = el.className.at(-1)-1];
+});
 
 let changeList = [], currAbc = 0, fontSize = 1.25;
 const textInput = document.getElementById('input');
 const textOutput = document.getElementById('output');
-const selectJ = document.querySelectorAll('#itoj input');
-const copy = document.querySelectorAll('.copy');
 const body = document.body;
-const fontSizes = document.querySelectorAll('#font-size > b');
-copy[0].addEventListener('click', copyText);
-copy[1].addEventListener('click', copyText);
-function copyText() {
-	navigator.clipboard.writeText(this === copy[0] ? textInput.value : textOutput.innerText);
-	this.style.setProperty('--opacity', '1');
-	this.innerText = 'Скапіявана';
+const selectJ = body.querySelectorAll('#itoj input');
+const copy = body.querySelectorAll('.copy');
+const fontSizes = body.querySelectorAll('#font-size > b');
+const copyText = ({target: el}) => {
+	navigator.clipboard.writeText(el === copy[0] ? textInput.value : textOutput.innerText);
+	el.style.setProperty('--opacity', '1');
+	el.innerText = 'Скапіявана';
 	setTimeout(() => {
-		this.style.setProperty('--opacity', '.8');
-		this.innerText = 'Капіяваць';
+		el.style.setProperty('--opacity', '.8');
+		el.innerText = 'Капіяваць';
 	}, 500);
 }
+copy[0].addEventListener('click', copyText);
+copy[1].addEventListener('click', copyText);
 const count = {
-	S: document.querySelectorAll('.symbol-count'),
-	W: document.querySelector('.word-count'),
-	F: document.querySelector('.fix-count'),
-	P: document.querySelector('.punct-count')
+	S: body.querySelectorAll('.symbol-count'),
+	W: body.querySelector('.word-count'),
+	F: body.querySelector('.fix-count'),
+	P: body.querySelector('.punct-count')
 };
 
 if (!/Android|Mobile|Phone|webOS|iP[ao]d|BlackBerry|BB|PlayBook|Kindle|Silk|Opera Mini/i.test(navigator.userAgent))
-document.querySelector('footer').innerHTML += `<br>
+body.querySelector('footer').innerHTML += `<br>
 <p>
 	<a href="https://github.com/GooseOb/taraskevizatar/archive/refs/heads/main.zip">
 		Спампаваць ${location.host ? '' : 'актуальную'} афлайн вэрсію
 	</a>
 </p>`;
 
+const lsText = (text = false) => text
+	? localStorage.text = JSON.stringify(text)
+	: JSON.parse(localStorage.text);
+const lsTextStr = () => JSON.parse(localStorage.text)?.join(' ').replace(/<br>/g, '\n');
 const fixFont = () => textOutput.className = 'textfield' + (currAbc===2 ? ' arab' : '');
+const fixFontSize = num => body.style.setProperty('--fontSize', (fontSize += num) + 'rem');
 
-textInput.addEventListener('input', convert);
-document.querySelector('#convert').addEventListener('click', convert);
-for (let i=0; i < selectJ.length; i++) selectJ[i].addEventListener('click', () => {
+textInput.addEventListener('input', function() {
+	if (this.value.trim() !== lsTextStr())
+		convert();
+});
+body.querySelector('#convert').addEventListener('click', convert);
+for (let i = 0; i < selectJ.length; i++) selectJ[i].addEventListener('click', () => {
 	if (localStorage.j == i) return;
 	localStorage.j = i;
-	localStorage.text = '[]';
-	if (/ [іи] /.test(textInput.value)) convert();
+	if (!/ [іи] /.test(textInput.value)) return;
+	lsText([]);
+	convert();
 });
-fontSizes[0].addEventListener('click', () => {
-	if (fontSize!==0.0625) body.style.setProperty('--fontSize', (fontSize -= 0.0625)+'rem')
-});
-fontSizes[1].addEventListener('click', () => body.style.setProperty('--fontSize', (fontSize += 0.0625)+'rem'));
-const edit = document.querySelector('#edit');
-edit.addEventListener('click', () => textOutput.contentEditable = !edit.classList.toggle('disable'));
 
-const modals = document.querySelectorAll('.modal');
+fontSizes[0].addEventListener('click', () => fontSize !== 0.0625 && fixFontSize(-0.0625));
+fontSizes[1].addEventListener('click', () => fixFontSize(0.0625));
+
+body.querySelector('#edit').addEventListener('click', function() {
+	textOutput.contentEditable = !this.classList.toggle('disable')
+});
+
+const modals = body.querySelectorAll('.modal');
 const closeModal = i => modals[i].className = 'modal hidden';
-document.querySelector('#info').addEventListener('click', () => modals[0].className = 'modal');
-document.querySelector('#select-abc').addEventListener('click', () => modals[1].className = 'modal');
-const exit = document.querySelectorAll('.close');
-for (let i=0; i < modals.length; i++) {
-	exit[i].addEventListener('click', () => closeModal(i));
-	modals[i].addEventListener('click', e => {if (e.target === modals[i]) closeModal(i)});
+body.querySelector('#info').addEventListener('click', () => modals[0].className = 'modal');
+body.querySelector('#select-abc').addEventListener('click', () => modals[1].className = 'modal');
+for (let i = 0; i < modals.length; i++)
+	modals[i].addEventListener('click', function() {
+		if (this.className === 'modal' || this.className === 'close') closeModal(i);
+	});
+const gobj = {
+'г':'ґ',
+'ґ':'г',
+'Г':'Ґ',
+'Ґ':'Г',
+'h':'g',
+'g':'h',
+'H':'G',
+'G':'H',
 };
-textOutput.addEventListener('click', e => {
-	const item = e.target;
-	switch(item.tagName) {
+textOutput.addEventListener('click', ({target: el}) => {
+	switch(el.tagName) {
 		case 'TARL':
-			let data = item.dataset.l;
+			let data = el.dataset.l;
 			if (data.indexOf(',') !== -1) {
 				data = data.split(',');
-				data[data.length] = item.textContent;
-				item.textContent = data.shift();
-				item.dataset.l = data;
+				data[data.length] = el.textContent;
+				el.textContent = data.shift();
+				el.dataset.l = data;
 				return;
 			};
-			item.dataset.l = item.textContent;
-			item.textContent = data;
+			el.dataset.l = el.textContent;
+			el.textContent = data;
 			return;
 		case 'TARG':
-			switch (currAbc) {
-				case 0:
-						switch (item.textContent) {
-							case 'г': item.textContent = 'ґ'; break;
-							case 'ґ': item.textContent = 'г'; break;
-							case 'Г': item.textContent = 'Ґ'; break;
-							default: item.textContent = 'Г';
-					}; return;
-				case 1:
-						switch (item.textContent) {
-							case 'h': item.textContent = 'g'; break;
-							case 'g': item.textContent = 'h'; break;
-							case 'H': item.textContent = 'G'; break;
-							default: item.textContent = 'H';
-					}; return;
-				case 2:
-					item.textContent = item.textContent === 'غ' ? 'ه' : 'غ';
-					return;
-			};
+			el.textContent = currAbc === 2
+				? el.textContent === 'غ' ? 'ه' : 'غ'
+				: gobj[el.textContent]
 	};
 });
 
-const LSText = {
-	get: () => localStorage.text ? JSON.parse(localStorage.text) : [],
-	set: text => localStorage.text = JSON.stringify(text)
-};
-
 const abcBtns = modals[1].querySelectorAll('button');
-const currentAbc = document.querySelector('#current-abc');
-if (localStorage.j) {
+const currentAbc = body.querySelector('#current-abc');
+if (localStorage.length > 3) {
 	if (localStorage.text[0] !== '[')
-		LSText.set(
+		lsText(
 			/<!<sep>!>/.test(localStorage.text)
 			? localStorage.text.split('<!<sep>!>')
-			: [localStorage.text]
+			: localStorage.text ? [localStorage.text] : []
 		);
-	textInput.value = LSText.get()?.join(' ').replace(/<br>/g, '\n');
+	textInput.value = lsTextStr();
 	currAbc = +localStorage.abc;
 	currentAbc.textContent = abcBtns[currAbc].innerHTML;
 	fixFont();
 	abcBtns[currAbc].className = 'active';
 	selectJ[localStorage.j].checked = true;
 	convert();
+} else {
+	lsText([]);
+	localStorage.j = 1;
+	localStorage.abc = 0;
+	localStorage.theme = 0;
 };
 
 for (let i = 0; i < abcBtns.length; i++) abcBtns[i].addEventListener('click', () => {
@@ -145,7 +139,7 @@ for (let i = 0; i < abcBtns.length; i++) abcBtns[i].addEventListener('click', ()
 	abcBtns[currAbc].className = '';
 	currentAbc.textContent = abcBtns[i].textContent;
 	localStorage.abc = currAbc = i;
-	localStorage.text = '[]';
+	lsText([]);
 	closeModal(1);
 	fixFont();
 	convert();
@@ -161,31 +155,46 @@ function convert() {
 		count.P.textContent =
 		count.S[1].textContent =
 		count.F.textContent = 0;
-		localStorage.text = '[]';
+		lsText([]);
 		return;
 	};
 	text = text.replace(/\n/g, '<br>').match(/[^\s]+/g);
 	const result = [];
 	while (text.length) {
-		let wordI = text.length < 99 ? text.length-1 : 99;
+		let wordI = text.length < 99 ? text.length-1 : 98;
 		let word = text[wordI].toLowerCase();
-		if (wordI !== text.length)
-			while ((word === 'не' || word[word.length] === 'з') && wordI > 0)
+		if (wordI > 99 && wordI !== text.length-1)
+			while ((word === 'не' || word === 'са' || word[word.length-1] === 'з') && wordI > 0)
 				word = text[wordI--].toLowerCase();
 		result[result.length] = text.splice(0, wordI+1).join(' ');
 	};
-	const textOutputEmpty = textOutput.textContent.length < 10;
-	let outps = textOutput.querySelectorAll('span');
-	while (outps.length !== result.length) {
-		if (outps.length < result.length) textOutput.append(document.createElement('span'))
-		else outps[outps.length-1].remove();
-		outps = textOutput.querySelectorAll('span');
+	const resultlen = result.length;
+	if (textOutput.textContent.length < 10) {
+		let str = '';
+		for (let i = 0; i < resultlen; i++)
+			str += '<span>' + result[i].toTaraskConvert(currAbc, +localStorage.j) + ' </span>';
+		textOutput.innerHTML = str;
+	} else {
+		let outps = textOutput.querySelectorAll('span');
+		if (outps.length !== resultlen) {
+			if (outps.length < resultlen) {
+				textOutput.innerHTML += '<span></span>'.repeat(resultlen - outps.length);
+			} else {
+				outps = Array.from(outps);
+				while (outps.length > resultlen) outps.pop().remove();
+			};
+			outps = textOutput.querySelectorAll('span');
+		};
+		const storageText = lsText();
+		for (let i = 0; i < resultlen; i++)
+			if (result[i] !== storageText[i]) {
+				const j = +localStorage.j;
+				while (i < resultlen)
+					outps[i].innerHTML = result[i++].toTaraskConvert(currAbc, j) + ' ';
+				break;
+			};
 	};
-	const storageText = LSText.get();
-	for (let i=0; i < result.length; i++)
-		if (result[i] !== storageText[i] || textOutputEmpty)
-			outps[i].innerHTML = result[i].toTaraskConvert(currAbc, +localStorage.j) + ' ';
-	LSText.set(result);
+	lsText(result);
 	const inputText = textInput.value;
 	count.S[0].textContent = inputText.length;
 	count.W.textContent = inputText.match(/[^\s]+/g).length;
@@ -193,12 +202,10 @@ function convert() {
 	count.S[1].textContent = textOutput.textContent.trim().length;
 	count.F.textContent = textOutput.querySelectorAll('tarF').length;
 	const spans = textOutput.querySelectorAll('tarG, tarL');
-	for (let i=0; i < changeList.length; i++) {
-		if (changeList[i]) spans[i].click();
-	};
-	while (changeList.length < spans.length) changeList[changeList.length] = 0;
+	while (changeList.length < spans.length) changeList[changeList.length] = false;
 	while (changeList.length > spans.length) changeList.pop();
-	for (let i=0; i < changeList.length; i++) {
+	for (let i = 0; i < changeList.length; i++) {
+		if (changeList[i]) spans[i].click();
 		spans[i].addEventListener('click', () => changeList[i] = !changeList[i]);
 	};
 }
@@ -208,11 +215,11 @@ function convert() {
 // textOutput.onmousedown = function(e) {
 // 	resize = true;
 // 	pos = e.pageY;
-// 	document.onmouseup = () => {
+// 	body.onmouseup = () => {
 // 		resize = false;
 // 		height = +this.style.height.slice(0, -2);
 // 	};
-// 	document.onmousemove = e => {
+// 	body.onmousemove = function(e) {
 // 		if (!resize) return;
 // 		let res = height + e.pageY-pos;
 // 		this.style.height = res+"px";

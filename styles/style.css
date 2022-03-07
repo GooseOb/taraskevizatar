@@ -31,8 +31,7 @@ header {
   padding: 10px;
 }
 header > div {text-align: left}
-
-#info {
+header > button {
   font-size: 1.625rem;
   font-family: monospace;
   color: whitesmoke;
@@ -40,9 +39,11 @@ header > div {text-align: left}
   width: 2.5rem;
   background: linear-gradient(#ff6600, #ff9900);
   opacity: .9;
-  margin-left: auto;
-  margin-right: 10%;
   user-select: none;
+}
+#info {
+  margin-right: 10%;
+  margin-left: auto;
 }
 
 .modal {
@@ -378,9 +379,9 @@ fieldset > input {
 
 fieldset > input:focus {outline: none}
 
-#theme--light {background-image: url('./themeIco/light.svg')}
-#theme--auto {background-image: url('./themeIco/auto.svg')}
-#theme--dark {background-image: url('./themeIco/dark.svg')}
+#theme--light {background-image: url('../icons/theme/light.svg')}
+#theme--auto {background-image: url('../icons/theme/auto.svg')}
+#theme--dark {background-image: url('../icons/theme/dark.svg')}
 
 #itoj input {
   display: flex;
@@ -402,7 +403,7 @@ fieldset > input:focus {outline: none}
   bottom: 0;
   left: 0;
   z-index: -1;
-  background: no-repeat url('./themeIco/status.svg') center/2.325rem;
+  background: no-repeat url('../icons/theme/status.svg') center/2.325rem;
   transition: background-position 0.1s ease-in;
   filter: invert(1);
 }

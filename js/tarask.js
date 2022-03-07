@@ -15,6 +15,7 @@ String.prototype.toLatin = function(value) {return toLatin(this, value)};
 String.prototype.toJ = function(value) {return toJ(this, value)};
 Array.prototype.restoreRegister = function(value1, value2) {return restoreRegister(this, value1, value2)};
 Array.prototype.addColor = function(value) {return addColor(this, value)};
+const isUpCase = str => str === str.toUpperCase();
 
 for (const key in wordlist) wordlist[key] = RegExp(wordlist[key], 'g');
 for (const key in softers) softers[key] = RegExp(softers[key], 'g');
@@ -97,29 +98,16 @@ function restoreRegister(text, orig) {
 		const  word = text[i];
 		const oWord = orig[i];
 		if (word === oWord) continue;
-		if (word === oWord.toLowerCase()) {
-			text[i] = oWord;
-			continue;
-		};
-		if (
+		if (word === oWord.toLowerCase()) text[i] = oWord
+		else if (
 			!oWord[0] ||
 			oWord[0] === oWord[0].toLowerCase()
-		) continue;
-		if (word === 'зь') {
-			const nextWord = orig[i + 1];
-			text[i] = nextWord[1] === nextWord[1].toUpperCase() ? 'ЗЬ' : 'Зь';
-			continue;
-		};
-		const lastLetter = oWord[oWord.length - 1];
-		if (word[0] === '(') {
-			if (oWord[0] === oWord[0].toUpperCase()) {
-				text[i] = word.replace(/\(./g, a => a.toUpperCase());
-				if (lastLetter === lastLetter.toUpperCase()) text[i] = word.toUpperCase();
-			};
-			continue;
-		};
-		if (lastLetter === lastLetter.toUpperCase()) text[i] = word.toUpperCase()
-		else text[i] = word[0].toUpperCase() + word.slice(1);
+		) continue
+		else if (word === 'зь') text[i] = isUpCase(orig[i + 1]) ? 'ЗЬ' : 'Зь'
+		else if (isUpCase(oWord[oWord.length - 1])) text[i] = word.toUpperCase()
+		else if (word[0] === '(') {
+			if (isUpCase(oWord[0])) text[i] = word.replace(/\(./g, a => a.toUpperCase());
+		} else text[i] = word[0].toUpperCase() + word.slice(1);
 	};
 
 	return text;
@@ -131,9 +119,8 @@ function addColor(text, orig) {
 		if (word === oWord) continue;
 		if (word.length === oWord.length) {
 			const LettersText = word.split('');
-			const LettersOrig = oWord.split('');
 			for (let x = 0; x < LettersText.length; x++) {
-				if (LettersText[x] !== LettersOrig[x])
+				if (LettersText[x] !== oWord[x])
 					LettersText[x] = `<tarF>${LettersText[x]}</tarF>`;
 			};
 			text[i] = LettersText.join('');
@@ -167,9 +154,8 @@ function addColor(text, orig) {
 function toTarask(text) {
 	for (const key in wordlist) text = text.replace(wordlist[key], key);
 	while (true) {
-		for (const key in softers) {
+		for (const key in softers)
 			text = text.replace(softers[key], key);
-		};
 		let stop = true;
 		for (const key in softers) {
 			if (key !== '$1дзьдз$2' && softers[key].test(text)) {
