@@ -65,6 +65,7 @@ header > button {
   flex-direction: column;
   justify-content: center;
   width: fit-content;
+  max-width: 51rem;
   height: fit-content;
   top: 50%;
   left: 50%;

@@ -17,19 +17,23 @@ const textInput = document.getElementById('input');
 const textOutput = document.getElementById('output');
 const body = document.body;
 const selectJ = body.querySelectorAll('#itoj input');
-const copy = body.querySelectorAll('.copy');
 const fontSizes = body.querySelectorAll('#font-size > b');
-const copyText = ({target: el}) => {
-	navigator.clipboard.writeText(el === copy[0] ? textInput.value : textOutput.innerText);
-	el.style.setProperty('--opacity', '1');
-	el.innerText = 'Скапіявана';
-	setTimeout(() => {
-		el.style.setProperty('--opacity', '.8');
-		el.innerText = 'Капіяваць';
-	}, 500);
-}
-copy[0].addEventListener('click', copyText);
-copy[1].addEventListener('click', copyText);
+
+body.querySelectorAll('.copy').forEach((el, i) => {
+	const getText = i === 0
+		? () => textInput.value
+		: () => textOutput.innerText;
+	el.addEventListener('click', () => {
+		navigator.clipboard.writeText(getText());
+		el.style.setProperty('--opacity', '1');
+		el.innerText = 'Скапіявана';
+		setTimeout(() => {
+			el.style.setProperty('--opacity', '.8');
+			el.innerText = 'Капіяваць';
+		}, 500);
+	});
+});
+
 const count = {
 	S: body.querySelectorAll('.symbol-count'),
 	W: body.querySelector('.word-count'),
@@ -52,9 +56,8 @@ const lsTextStr = () => JSON.parse(localStorage.text)?.join(' ').replace(/<br>/g
 const fixFont = () => textOutput.className = 'textfield' + (currAbc===2 ? ' arab' : '');
 const fixFontSize = num => body.style.setProperty('--fontSize', (fontSize += num) + 'rem');
 
-textInput.addEventListener('input', function() {
-	if (this.value.trim() !== lsTextStr())
-		convert();
+textInput.addEventListener('input', ({target: {value}}) => {
+	if (value.trim() !== lsTextStr()) convert();
 });
 body.querySelector('#convert').addEventListener('click', convert);
 for (let i = 0; i < selectJ.length; i++) selectJ[i].addEventListener('click', () => {
@@ -68,17 +71,18 @@ for (let i = 0; i < selectJ.length; i++) selectJ[i].addEventListener('click', ()
 fontSizes[0].addEventListener('click', () => fontSize !== 0.0625 && fixFontSize(-0.0625));
 fontSizes[1].addEventListener('click', () => fixFontSize(0.0625));
 
-body.querySelector('#edit').addEventListener('click', function() {
-	textOutput.contentEditable = !this.classList.toggle('disable')
+body.querySelector('#edit').addEventListener('click', ({target: el}) => {
+	textOutput.contentEditable = !el.classList.toggle('disable')
 });
 
 const modals = body.querySelectorAll('.modal');
 const closeModal = i => modals[i].className = 'modal hidden';
-body.querySelector('#info').addEventListener('click', () => modals[0].className = 'modal');
-body.querySelector('#select-abc').addEventListener('click', () => modals[1].className = 'modal');
+const openModal = i => modals[i].className = 'modal';
+body.querySelector('#info').addEventListener('click', () => openModal(0));
+body.querySelector('#select-abc').addEventListener('click', () => openModal(1));
 for (let i = 0; i < modals.length; i++)
-	modals[i].addEventListener('click', function() {
-		if (this.className === 'modal' || this.className === 'close') closeModal(i);
+	modals[i].addEventListener('click', ({target: {className}}) => {
+		if (className === 'modal' || className === 'close') closeModal(i);
 	});
 const gobj = {
 'г':'ґ',

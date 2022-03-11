@@ -153,18 +153,14 @@ function addColor(text, orig) {
 }
 function toTarask(text) {
 	for (const key in wordlist) text = text.replace(wordlist[key], key);
-	while (true) {
+	loop: do {
 		for (const key in softers)
 			text = text.replace(softers[key], key);
-		let stop = true;
-		for (const key in softers) {
-			if (key !== '$1дзьдз$2' && softers[key].test(text)) {
-				stop = false;
-				break;
-			};
-		};
-		if (stop) break;
-	};
+		for (const key in softers)
+			if (key !== '$1дзьдз$2' && softers[key].test(text))
+				continue loop;
+		break;
+	} while (true);
 	// while (/ае( \S+)ай /g.test(text))
 	// 	text = text.replace(/ае( \S+)ай /g, 'ае$1ае ');
 
