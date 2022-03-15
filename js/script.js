@@ -42,12 +42,12 @@ const count = {
 };
 
 if (!/Android|Mobile|Phone|webOS|iP[ao]d|BlackBerry|BB|PlayBook|Kindle|Silk|Opera Mini/i.test(navigator.userAgent))
-body.querySelector('footer').innerHTML += `<br>
-<p>
-	<a href="https://github.com/GooseOb/taraskevizatar/archive/refs/heads/main.zip">
-		Спампаваць ${location.host ? '' : 'актуальную'} афлайн вэрсію
-	</a>
-</p>`;
+	body.querySelector('footer').innerHTML += `<br>
+	<p>
+		<a href="https://github.com/GooseOb/taraskevizatar/archive/refs/heads/main.zip">
+			Спампаваць ${location.host ? '' : 'актуальную'} афлайн вэрсію
+		</a>
+	</p>`;
 
 const lsText = (text = false) => text
 	? localStorage.text = JSON.stringify(text)
