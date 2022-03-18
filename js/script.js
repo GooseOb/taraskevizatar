@@ -34,12 +34,18 @@ body.querySelectorAll('.copy').forEach((el, i) => {
 	});
 });
 
-const count = {
-	S: body.querySelectorAll('.symbol-count'),
-	W: body.querySelector('.word-count'),
-	F: body.querySelector('.fix-count'),
-	P: body.querySelector('.punct-count')
-};
+const count = new Proxy(
+	{
+		S0: body.querySelectorAll('.symbol-count')[0],
+		S1: body.querySelectorAll('.symbol-count')[1],
+		W: body.querySelector('.word-count'),
+		F: body.querySelector('.fix-count'),
+		P: body.querySelector('.punct-count')
+	}, {
+		get: (target, name) => target[name].textContent,
+		set: (target, name, num) => target[name].textContent = num
+	}
+);
 
 if (!/Android|Mobile|Phone|webOS|iP[ao]d|BlackBerry|BB|PlayBook|Kindle|Silk|Opera Mini/i.test(navigator.userAgent))
 	body.querySelector('footer').innerHTML += `<br>
@@ -154,11 +160,7 @@ function convert() {
 	let text = textInput.value.trim();
 	if (!text) {
 		textOutput.innerHTML = '<span>' + ['Тэкст', 'Tekst', 'طَقْصْطْ'][currAbc] + '</span>';
-		count.S[0].textContent =
-		count.W.textContent =
-		count.P.textContent =
-		count.S[1].textContent =
-		count.F.textContent = 0;
+		count.S0 = count.W = count.P = count.S1 = count.F = 0;
 		lsText([]);
 		return;
 	};
@@ -200,11 +202,11 @@ function convert() {
 	};
 	lsText(result);
 	const inputText = textInput.value;
-	count.S[0].textContent = inputText.length;
-	count.W.textContent = inputText.match(/[^\s]+/g).length;
-	count.P.textContent = inputText.match(/\p{P}/gu)?.length ||0;
-	count.S[1].textContent = textOutput.textContent.trim().length;
-	count.F.textContent = textOutput.querySelectorAll('tarF').length;
+	count.S0 = inputText.length;
+	count.W = inputText.match(/[^\s]+/g).length;
+	count.P = inputText.match(/\p{P}/gu)?.length ||0;
+	count.S1 = textOutput.textContent.trim().length;
+	count.F = textOutput.querySelectorAll('tarF').length;
 	const spans = textOutput.querySelectorAll('tarG, tarL');
 	while (changeList.length < spans.length) changeList[changeList.length] = false;
 	while (changeList.length > spans.length) changeList.pop();
