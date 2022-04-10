@@ -1,33 +1,19 @@
-/*
-	Cкрыпт тарашкевізатара
-
-	Аўтар: Гусак Звычайны
-	vk: vk.com/gooseob
-	tg: t.me/gooseob
-
-*/
-
-String.prototype.toTaraskConvert = function(value1, value2, value3) {return toTaraskConvert(this, value1, value2, value3)};
-String.prototype.toBel = function() {return toBel(this)};
-String.prototype.toTarask = function() {return toTarask(this)};
-String.prototype.toArab = function() {return toArab(this)};
-String.prototype.toLatin = function(value) {return toLatin(this, value)};
-String.prototype.toJ = function(value) {return toJ(this, value)};
-Array.prototype.restoreRegister = function(value1, value2) {return restoreRegister(this, value1, value2)};
-Array.prototype.addColor = function(value) {return addColor(this, value)};
+Object.assign(String.prototype, {
+	toTaraskConvert: function(value1, value2, value3) {return toTaraskConvert(this, value1, value2, value3)},
+	// toBel: function() {return toBel(this)},
+	toTarask: function() {return toTarask(this)},
+	toArab: function() {return toArab(this)},
+	toLatin: function(value) {return toLatin(this, value)},
+	toJ: function(value) {return toJ(this, value)}
+});
+Object.assign(Array.prototype, {
+	restoreRegister: function(value1, value2) {return restoreRegister(this, value1, value2)},
+	addColor: function(value) {return addColor(this, value)}
+});
 const isUpCase = str => str === str.toUpperCase();
 
-for (const key in wordlist) wordlist[key] = RegExp(wordlist[key], 'g');
-for (const key in softers) softers[key] = RegExp(softers[key], 'g');
-const latinLettersUpCase = {};
-for (const key in latinLetters) latinLettersUpCase[key] = RegExp(latinLetters[key].toUpperCase(), 'g');
-for (const key in latinLetters) latinLetters[key] = RegExp(latinLetters[key], 'g');
-for (const key in arabLetters) arabLetters[key] = RegExp(arabLetters[key], 'g');
-for (let i = 0; i < gwords.length; i++) wordlist[gwords[i]] = RegExp(gwords[i].replace(/ґ/g, 'г'), 'g');
-
-els1 = els2 = els3 = iwords = gwords = soft = presoft = undefined;
-
 function toTaraskConvert(text, abc = 0, checkJ = 2) {
+	const isArab = abc === 2;
 	const noFix = Array(text.match(/ !>/g)?.length || 0);
 	while (noFix.length > text.match(/<! /g)?.length) noFix.pop();
 	if (noFix.length) {
@@ -50,7 +36,7 @@ function toTaraskConvert(text, abc = 0, checkJ = 2) {
 	};
 	text = text
 		.toLowerCase()
-		.toBel()
+		// .toBel()
 		.toTarask();
 	if (checkJ) text = text.toJ(checkJ === 2);
 	switch (abc) {
@@ -58,7 +44,7 @@ function toTaraskConvert(text, abc = 0, checkJ = 2) {
 		case 2: text = text.toArab();
 	};
 	text = text.split(' ');
-	if (abc !== 2) text = text.restoreRegister(textSplit);
+	if (!isArab) text = text.restoreRegister(textSplit);
 	text = text
 		.addColor(textSplit)
 		.join(' ')
@@ -79,19 +65,17 @@ function toTaraskConvert(text, abc = 0, checkJ = 2) {
 		default: text = text.replace(/غ/g, '<tarG>ه</tarG>');
 	};
 	if (noFix.length) text = text.replace(/౦/g, () => noFix.shift());
-		return abc === 2 ?
-			text
-			// .replace(/\((\S+)\)\((\S+)\)\((\S+)\)/g, `<tarL data-l='$2,$3'>$1</tarL>`)
-			.replace(/\(([\p{L}’ \u0600-\u06FF\-]+)\)\(([\p{L}’ \u0600-\u06FF\-]+)\)\(([\p{L}’ \u0600-\u06FF\-]+)\)/gu, `<tarL data-l='$2,$3'>$1</tarL>`)
-			.replace(/\(([\p{L}’ \u0600-\u06FF\-]+)\)\(([\p{L}’ \u0600-\u06FF\-]+)\)/gu, `<tarL data-l='$2'>$1</tarL>`)
-			// .replace(/\((\S+)\)\((\S+)\)/g, `<tarL data-l='$2'>$1</tarL>`)
-			.replace(/ \n /g, '<br>')
-			.trim()
-			:
-			text.replace(/\((\p{L}+)\)\((\p{L}+)\)\((\p{L}+)\)/gu, `<tarL data-l='$2,$3'>$1</tarL>`)
-			.replace(/\((\p{L}+)\)\((\p{L}+)\)/gu, `<tarL data-l='$2'>$1</tarL>`)
-			.replace(/ \n /g, '<br>')
-			.trim();
+	const regExp = isArab
+		? /(?:\([\p{L}’\- \u0600-\u06FF\u08AF]+\)){2,}/gu
+		: /(?:\([\p{L}’\- ]+\)){2,}/gu;
+	return text
+		.replace(regExp, a => {
+			a = a.slice(1, -1).split(')(');
+			const b = a.shift();
+			return `<tarL data-l='${a}'>${b}</tarL>`;
+		})
+		.replace(/ \n /g, '<br>')
+		.trim();
 }
 function restoreRegister(text, orig) {
 	for (let i = 0; i < text.length; i++) {
@@ -101,13 +85,13 @@ function restoreRegister(text, orig) {
 		if (word === oWord.toLowerCase()) text[i] = oWord
 		else if (
 			!oWord[0] ||
-			oWord[0] === oWord[0].toLowerCase()
-		) continue
-		else if (word === 'зь') text[i] = isUpCase(orig[i + 1]) ? 'ЗЬ' : 'Зь'
+			!isUpCase(oWord[0])
+		) continue;
+		if (word === 'зь') text[i] = isUpCase(orig[i + 1]) ? 'ЗЬ' : 'Зь'
 		else if (isUpCase(oWord[oWord.length - 1])) text[i] = word.toUpperCase()
-		else if (word[0] === '(') {
-			if (isUpCase(oWord[0])) text[i] = word.replace(/\(./g, a => a.toUpperCase());
-		} else text[i] = word[0].toUpperCase() + word.slice(1);
+		else text[i] = word[0] === '('
+			? word.replace(/\(./g, a => a.toUpperCase())
+			: word[0].toUpperCase() + word.slice(1);
 	};
 
 	return text;
@@ -161,8 +145,6 @@ function toTarask(text) {
 				continue loop;
 		break;
 	} while (true);
-	// while (/ае( \S+)ай /g.test(text))
-	// 	text = text.replace(/ае( \S+)ай /g, 'ае$1ае ');
 
 	return text
 		.replace(/ не (\S+)/g, (a, b) => {
@@ -171,7 +153,7 @@ function toTarask(text) {
 				!/[аеёіоуыэюя]/.test(b) ||
 				/\p{P}|ір[ауо]/u.test(b) ||
 				b[0] === 'і' ||
-				/^(?:(?:ві|да|з?бы|маг|мя|налі|раў|ўзя)л[аі]|магу|ха[цч]|пач)/.test(b))
+				/^прызн|(?:(?:ві|з?да|з?бы|з?маг|мя|налі|раў|ўзя)л[аі]|(?:дав|кап)а|магу|ха[цч]|пач)/.test(b))
 				return a;
 			if (/(вы)?к(ла|і)да\S/.test(b))
 				return /мі?$/.test(b) ? ' ня ' + b : a;
@@ -211,17 +193,17 @@ function toTarask(text) {
 		.replace(/ не (\S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' ня ' + b : a)
 		.replace(/( (?:б[ея]|пра|цера)?з) і(\S*)/g, (a, b, c) => /([ая]ў|ну)$/.test(c) ? b + 'ь і' + c : a);
 }
-function toBel(text) {
-	return text
-		.replace(/и/g, 'і')
-		.replace(/([аеёіоуыэюя] ?)у/g, '$1ў')
-		.replace(/ўм /g, 'ум ')
-		.replace(/ўс /g, 'ус ')
-		.replace(/ іўд(ай?|ав[аы]|у|зе) /g, ' іуд$1 ')
-		.replace(/ ілеўс/g, ' ілеус')
-		.replace(/щ/g, 'ў')
-		.replace(/ъ/g, '’');
-}
+// function toBel(text) {
+// 	return text
+// 		.replace(/и/g, 'і')
+// 		.replace(/([аеёіоуыэюя] ?)у/g, '$1ў')
+// 		.replace(/ўм /g, 'ум ')
+// 		.replace(/ўс /g, 'ус ')
+// 		.replace(/ іўд(ай?|ав[аы]|у|зе) /g, ' іуд$1 ')
+// 		.replace(/ ілеўс/g, ' ілеус')
+// 		.replace(/щ/g, 'ў')
+// 		.replace(/ъ/g, '’');
+// }
 function toLatin(text, upCase = true) {
 	for (const key in latinLetters)
 		text = text.replace(latinLetters[key], key);

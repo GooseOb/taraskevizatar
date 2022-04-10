@@ -194,7 +194,7 @@ tarG {color: blueviolet}
 
 @font-face {
   font-family: 'Noto Sans Arabic';
-  src: url('./fonts/NotoSansArabic-SemiBold.ttf');
+  src: url('../fonts/NotoSansArabic-SemiBold.ttf');
 }
 
 #output.arab {

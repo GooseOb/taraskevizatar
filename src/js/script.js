@@ -1,4 +1,4 @@
-const darkTheme = document.querySelector('link[href="./styles/dark.css"]');
+const darkTheme = document.querySelector('#dark-css');
 const checkTheme = document.querySelectorAll('#theme input');
 const themeStates = ['not all', '(prefers-color-scheme: dark)', 'all'];
 if (localStorage.theme) {
@@ -34,7 +34,7 @@ body.querySelectorAll('.copy').forEach((el, i) => {
 	});
 });
 
-const count = new Proxy(
+const counts = new Proxy(
 	{
 		S0: body.querySelectorAll('.symbol-count')[0],
 		S1: body.querySelectorAll('.symbol-count')[1],
@@ -43,28 +43,29 @@ const count = new Proxy(
 		P: body.querySelector('.punct-count')
 	}, {
 		get: (target, name) => target[name].textContent,
-		set: (target, name, num) => target[name].textContent = num
+		set: (target, name, num) => (target[name].textContent = num) || true
 	}
 );
-
-if (!/Android|Mobile|Phone|webOS|iP[ao]d|BlackBerry|BB|PlayBook|Kindle|Silk|Opera Mini/i.test(navigator.userAgent))
-	body.querySelector('footer').innerHTML += `<br>
-	<p>
-		<a href="https://github.com/GooseOb/taraskevizatar/archive/refs/heads/main.zip">
-			Спампаваць ${location.host ? '' : 'актуальную'} афлайн вэрсію
-		</a>
-	</p>`;
 
 const lsText = (text = false) => text
 	? localStorage.text = JSON.stringify(text)
 	: JSON.parse(localStorage.text);
-const lsTextStr = () => JSON.parse(localStorage.text)?.join(' ').replace(/<br>/g, '\n');
 const fixFont = () => textOutput.className = 'textfield' + (currAbc===2 ? ' arab' : '');
 const fixFontSize = num => body.style.setProperty('--fontSize', (fontSize += num) + 'rem');
 
-textInput.addEventListener('input', ({target: {value}}) => {
-	if (value.trim() !== lsTextStr()) convert();
+let lastTypingDate = 0;
+let lastTimeout;
+const typingTime = 200;
+textInput.addEventListener('input', () => {
+	const text = textInput.value.trim();
+	if (text === sessionStorage.inputText) return;
+	if (text.length > 60000) {
+		const currTimeout = lastTimeout = setTimeout(() => {
+			if (currTimeout === lastTimeout) convert(text);
+		}, typingTime);
+	} else convert(text);
 });
+
 body.querySelector('#convert').addEventListener('click', convert);
 for (let i = 0; i < selectJ.length; i++) selectJ[i].addEventListener('click', () => {
 	if (localStorage.j == i) return;
@@ -74,11 +75,12 @@ for (let i = 0; i < selectJ.length; i++) selectJ[i].addEventListener('click', ()
 	convert();
 });
 
-fontSizes[0].addEventListener('click', () => fontSize !== 0.0625 && fixFontSize(-0.0625));
-fontSizes[1].addEventListener('click', () => fixFontSize(0.0625));
+const fontUnit = 0.0625;
+fontSizes[0].addEventListener('click', () => fontSize > fontUnit && fixFontSize(-fontUnit));
+fontSizes[1].addEventListener('click', () => fixFontSize(fontUnit));
 
-body.querySelector('#edit').addEventListener('click', ({target: el}) => {
-	textOutput.contentEditable = !el.classList.toggle('disable')
+body.querySelector('#edit').addEventListener('click', function() {
+	textOutput.contentEditable = !this.classList.toggle('disable')
 });
 
 const modals = body.querySelectorAll('.modal');
@@ -124,25 +126,27 @@ textOutput.addEventListener('click', ({target: el}) => {
 const abcBtns = modals[1].querySelectorAll('button');
 const currentAbc = body.querySelector('#current-abc');
 if (localStorage.length > 3) {
-	if (localStorage.text[0] !== '[')
+	const textFromLS = localStorage.text;
+	if (textFromLS[0] !== '[')
 		lsText(
-			/<!<sep>!>/.test(localStorage.text)
-			? localStorage.text.split('<!<sep>!>')
-			: localStorage.text ? [localStorage.text] : []
+			textFromLS
+			? /<!<sep>!>/.test(textFromLS)
+				? textFromLS.split('<!<sep>!>') : [textFromLS]
+			: []
 		);
-	textInput.value = lsTextStr();
+	textInput.value = lsText()?.join(' ').replace(/<br>/g, '\n');;
 	currAbc = +localStorage.abc;
 	currentAbc.textContent = abcBtns[currAbc].innerHTML;
 	fixFont();
 	abcBtns[currAbc].className = 'active';
 	selectJ[localStorage.j].checked = true;
 	convert();
-} else {
-	lsText([]);
-	localStorage.j = 1;
-	localStorage.abc = 0;
-	localStorage.theme = 0;
-};
+} else Object.assign(localStorage, {
+	text: '[]',
+	j: 1,
+	abc: 0,
+	theme: 1
+});
 
 for (let i = 0; i < abcBtns.length; i++) abcBtns[i].addEventListener('click', () => {
 	if (currAbc === i) return;
@@ -156,11 +160,11 @@ for (let i = 0; i < abcBtns.length; i++) abcBtns[i].addEventListener('click', ()
 	abcBtns[i].className = 'active';
 });
 
-function convert() {
-	let text = textInput.value.trim();
+function convert(text = textInput.value.trim()) {
+	sessionStorage.inputText = text;
 	if (!text) {
 		textOutput.innerHTML = '<span>' + ['Тэкст', 'Tekst', 'طَقْصْطْ'][currAbc] + '</span>';
-		count.S0 = count.W = count.P = count.S1 = count.F = 0;
+		Object.assign(counts, {S0: 0, W: 0, P: 0, S1: 0, F: 0});
 		lsText([]);
 		return;
 	};
@@ -202,11 +206,13 @@ function convert() {
 	};
 	lsText(result);
 	const inputText = textInput.value;
-	count.S0 = inputText.length;
-	count.W = inputText.match(/[^\s]+/g).length;
-	count.P = inputText.match(/\p{P}/gu)?.length ||0;
-	count.S1 = textOutput.textContent.trim().length;
-	count.F = textOutput.querySelectorAll('tarF').length;
+	Object.assign(counts, {
+		S0: inputText.length,
+		W: inputText.match(/[^\s]+/g).length,
+		P: inputText.match(/\p{P}/gu)?.length ||0,
+		S1: textOutput.textContent.trim().length,
+		F: textOutput.querySelectorAll('tarF').length
+	})
 	const spans = textOutput.querySelectorAll('tarG, tarL');
 	while (changeList.length < spans.length) changeList[changeList.length] = false;
 	while (changeList.length > spans.length) changeList.pop();
