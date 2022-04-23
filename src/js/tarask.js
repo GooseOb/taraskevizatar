@@ -100,7 +100,7 @@ function addColor(text, orig) {
 	for (let i = 0; i < text.length; i++) {
 		const  word = text[i];
 		const oWord = orig[i];
-		if (word === oWord) continue;
+		if (word === oWord || /\(/.test(word)) continue;
 		if (word.length === oWord.length) {
 			const LettersText = word.split('');
 			for (let x = 0; x < LettersText.length; x++) {
@@ -110,7 +110,7 @@ function addColor(text, orig) {
 			text[i] = LettersText.join('');
 			continue;
 		};
-		const word1 = word.replace(/ь/g, '')
+		const word1 = word.replace(/ь/g, '');
 		switch (oWord) {
 			case word1:
 				text[i] = word.replace(/ь/g, '<tarF>ь</tarF>');
@@ -123,13 +123,13 @@ function addColor(text, orig) {
 				continue;
 		};
 		if (oWord.length !== word.replace(/\((\p{L}+)\)\(\p{L}+\)/gu, '$1').length) {
-			let x = 0;
-			let x1 = word.length-1;
-			let x2 = oWord.length-1;
-			while (word[x] === oWord[x]) x++;
-			while (word[x1] === oWord[x2]) x1--, x2--;
-			if (x1 < x2) x1 += 2; // калі ў зыходным слове больш літар
-			text[i] = word.slice(0, x) + '<tarF>' + word.slice(x, x1+1) + '</tarF>' + word.slice(x1+1);
+			let x1 = 0; // word start -> fix start
+			let x2 = word.length-1; // word end -> fix end
+			let o = oWord.length-1; // oWord end
+			while (word[x1] === oWord[x1]) x1++;
+			while (word[x2] === oWord[o]) x2--, o--;
+			if (x2 < o && x1 !== x2) x1--, x2++; // калі ў зыходным слове больш літар
+			text[i] = word.slice(0, x1) + '<tarF>' + word.slice(x1, x2+1) + '</tarF>' + word.slice(x2+1);
 		};
 	};
 
@@ -147,48 +147,6 @@ function toTarask(text) {
 	} while (true);
 
 	return text
-		.replace(/ не (\S+)/g, (a, b) => {
-			if (/[оё]/.test(b) ||
-				c.length < 2 ||
-				!/[аеёіоуыэюя]/.test(b) ||
-				/\p{P}|ір[ауо]/u.test(b) ||
-				b[0] === 'і' ||
-				/^прызн|(?:(?:ві|з?да|з?бы|з?маг|мя|налі|раў|ўзя)л[аі]|(?:дав|кап)а|магу|ха[цч]|пач)/.test(b))
-				return a;
-			if (/(вы)?к(ла|і)да\S/.test(b))
-				return /мі?$/.test(b) ? ' ня ' + b : a;
-			const vowNum = b.match(/[аеёіоуыэюя]/g).length;
-			if (vowNum === 1)
-				return ' ня ' + b;
-			const wordstart = b[0] + b[1] === 'вы';
-			const wordend = /(ў|[еуы]|а[мх]|л[аі]|не|дзе|уць)$/.test(b);
-			if (
-				vowNum === 2 && (wordstart || wordend) ||
-				wordstart && (
-					vowNum === 3 && wordend ||
-					vowNum === 4 && b.slice(-3) === 'амі'
-				)
-			) return ' ня ' + b;
-			return a;
-		})
-		.replace(/ без(ь? )(\S+)/g, (a, b, c) => {
-			if (/[оё]/.test(b) ||
-				c.length < 2 ||
-				!/[аеёіоуыэюя]/.test(c) ||
-				c[0] === 'і' ||
-				/\p{P}|ір[ауо]/u.test(c))
-				return a;
-			const vowNum = c.match(/[аеёіоуыэюя]/g).length;
-			if (vowNum === 1)
-				return ' бяз' + b + c;
-			const wordstart = /^вы/.test(c);
-			const wordend = /([ая]ў|у)$/.test(c);
-			if (
-				vowNum === 2 && (wordstart || wordend) ||
-				vowNum === 3 && (wordstart && wordend)
-			) return ' бяз' + b + c;
-			return a;
-		})
 		.replace(/ без(ь? \S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' бяз' + b : a)
 		.replace(/ не (\S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' ня ' + b : a)
 		.replace(/( (?:б[ея]|пра|цера)?з) і(\S*)/g, (a, b, c) => /([ая]ў|ну)$/.test(c) ? b + 'ь і' + c : a);

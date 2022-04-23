@@ -296,8 +296,6 @@ button, .close, summary, #font-size > b, tarL, tarG {cursor: pointer}
 
 footer {padding: 5px}
 
-#c {font-family: -webkit-pictograph}
-
 #font-size {
   user-select: none;
   margin-left: 5px;

@@ -68,6 +68,8 @@ const scripts = () => src('scripts')
 	.pipe(replace(/(\w+)\.css/g, hashNamesCSS))
 	.pipe(uglify())
 	.pipe(concat('script.min.js'))
+	.pipe(replace(/^/, '(()=>{'))
+	.pipe(replace(/$/, '})()'))
 	.pipe(hash(hashParams))
 	.pipe(dest('scripts'));
 

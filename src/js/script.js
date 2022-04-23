@@ -1,4 +1,4 @@
-const darkTheme = document.querySelector('#dark-css');
+const darkTheme = document.getElementById('dark-css');
 const checkTheme = document.querySelectorAll('#theme input');
 const themeStates = ['not all', '(prefers-color-scheme: dark)', 'all'];
 if (localStorage.theme) {
@@ -103,6 +103,7 @@ const gobj = {
 'G':'H',
 };
 textOutput.addEventListener('click', ({target: el}) => {
+	if ('num' in el) changeList[el.num] = !changeList[el.num];
 	switch(el.tagName) {
 		case 'TARL':
 			let data = el.dataset.l;
@@ -125,6 +126,32 @@ textOutput.addEventListener('click', ({target: el}) => {
 
 const abcBtns = modals[1].querySelectorAll('button');
 const currentAbc = body.querySelector('#current-abc');
+
+{
+const setStandardText = () => {
+	textInput.value =
+	`1. Без волі, без цукру, не буду, не прыйдзеш.
+	2. Абедзве, свята, праз лес.
+	З. Цераз ямы, з'ява, з іншымі.
+	4. Калоссе, насенне.
+	5. Тэатр, метр, кадр.
+	6. у акне, у адзін вагон, у аранжавым святле.
+	7. Ва Уроцлаў, да Уладзі
+	8. Белавежскі, казахскі, узбекскі, пясчаны, езджу, смяешся.
+	9. План, калона, філасофія,
+	10. Перыяд, праспект, сінонім, Бразілія.
+	11. Базіраваць, кадзіраваць, індуцыраваць, каменціраваць.
+	12. Гаага, ганак, Эбінггаўз, Вашынгтон, Глазга.`
+	.replace(/\u0009/g, '');
+	const listener = () => {
+		textInput.removeEventListener('click', listener);
+		textInput.value = '';
+		convert();
+	};
+	textInput.addEventListener('click', listener);
+	convert();
+	lsText([]);
+};
 if (localStorage.length > 3) {
 	const textFromLS = localStorage.text;
 	if (textFromLS[0] !== '[')
@@ -134,19 +161,25 @@ if (localStorage.length > 3) {
 				? textFromLS.split('<!<sep>!>') : [textFromLS]
 			: []
 		);
-	textInput.value = lsText()?.join(' ').replace(/<br>/g, '\n');;
 	currAbc = +localStorage.abc;
 	currentAbc.textContent = abcBtns[currAbc].innerHTML;
 	fixFont();
 	abcBtns[currAbc].className = 'active';
 	selectJ[localStorage.j].checked = true;
-	convert();
-} else Object.assign(localStorage, {
-	text: '[]',
-	j: 1,
-	abc: 0,
-	theme: 1
-});
+	const textLS = lsText();
+	if (!textLS.length) setStandardText()
+	else convert(
+		textInput.value = textLS.join(' ').replace(/<br>/g, '\n')
+	);
+} else {
+	Object.assign(localStorage, {
+		j: 1,
+		abc: 0,
+		theme: 1
+	});
+	setStandardText();
+};
+}
 
 for (let i = 0; i < abcBtns.length; i++) abcBtns[i].addEventListener('click', () => {
 	if (currAbc === i) return;
@@ -218,7 +251,7 @@ function convert(text = textInput.value.trim()) {
 	while (changeList.length > spans.length) changeList.pop();
 	for (let i = 0; i < changeList.length; i++) {
 		if (changeList[i]) spans[i].click();
-		spans[i].addEventListener('click', () => changeList[i] = !changeList[i]);
+		spans[i].num = i;
 	};
 }
 
