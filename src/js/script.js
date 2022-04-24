@@ -16,6 +16,7 @@ let changeList = [], currAbc = 0, fontSize = 1.25;
 const textInput = document.getElementById('input');
 const textOutput = document.getElementById('output');
 const body = document.body;
+const html = document.querySelector('html');
 const selectJ = body.querySelectorAll('#itoj input');
 const fontSizes = body.querySelectorAll('#font-size > b');
 
@@ -33,6 +34,8 @@ body.querySelectorAll('.copy').forEach((el, i) => {
 		}, 500);
 	});
 });
+
+document.getElementById('clean').addEventListener('click', () => convert(textInput.value = ''));
 
 const counts = new Proxy(
 	{
@@ -66,7 +69,7 @@ textInput.addEventListener('input', () => {
 	} else convert(text);
 });
 
-body.querySelector('#convert').addEventListener('click', convert);
+body.querySelector('#convert').addEventListener('click', () => convert());
 for (let i = 0; i < selectJ.length; i++) selectJ[i].addEventListener('click', () => {
 	if (localStorage.j == i) return;
 	localStorage.j = i;
@@ -89,8 +92,8 @@ const openModal = i => modals[i].className = 'modal';
 body.querySelector('#info').addEventListener('click', () => openModal(0));
 body.querySelector('#select-abc').addEventListener('click', () => openModal(1));
 for (let i = 0; i < modals.length; i++)
-	modals[i].addEventListener('click', ({target: {className}}) => {
-		if (className === 'modal' || className === 'close') closeModal(i);
+	modals[i].addEventListener('click', ({target: {classList}}) => {
+		if (classList.contains('modal') || classList.contains('close')) closeModal(i);
 	});
 const gobj = {
 'г':'ґ',
@@ -127,7 +130,6 @@ textOutput.addEventListener('click', ({target: el}) => {
 const abcBtns = modals[1].querySelectorAll('button');
 const currentAbc = body.querySelector('#current-abc');
 
-{
 const setStandardText = () => {
 	textInput.value =
 	`1. Без волі, без цукру, не буду, не прыйдзеш.
@@ -179,7 +181,6 @@ if (localStorage.length > 3) {
 	});
 	setStandardText();
 };
-}
 
 for (let i = 0; i < abcBtns.length; i++) abcBtns[i].addEventListener('click', () => {
 	if (currAbc === i) return;
@@ -255,18 +256,49 @@ function convert(text = textInput.value.trim()) {
 	};
 }
 
-// let resize = false
-// let height = textOutput.offsetHeight;
-// textOutput.onmousedown = function(e) {
-// 	resize = true;
-// 	pos = e.pageY;
-// 	body.onmouseup = () => {
-// 		resize = false;
-// 		height = +this.style.height.slice(0, -2);
-// 	};
-// 	body.onmousemove = function(e) {
-// 		if (!resize) return;
-// 		let res = height + e.pageY-pos;
-// 		this.style.height = res+"px";
-// 	};
-// }
+const resizer = {};
+let startResizeAction;
+if (
+	/Android|Mobile|Phone|webOS|iP[ao]d|BlackBerry|BB|PlayBook|Kindle|Silk|Opera Mini/i
+		.test(navigator.userAgent)
+) {
+	startResizeAction = 'ontouchstart';
+	resizer._onClick = function(e) {
+		const {targetEl} = this;
+		const startPos = e.targetTouches[0].screenY;
+		const height = targetEl.offsetHeight;
+		const blockScroll = block => body.style.overflowY = html.style.overflowY = block ? 'hidden' : 'auto';
+	
+		body.ontouchmove = e => {
+			blockScroll(true);
+			const currPos = e.targetTouches[0].screenY;
+			targetEl.style.height = (height + currPos - startPos) + 'px';
+		};
+		body.ontouchend = () => {
+			blockScroll(false);
+			body.ontouchend = body.ontouchmove = null;
+		};
+	};
+} else {
+	startResizeAction = 'onmousedown';
+	resizer._onClick = function(e) {
+		const {targetEl} = this;
+		const startPos = e.pageY;
+		const height = targetEl.offsetHeight;
+	
+		body.onmousemove = e => {
+			if (e.which === 0) return body.onmousemove = null;
+			const currPos = e.pageY;
+			targetEl.style.height = (height + currPos - startPos) + 'px';
+		};
+	};
+};
+resizer.connect = (btn, targetEl) => Object.assign(
+	btn,
+	{[startResizeAction]: resizer._onClick, targetEl}
+);
+
+resizer.btns = document.querySelectorAll('button.resize');
+
+resizer.connect(resizer.btns[0], textInput);
+resizer.connect(resizer.btns[1], textOutput);

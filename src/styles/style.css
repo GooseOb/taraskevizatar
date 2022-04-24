@@ -37,7 +37,7 @@ header > button {
   color: whitesmoke;
   height: 2.5rem;
   width: 2.5rem;
-  background: linear-gradient(#ff6600, #ff9900);
+  background: linear-gradient(#f60, #f90);
   opacity: .9;
   user-select: none;
 }
@@ -87,17 +87,34 @@ header > button {
   background-color: transparent;
   padding: 5px;
 }
-.close:before, .close:after {
+.close:before, .close:after {background-color: #f60}
+.cross:before, .cross:after {
   position: absolute;
   left: 1rem;
-  content: ' ';
+  content: '';
   height: 2rem;
-  width: 0.25rem;
-  background-color: #ff6600;
+  width: .25rem;
   border-radius: 0.125rem;
 }
-.close:before {transform: rotate(45deg)}
-.close:after {transform: rotate(-45deg)}
+.cross:before {transform: rotate(45deg)}
+.cross:after {transform: rotate(-45deg)}
+
+#clean {
+  margin-top: .5rem;
+  width: 2rem;
+  height: 2rem;
+  position: relative;
+  background: #f60;
+  opacity: .8;
+}
+
+#clean:before, #clean:after {
+  background-color: #000;
+  left: .9rem;
+  top: .1rem;
+  height: 1.8rem;
+  width: .2rem;
+}
 
 .global-card {
   width: 90%;
@@ -112,7 +129,8 @@ header > button {
 }
 
 .card-name > h2 {
-  margin: 0.5rem 0 0.5rem 6%;
+  /* margin: 0.5rem 0 0.5rem 6%; */
+  margin: 0.5rem auto 0.5rem 6%;
   font-size: 1.875rem;
   font-weight: bold;
 }
@@ -144,15 +162,15 @@ header > button {
 
 .copy {
   padding: 0.5rem;
-  margin: 0.5rem 2% 0.5rem auto;
+  margin: 0.5rem 2% 0.5rem 0.5rem;
   opacity: .8;
   user-select: none;
 }
 
 #edit {
   opacity: .5;
-  padding: 0.25rem 0.375rem 0.25rem 0.375rem;
-  margin: 0 0 0 5px;
+  padding: 0.2rem 0.375rem 0.2rem 0.375rem;
+  margin: 0 1.75rem 0 5px;
 }
 #edit.disable {opacity: .9}
 
@@ -239,6 +257,27 @@ summary {outline: none}
 
 button, .close, summary, #font-size > b, tarL, tarG {cursor: pointer}
 
+button.resize {
+  position: relative;
+  height: .8rem;
+  width: 2rem;
+  margin: 0 0 0 1rem;
+  background-color: #0000;
+}
+
+button.resize > div:before, button.resize > div:after {
+  position: absolute;
+  top: 0;
+  left: .85rem;
+  content: '';
+  height: .8rem;
+  width: .2rem;
+  background-color: #000;
+  border-radius: 0.125rem;
+}
+button.resize > div:before {transform: translateX(115%) rotate(45deg)}
+button.resize > div:after {transform: translateX(-115%) rotate(-45deg)}
+
 #convert {
   background: linear-gradient(#1cf, skyblue);
   margin-right: 0;
@@ -268,8 +307,8 @@ button, .close, summary, #font-size > b, tarL, tarG {cursor: pointer}
 }
 
 #convert:hover, #select-abc:hover, #itoj input:hover, #itoj input:checked,
-#info:hover, #tg:hover, #vk:hover, .copy:hover, #edit.disable:hover,
-.modal button:hover, .close:hover, fieldset input:hover, fieldset input:checked {opacity: 1}
+#info:hover, #tg:hover, .copy:hover, #edit.disable:hover,
+.modal button:hover, #clean:hover, .close:hover, fieldset input:hover, fieldset input:checked {opacity: 1}
 
 #itoj {
   position: relative;
@@ -285,14 +324,13 @@ button, .close, summary, #font-size > b, tarL, tarG {cursor: pointer}
   margin-left: 0;
 }
 
-#tg, #vk {
+#tg {
   padding: 0.125rem;
   border-radius: 0.4rem;
   color: whitesmoke;
   opacity: .9;
 }
 #tg {background-color: #3ad}
-#vk {background-color: #48c}
 
 footer {padding: 5px}
 
@@ -315,10 +353,6 @@ a:hover {color: #26f}
 
 @media (max-height: 37.5em) {
   header {padding: 5px}
-  .copy {
-    font-size: 0.875rem;
-    padding: 5px;
-  }
 }
 
 @media (max-width: 37.5em) {
@@ -337,13 +371,6 @@ a:hover {color: #26f}
   .modal p {font-size: 1.25rem}
   #theme {margin-left: 10px}
   .btn-cont, button {transform: translateX(-5px)}
-}
-
-@media (max-width: 20em) {
-  .copy {
-    font-size: 0.875rem;
-    padding: 5px;
-  }
 }
 
 fieldset {

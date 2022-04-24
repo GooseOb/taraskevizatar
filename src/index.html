@@ -29,6 +29,7 @@
 	<div class='global-card'>
 		<div class='card-name'>
 			<h2>Афіцыйны</h2>
+			<button class='cross' id='clean'></button>
 			<button class='copy'>Капіяваць</button>
 		</div>
 		<div class='textfield-cont'>
@@ -40,6 +41,9 @@
 				Памер тэксту
 				<b>+</b>
 			</div>
+			<button class='resize' tabindex='-1'>
+				<div></div>
+			</button>
 			<details>
 				<summary>
 					Сымбаляў: <span class='symbol-count'>0</span>
@@ -84,12 +88,15 @@
 		</div>
 		<div class='counter-card'>
 			<button id='edit' class='disable'>Рэдагаваць</button>
-				<details>
-					<summary>
-						Сымбаляў: <span class='symbol-count'>0</span>
-					</summary>
-					Выпраўленьняў: <span class='fix-count'>0</span>
-				</details>
+			<button class='resize' tabindex='-1'>
+				<div></div>
+			</button>
+			<details>
+				<summary>
+					Сымбаляў: <span class='symbol-count'>0</span>
+				</summary>
+				Выпраўленьняў: <span class='fix-count'>0</span>
+			</details>
 		</div>
 	</div>
 
@@ -104,7 +111,7 @@
 
 	<div class='modal hidden'>
 		<div>
-			<div class='close'></div>
+			<div class='close cross'></div>
 			<p>
 				<tarL class='demo'>Гэтыя часьціны</tarL> і літары <tarG class='demo'>г/ґ</tarG> можна зьмяняць, націскаючы на іх. Калі вылучана цэлае <tarL class='demo'>слова</tarL>, па кліку паказваецца альтэрнатыўнае
 			</p><br><p>
@@ -114,13 +121,12 @@
 			</p><br><p>
 				Калі заўважылі памылку ці маеце свае прапановы, пішыце:
 				<a target='_blank' href='https://t.me/gooseob' id='tg'>Тэлеграм</a>
-				<a target='_blank' href='https://vk.com/im?sel=454704688' id='vk'>Укантакце</a>
 			</p>
 		</div>
 	</div>
 	<div id='abc' class='modal hidden'>
 		<div>
-			<div class='close'></div>
+			<div class='close cross'></div>
 			<h3>Абярыце альфабэт</h3>
 			<button>Кірылічны</button>
 			<button>Лацінскі</button>

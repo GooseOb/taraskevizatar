@@ -11,7 +11,9 @@ body {background-color: #080822}
 .close:before, .close:after {background-color: #85d}
 
 .copy, #edit {background: linear-gradient(#52b, #347)}
-
+button.resize > div:before, button.resize > div:after {background-color: #fff}
+#clean {background: #347}
+  #clean:before, #clean:after {background-color: #fff}
 .textfield, .demo {
   background-color: #222;
   border-color: #222;
