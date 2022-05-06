@@ -219,24 +219,24 @@ function convert(text = textInput.value.trim()) {
 			str += '<span>' + result[i].toTaraskConvert(currAbc, +localStorage.j) + ' </span>';
 		textOutput.innerHTML = str;
 	} else {
-		let outps = textOutput.querySelectorAll('span');
-		if (outps.length !== resultlen) {
-			if (outps.length < resultlen) {
-				textOutput.innerHTML += '<span></span>'.repeat(resultlen - outps.length);
+		let spans = textOutput.querySelectorAll('span');
+		if (spans.length !== resultlen) {
+			if (spans.length < resultlen) {
+				textOutput.innerHTML += '<span></span>'.repeat(resultlen - spans.length);
 			} else {
-				outps = Array.from(outps);
-				while (outps.length > resultlen) outps.pop().remove();
+				spans = Array.from(spans);
+				while (spans.length > resultlen) spans.pop().remove();
 			};
-			outps = textOutput.querySelectorAll('span');
+			spans = textOutput.querySelectorAll('span');
 		};
 		const storageText = lsText();
-		for (let i = 0; i < resultlen; i++)
-			if (result[i] !== storageText[i]) {
-				const j = +localStorage.j;
-				while (i < resultlen)
-					outps[i].innerHTML = result[i++].toTaraskConvert(currAbc, j) + ' ';
-				break;
-			};
+		for (let i = 0; i < resultlen; i++) {
+			if (result[i] === storageText[i]) continue;
+			const j = +localStorage.j;
+			while (i < resultlen)
+				spans[i].innerHTML = result[i++].toTaraskConvert(currAbc, j) + ' ';
+			break;
+		}
 	};
 	lsText(result);
 	const inputText = textInput.value;
@@ -256,47 +256,70 @@ function convert(text = textInput.value.trim()) {
 	};
 }
 
-const resizer = {};
-let startResizeAction;
-if (
-	/Android|Mobile|Phone|webOS|iP[ao]d|BlackBerry|BB|PlayBook|Kindle|Silk|Opera Mini/i
-		.test(navigator.userAgent)
-) {
-	startResizeAction = 'ontouchstart';
-	resizer._onClick = function(e) {
-		const {targetEl} = this;
-		const startPos = e.targetTouches[0].screenY;
-		const height = targetEl.offsetHeight;
-		const blockScroll = block => body.style.overflowY = html.style.overflowY = block ? 'hidden' : 'auto';
-	
-		body.ontouchmove = e => {
-			blockScroll(true);
-			const currPos = e.targetTouches[0].screenY;
-			targetEl.style.height = (height + currPos - startPos) + 'px';
-		};
-		body.ontouchend = () => {
-			blockScroll(false);
-			body.ontouchend = body.ontouchmove = null;
-		};
+const resizer = {
+	scope: {
+		set: ({targetEl, startY}) =>
+			Object.assign(resizer.scope, {
+				targetEl, startY,
+				height: targetEl.offsetHeight,
+			}),
+		clean: () => {
+			const {set, clean} = resizer.scope;
+			resizer.scope = {set, clean};
+		}
+	},
+	fixHeight: ({currY}) => {
+		const {height, startY, targetEl} = resizer.scope;
+		targetEl.style.height = (height + currY - startY) + 'px'
+	}
+};
+const isMobile = /Android|Mobile|Phone|webOS|iP[ao]d|BlackBerry|BB|PlayBook|Kindle|Silk|Opera Mini/i
+	.test(navigator.userAgent);
+if (isMobile) {
+	const listeners = [
+		['touchmove', e => {
+			e.preventDefault();
+			resizer.fixHeight({
+				currY: e.targetTouches[0].screenY
+			});
+		}, {passive: false}],
+		['touchend', () => {
+			resizer.scope.clean();
+			listeners.forEach(item => body.removeEventListener(...item));
+		}]
+	];
+
+	resizer.connect = (btn, targetEl) => {
+		btn.addEventListener('touchstart', e => {
+			resizer.scope.set({
+				targetEl,
+				startY: e.targetTouches[0].screenY
+			});
+
+			listeners.forEach(item => body.addEventListener(...item));
+		});
 	};
 } else {
-	startResizeAction = 'onmousedown';
-	resizer._onClick = function(e) {
-		const {targetEl} = this;
-		const startPos = e.pageY;
-		const height = targetEl.offsetHeight;
-	
-		body.onmousemove = e => {
-			if (e.which === 0) return body.onmousemove = null;
-			const currPos = e.pageY;
-			targetEl.style.height = (height + currPos - startPos) + 'px';
-		};
+	const mousemove = ['mousemove', e => {
+		if (e.which === 0) {
+			resizer.scope.clean();
+			body.removeEventListener(...mousemove);
+		} else resizer.fixHeight({
+			currY: e.pageY
+		});
+	}];
+
+	resizer.connect = (btn, targetEl) => {
+		btn.addEventListener('mousedown', e => {
+			resizer.scope.set({
+				targetEl,
+				startY: e.pageY
+			});
+
+			body.addEventListener(...mousemove);
+		});
 	};
 };
-resizer.connect = (btn, targetEl) => Object.assign(
-	btn,
-	{[startResizeAction]: resizer._onClick, targetEl}
-);
 
 resizer.btns = document.querySelectorAll('button.resize');
 
