@@ -12,13 +12,12 @@ document.querySelector('#theme > fieldset').addEventListener('click', ({target: 
 		darkTheme.media = themeStates[localStorage.theme = el.className.at(-1)-1];
 });
 
-let changeList = [], currAbc = 0, fontSize = 1.25;
+let changeList = [], currAbc = 0, currFontSize = 1.25;
 const textInput = document.getElementById('input');
 const textOutput = document.getElementById('output');
 const body = document.body;
 const html = document.querySelector('html');
 const selectJ = body.querySelectorAll('#itoj input');
-const fontSizes = body.querySelectorAll('#font-size > b');
 
 body.querySelectorAll('.copy').forEach((el, i) => {
 	const getText = i === 0
@@ -54,18 +53,17 @@ const lsText = (text = false) => text
 	? localStorage.text = JSON.stringify(text)
 	: JSON.parse(localStorage.text);
 const fixFont = () => textOutput.className = 'textfield' + (currAbc===2 ? ' arab' : '');
-const fixFontSize = num => body.style.setProperty('--fontSize', (fontSize += num) + 'rem');
+const fixFontSize = num => body.style.setProperty('--fontSize', (currFontSize += num) + 'rem');
 
-let lastTypingDate = 0;
 let lastTimeout;
-const typingTime = 200;
+const TYPING_TIME = 200;
 textInput.addEventListener('input', () => {
 	const text = textInput.value.trim();
 	if (text === sessionStorage.inputText) return;
 	if (text.length > 60000) {
 		const currTimeout = lastTimeout = setTimeout(() => {
 			if (currTimeout === lastTimeout) convert(text);
-		}, typingTime);
+		}, TYPING_TIME);
 	} else convert(text);
 });
 
@@ -78,9 +76,13 @@ for (let i = 0; i < selectJ.length; i++) selectJ[i].addEventListener('click', ()
 	convert();
 });
 
-const fontUnit = 0.0625;
-fontSizes[0].addEventListener('click', () => fontSize > fontUnit && fixFontSize(-fontUnit));
-fontSizes[1].addEventListener('click', () => fixFontSize(fontUnit));
+const FONT_UNIT = 0.0625;
+body.querySelectorAll('#font-size > b').forEach((el, i) => {
+	const listener = i === 0
+		? () => currFontSize > FONT_UNIT && fixFontSize(-FONT_UNIT)
+		: () => fixFontSize(FONT_UNIT);
+	el.addEventListener('click', listener);
+});
 
 body.querySelector('#edit').addEventListener('click', function() {
 	textOutput.contentEditable = !this.classList.toggle('disable')
@@ -325,3 +327,27 @@ resizer.btns = document.querySelectorAll('button.resize');
 
 resizer.connect(resizer.btns[0], textInput);
 resizer.connect(resizer.btns[1], textOutput);
+
+// const lastResults = {
+// 	add: function(obj) {
+// 		if (this.size > 10) {
+// 			let currElement = this.tree;
+// 			while (currElement.next) currElement = currElement.next;
+// 			currElement.prev.next = null;
+// 		} else this.size += 1;
+// 		if (this.tree) this.tree.prev = obj;
+// 		obj.next = this.tree;
+// 		this.tree = obj;
+// 	},
+// 	get: function(value) {
+// 		let currElement = this.tree;
+// 		while (currElement.next) {
+// 			const currValue = currElement[value];
+// 			if (currValue) return currValue;
+// 			currElement = currElement.next;
+// 		};
+// 		return null;
+// 	},
+// 	tree: null,
+// 	size: 0
+// };
