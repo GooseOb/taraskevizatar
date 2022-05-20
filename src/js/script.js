@@ -19,6 +19,10 @@ const body = document.body;
 const html = document.querySelector('html');
 const selectJ = body.querySelectorAll('#itoj input');
 
+const FONT_UNIT = 0.0625;
+const TYPING_TIME = 200;
+const TEXT_PART_LENGTH = 99;
+
 body.querySelectorAll('.copy').forEach((el, i) => {
 	const getText = i === 0
 		? () => textInput.value
@@ -34,7 +38,9 @@ body.querySelectorAll('.copy').forEach((el, i) => {
 	});
 });
 
-document.getElementById('clean').addEventListener('click', () => convert(textInput.value = ''));
+document.getElementById('clean').addEventListener('click', () => {
+	convert(textInput.value = '')
+});
 
 const counts = new Proxy(
 	{
@@ -56,7 +62,6 @@ const fixFont = () => textOutput.className = 'textfield' + (currAbc===2 ? ' arab
 const fixFontSize = num => body.style.setProperty('--fontSize', (currFontSize += num) + 'rem');
 
 let lastTimeout;
-const TYPING_TIME = 200;
 textInput.addEventListener('input', () => {
 	const text = textInput.value.trim();
 	if (text === sessionStorage.inputText) return;
@@ -76,7 +81,6 @@ for (let i = 0; i < selectJ.length; i++) selectJ[i].addEventListener('click', ()
 	convert();
 });
 
-const FONT_UNIT = 0.0625;
 body.querySelectorAll('#font-size > b').forEach((el, i) => {
 	const listener = i === 0
 		? () => currFontSize > FONT_UNIT && fixFontSize(-FONT_UNIT)
@@ -184,22 +188,31 @@ if (localStorage.length > 3) {
 	setStandardText();
 };
 
-for (let i = 0; i < abcBtns.length; i++) abcBtns[i].addEventListener('click', () => {
-	if (currAbc === i) return;
-	abcBtns[currAbc].className = '';
-	currentAbc.textContent = abcBtns[i].textContent;
-	localStorage.abc = currAbc = i;
-	lsText([]);
-	closeModal(1);
-	fixFont();
-	convert();
-	abcBtns[i].className = 'active';
-});
+for (let i = 0; i < abcBtns.length; i++) {
+	const outputDefault = '<span>' + ['Тэкст', 'Tekst', 'طَقْصْطْ'][i] + '</span>';
+	const textOutputSetDefault = function() {
+		this.innerHTML = outputDefault;
+	};
+	if (i === currAbc) textOutput.setDefault = textOutputSetDefault;
+	abcBtnName = abcBtns[i].textContent;
+	abcBtns[i].addEventListener('click', () => {
+		if (currAbc === i) return;
+		abcBtns[currAbc].className = '';
+		currentAbc.textContent = abcBtnName;
+		localStorage.abc = currAbc = i;
+		textOutput.setDefault = textOutputSetDefault;
+		lsText([]);
+		closeModal(1);
+		fixFont();
+		convert();
+		abcBtns[i].className = 'active';
+	});
+};
 
 function convert(text = textInput.value.trim()) {
 	sessionStorage.inputText = text;
 	if (!text) {
-		textOutput.innerHTML = '<span>' + ['Тэкст', 'Tekst', 'طَقْصْطْ'][currAbc] + '</span>';
+		textOutput.setDefault();
 		Object.assign(counts, {S0: 0, W: 0, P: 0, S1: 0, F: 0});
 		lsText([]);
 		return;
@@ -207,9 +220,9 @@ function convert(text = textInput.value.trim()) {
 	text = text.replace(/\n/g, '<br>').match(/[^\s]+/g);
 	const result = [];
 	while (text.length) {
-		let wordI = text.length < 99 ? text.length-1 : 98;
+		let wordI = text.length < TEXT_PART_LENGTH ? text.length-1 : TEXT_PART_LENGTH-1;
 		let word = text[wordI].toLowerCase();
-		if (wordI > 99 && wordI !== text.length-1)
+		if (wordI > TEXT_PART_LENGTH && wordI !== text.length-1)
 			while ((word === 'не' || word === 'са' || word[word.length-1] === 'з') && wordI > 0)
 				word = text[wordI--].toLowerCase();
 		result[result.length] = text.splice(0, wordI+1).join(' ');
@@ -327,27 +340,3 @@ resizer.btns = document.querySelectorAll('button.resize');
 
 resizer.connect(resizer.btns[0], textInput);
 resizer.connect(resizer.btns[1], textOutput);
-
-// const lastResults = {
-// 	add: function(obj) {
-// 		if (this.size > 10) {
-// 			let currElement = this.tree;
-// 			while (currElement.next) currElement = currElement.next;
-// 			currElement.prev.next = null;
-// 		} else this.size += 1;
-// 		if (this.tree) this.tree.prev = obj;
-// 		obj.next = this.tree;
-// 		this.tree = obj;
-// 	},
-// 	get: function(value) {
-// 		let currElement = this.tree;
-// 		while (currElement.next) {
-// 			const currValue = currElement[value];
-// 			if (currValue) return currValue;
-// 			currElement = currElement.next;
-// 		};
-// 		return null;
-// 	},
-// 	tree: null,
-// 	size: 0
-// };

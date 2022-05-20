@@ -1,5 +1,5 @@
 Object.assign(String.prototype, {
-	toTaraskConvert: function(value1, value2, value3) {return toTaraskConvert(this, value1, value2, value3)},
+	toTaraskConvert: function(value1, value2) {return toTaraskConvert(this, value1, value2)},
 	// toBel: function() {return toBel(this)},
 	toTarask: function() {return toTarask(this)},
 	toArab: function() {return toArab(this)},
@@ -7,7 +7,7 @@ Object.assign(String.prototype, {
 	toJ: function(value) {return toJ(this, value)}
 });
 Object.assign(Array.prototype, {
-	restoreRegister: function(value1, value2) {return restoreRegister(this, value1, value2)},
+	restoreRegister: function(value1) {return restoreRegister(this, value1)},
 	addColor: function(value) {return addColor(this, value)}
 });
 const isUpCase = str => str === str.toUpperCase();
@@ -82,8 +82,11 @@ function restoreRegister(text, orig) {
 		const  word = text[i];
 		const oWord = orig[i];
 		if (word === oWord) continue;
-		if (word === oWord.toLowerCase()) text[i] = oWord
-		else if (
+		if (word === oWord.toLowerCase()) {
+			text[i] = oWord;
+			continue;
+		};
+		if (
 			!oWord[0] ||
 			!isUpCase(oWord[0])
 		) continue;
