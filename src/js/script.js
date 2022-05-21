@@ -273,11 +273,12 @@ function convert(text = textInput.value.trim()) {
 
 const resizer = {
 	scope: {
-		set: ({targetEl, startY}) =>
+		set: ({targetEl, startY}) => {
 			Object.assign(resizer.scope, {
 				targetEl, startY,
 				height: targetEl.offsetHeight,
-			}),
+			})
+		},
 		clean: () => {
 			const {set, clean} = resizer.scope;
 			resizer.scope = {set, clean};
