@@ -194,7 +194,7 @@ for (let i = 0; i < abcBtns.length; i++) {
 		this.innerHTML = outputDefault;
 	};
 	if (i === currAbc) textOutput.setDefault = textOutputSetDefault;
-	abcBtnName = abcBtns[i].textContent;
+	const abcBtnName = abcBtns[i].textContent;
 	abcBtns[i].addEventListener('click', () => {
 		if (currAbc === i) return;
 		abcBtns[currAbc].className = '';

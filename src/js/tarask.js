@@ -173,7 +173,7 @@ function toLatin(text, upCase = true) {
 			text = text.replace(latinLettersUpCase[key], key.toUpperCase());
 		text = text
 			.replace(/ CH(\p{Ll})/gu, ' Ch$1')
-			.replace(/ J[AEOU]\p{Ll}/gu, a => ' J' + a[2].toLowerCase() + a[3]);
+			.replace(/ J[AEOU][\p{Ll} ]/gu, a => ' J' + a[2].toLowerCase() + a[3]);
 	};
 
 	return text;
