@@ -171,7 +171,7 @@ const promptGenerator = (function*() {
 
 info.addEventListener('click', () => {
 	const prompt = promptGenerator.next().value;
-	snackbar('info', prompt, 1500);
+	snackbar('info', prompt, 2500);
 });
 
 const EDIT_ENABLE = 'Рэдагаваньне уключана';
