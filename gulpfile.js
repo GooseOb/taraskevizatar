@@ -1,6 +1,5 @@
 const gulp = require('gulp');
 const del = require('del');
-const rename = require('gulp-rename');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
 const replace = require('gulp-replace');
@@ -9,6 +8,11 @@ const minCSS = require('gulp-clean-css');
 const minSVG = require('gulp-svgmin');
 const minHTML = require('gulp-htmlmin');
 const {readdirSync} = require('fs');
+const sass = require('gulp-sass')(require('sass'));
+
+// const param = process.argv.pop();
+// const isDev = param === '--dev';
+// const isProd = !isDev;
 
 const getPathes = (src, dest = '') => ({
 	src: 'src/' + src,
@@ -17,8 +21,9 @@ const getPathes = (src, dest = '') => ({
 
 const pathes = {
 	html: getPathes('index.html'),
+	logo: getPathes('logo.png'),
 	og: getPathes('og.jpg'),
-	styles: getPathes('styles/*.css', 'styles'),
+	styles: getPathes('styles/*.sass', 'styles'),
 	fonts: getPathes('fonts/**/*', 'fonts'),
 	icons: getPathes('icons/**/*.svg', 'icons'),
 	scripts: {
@@ -29,55 +34,52 @@ const pathes = {
 
 const hashParams = {format: '{name}.{hash}{ext}'};
 
-const inDest = type => readdirSync(pathes[type].dest);
-const toFilesHash = file => {
-	const [name, /*min*/, hash, ext] = file.split('.');
-	filesHash[ext][name] = hash;
-};
-const filesHash = {
-	css: {},
-	js: {},
-	save: done => done(
-		inDest('styles')
-			.forEach(toFilesHash),
-		inDest('scripts')
-			.filter(fileName => /.js$/.test(fileName))
-			.forEach(toFilesHash)
-	)
-};
-
-const clean = () => del(['docs']);
-
 const src = fileType => gulp.src(pathes[fileType].src);
 const dest = fileType => gulp.dest(pathes[fileType].dest);
 
-const hashNamesCSS = (_, a) => a + '.min.' + filesHash.css[a] + '.css';
+const clean = () => del(['docs']);
 
-const html = () => src('html')
-	.pipe(replace(/(\w+)\.css/g, hashNamesCSS))
-	.pipe(replace(/<script.*\/script>/g, '<script>'))
-	.pipe(replace(/<script>/, () => `<script defer src='./script.min.${filesHash.js.script}.js'></script>`))
-	.pipe(replace(/<script>/g, ''))
+const getDestFileNames = (type, regExp) => {
+	return readdirSync(pathes[type].dest)
+		.filter(name => regExp.test(name));
+};
+
+const SCRIPTS = 'scripts';
+const STYLES = 'styles';
+const HTML = 'html';
+
+const html = () => src(HTML)
+	.pipe(replace(/<styles>/g, () => {
+		const fileNames = getDestFileNames(STYLES, /\.css$/);
+		const [main] = fileNames.filter(name => /^style/.test(name));
+		const [dark] = fileNames.filter(name => /^dark/.test(name));
+		const mainStyle = `<link rel='stylesheet' href='./styles/${main}'>`;
+		const darkStyle = `<link rel='stylesheet' href='./styles/${dark}' id='dark-css' media='(prefers-color-scheme: dark)'>`;
+		return mainStyle + darkStyle;
+	}))
+	.pipe(replace(/<scripts>/g, () => {
+		const [fileName] = getDestFileNames(SCRIPTS, /\.js$/);
+		return `<script defer src='./${fileName}'></script>`;
+	}))
 	.pipe(minHTML({
 		collapseWhitespace: true,
 		removeComments: true
 	}))
-	.pipe(dest('html'));
+	.pipe(dest(HTML));
 
-const scripts = () => src('scripts')
-	.pipe(replace(/(\w+)\.css/g, hashNamesCSS))
+const scripts = () => src(SCRIPTS)
 	.pipe(uglify())
-	.pipe(concat('script.min.js'))
+	.pipe(concat('script.js'))
 	.pipe(replace(/^/, '(()=>{'))
 	.pipe(replace(/$/, '})()'))
 	.pipe(hash(hashParams))
-	.pipe(dest('scripts'));
+	.pipe(dest(SCRIPTS));
 
-const styles = () => src('styles')
-	.pipe(rename({suffix: '.min'}))
+const styles = () => src(STYLES)
+	.pipe(sass())
 	.pipe(minCSS())
 	.pipe(hash(hashParams))
-	.pipe(dest('styles'));
+	.pipe(dest(STYLES));
 
 const icons = () => src('icons')
 	.pipe(minSVG({
@@ -90,33 +92,37 @@ const fonts = () => src('fonts')
 
 const og = () => src('og')
 	.pipe(dest('og'));
+const logo = () => src('logo')
+	.pipe(dest('logo'));
+
+const updateFiles = (ext, fns) => gulp.series(
+	() => del(['docs/**/*.' + ext]),
+	...fns
+);
+
+const update = {
+	[SCRIPTS]: updateFiles('js', [scripts, html]),
+	[STYLES]: updateFiles('css', [styles, html]),
+	[HTML]: updateFiles('html', [html]),
+};
 
 const watch = () => {
-	gulp.watch(pathes.html.src, html);
-	gulp.watch(pathes.styles.src, styles);
-	gulp.watch(pathes.scripts.src, scripts);
+	[HTML, STYLES, SCRIPTS].forEach(item => {
+		gulp.watch(pathes[item].src, update[item]);
+	});
 };
 
 const build = gulp.series(
 	clean,
-	gulp.parallel(styles, scripts, fonts, icons, og),
-	filesHash.save,
+	gulp.parallel(styles, scripts, fonts, icons, og, logo),
 	html
 );
 
-const updateFiles = (ext, fn) => gulp.series(
-	() => del(['docs/**/*.' + ext]),
-	...(fn === html
-		? [filesHash.save, fn]
-		: [fn, filesHash.save, html]
-	)
-);
 module.exports = {
 	default: build,
 	build,
 	watch,
 	clean,
-	scripts: updateFiles('js', scripts),
-	styles: updateFiles('css', styles),
-	html: updateFiles('html', html)
+	icons,
+	...update
 };

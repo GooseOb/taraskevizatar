@@ -1,18 +1,18 @@
 Object.assign(String.prototype, {
-	toTaraskConvert: function(value1, value2) {return toTaraskConvert(this, value1, value2)},
-	// toBel: function() {return toBel(this)},
-	toTarask: function() {return toTarask(this)},
-	toArab: function() {return toArab(this)},
-	toLatin: function(value) {return toLatin(this, value)},
-	toJ: function(value) {return toJ(this, value)}
+	toTaraskConvert(arg1, arg2) {return toTaraskConvert(this, arg1, arg2)},
+	// toBel() {return toBel(this)},
+	toTarask() {return toTarask(this)},
+	toArab() {return toArab(this)},
+	toLatin(arg) {return toLatin(this, arg)},
+	toJ(arg) {return toJ(this, arg)}
 });
 Object.assign(Array.prototype, {
-	restoreRegister: function(value1) {return restoreRegister(this, value1)},
-	addColor: function(value) {return addColor(this, value)}
+	restoreRegister(value1) {return restoreRegister(this, value1)},
+	addColor(value) {return addColor(this, value)}
 });
 const isUpCase = str => str === str.toUpperCase();
 
-function toTaraskConvert(text, abc = 0, checkJ = 2) {
+function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 	const isArab = abc === 2;
 	const noFix = Array(text.match(/ !>/g)?.length || 0);
 	while (noFix.length > text.match(/<! /g)?.length) noFix.pop();
@@ -29,6 +29,7 @@ function toTaraskConvert(text, abc = 0, checkJ = 2) {
 		.replace(/ - /g, ' — ')
 		.replace(/(\p{P}|\p{S}|\d)/gu, ' $1 ')
 		.replace(/ ['`’] (\S)/gu, '’$1');
+	let textSplit;
 	switch (abc) {
 		case 0: textSplit = text.split(' '); break;
 		case 1: textSplit = text.toLatin().split(' '); break;
@@ -37,46 +38,53 @@ function toTaraskConvert(text, abc = 0, checkJ = 2) {
 	text = text
 		.toLowerCase()
 		// .toBel()
-		.toTarask();
-	if (checkJ) text = text.toJ(checkJ === 2);
+		.toTarask()
+	if (j) text = text.toJ(j === 2);
 	switch (abc) {
 		case 1: text = text.toLatin(false); break;
 		case 2: text = text.toArab();
 	};
 	text = text.split(' ');
 	if (!isArab) text = text.restoreRegister(textSplit);
+	if (isColored) text = text.addColor(textSplit);
 	text = text
-		.addColor(textSplit)
 		.join(' ')
 		.replace(/&#160;/g, ' ')
 		.replace(/ (\p{P}|\p{S}|\d) /gu, '$1');
-	switch (abc) {
-		case 0:
-			text = text
-				.replace(/ґ/g, '<tarG>г</tarG>')
-				.replace(/Ґ/g, '<tarG>Г</tarG>');
-			break;
-		case 1:
-			text = text
-				.replace(/([AEIOUY])(?:<tarF>)?Ŭ(?:<\/tarF>)?/g, '$1U')
-				.replace(/g/g, '<tarG>h</tarG>')
-				.replace(/>G/g, '><tarG>H</tarG>');
-			break;
-		default: text = text.replace(/غ/g, '<tarG>ه</tarG>');
+	if (isColored) {
+		switch (abc) {
+			case 0:
+				text = text
+					.replace(/ґ/g, '<tarG>г</tarG>')
+					.replace(/Ґ/g, '<tarG>Г</tarG>');
+				break;
+			case 1:
+				text = text
+					.replace(/([AEIOUY])(?:<tarF>)?Ŭ(?:<\/tarF>)?/g, '$1U')
+					.replace(/g/g, '<tarG>h</tarG>')
+					.replace(/>G/g, '><tarG>H</tarG>');
+				break;
+			default: text = text.replace(/غ/g, '<tarG>ه</tarG>');
+		};
 	};
 	if (noFix.length) text = text.replace(/౦/g, () => noFix.shift());
 	const regExp = isArab
 		? /(?:\([\p{L}’\- \u0600-\u06FF\u08AF]+\)){2,}/gu
 		: /(?:\([\p{L}’\- ]+\)){2,}/gu;
-	return text
-		.replace(regExp, a => {
-			a = a.slice(1, -1).split(')(');
-			const b = a.shift();
-			return `<tarL data-l='${a}'>${b}</tarL>`;
-		})
-		.replace(/ \n /g, '<br>')
-		.trim();
+	text = isColored
+		? text
+			.replace(regExp, a => {
+				a = a.slice(1, -1).split(')(');
+				const b = a.shift();
+				return `<tarL data-l='${a}'>${b}</tarL>`;
+			})
+			.replace(/ \n /g, '<br>')
+		: text
+			.replace(regExp, a => a.slice(1, -1).split(')(')[0]);
+
+	return text.trim();
 }
+
 function restoreRegister(text, orig) {
 	for (let i = 0; i < text.length; i++) {
 		const  word = text[i];
@@ -99,6 +107,7 @@ function restoreRegister(text, orig) {
 
 	return text;
 }
+
 function addColor(text, orig) {
 	for (let i = 0; i < text.length; i++) {
 		const  word = text[i];
@@ -118,7 +127,7 @@ function addColor(text, orig) {
 			case word1:
 				text[i] = word.replace(/ь/g, '<tarF>ь</tarF>');
 				continue;
-			case word1+'ь':
+			case word1 + 'ь':
 				text[i] = word.slice(0, -1).replace(/ь/g, '<tarF>ь</tarF>')+'ь';
 				continue;
 			case word.replace(/(у|ю)/g, 'ір$1'):
@@ -126,18 +135,33 @@ function addColor(text, orig) {
 				continue;
 		};
 		if (oWord.length !== word.replace(/\((\p{L}+)\)\(\p{L}+\)/gu, '$1').length) {
-			let x1 = 0; // word start -> fix start
-			let x2 = word.length-1; // word end -> fix end
-			let o = oWord.length-1; // oWord end
-			while (word[x1] === oWord[x1]) x1++;
-			while (word[x2] === oWord[o]) x2--, o--;
-			if (x2 < o && x1 !== x2) x1--, x2++; // калі ў зыходным слове больш літар
-			text[i] = word.slice(0, x1) + '<tarF>' + word.slice(x1, x2+1) + '</tarF>' + word.slice(x2+1);
+			let iFromStart = 0;
+			let iFromWordEnd = word.length - 1;
+			const iFromOWordEnd_StartValue = oWord.length - 1;
+			let iFromOWordEnd = iFromOWordEnd_StartValue;
+
+			while (word[iFromStart] === oWord[iFromStart])
+				iFromStart++;
+			while (word[iFromWordEnd] === oWord[iFromOWordEnd])
+				iFromWordEnd--, iFromOWordEnd--;
+
+			if (iFromWordEnd < iFromOWordEnd && iFromStart !== iFromWordEnd) { // калі ў зыходным слове больш літар
+				if (iFromStart === 0 && iFromOWordEnd === iFromOWordEnd_StartValue) {
+					text[i] = '<tarF>' + word + '</tarF>';
+					continue;
+				};
+				iFromStart--, iFromWordEnd++;
+			};
+
+			text[i] = word.slice(0, iFromStart) +
+				'<tarF>' + word.slice(iFromStart, iFromWordEnd + 1) + '</tarF>'
+				+ word.slice(iFromWordEnd + 1);
 		};
 	};
 
 	return text;
 }
+
 function toTarask(text) {
 	for (const key in wordlist) text = text.replace(wordlist[key], key);
 	loop: do {
@@ -154,6 +178,7 @@ function toTarask(text) {
 		.replace(/ не (\S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' ня ' + b : a)
 		.replace(/( (?:б[ея]|пра|цера)?з) і(\S*)/g, (a, b, c) => /([ая]ў|ну)$/.test(c) ? b + 'ь і' + c : a);
 }
+
 // function toBel(text) {
 // 	return text
 // 		.replace(/и/g, 'і')
@@ -165,6 +190,7 @@ function toTarask(text) {
 // 		.replace(/щ/g, 'ў')
 // 		.replace(/ъ/g, '’');
 // }
+
 function toLatin(text, upCase = true) {
 	for (const key in latinLetters)
 		text = text.replace(latinLetters[key], key);
@@ -178,12 +204,14 @@ function toLatin(text, upCase = true) {
 
 	return text;
 }
+
 function toArab(text) {
 	for (const key in arabLetters)
 		text = text.replace(arabLetters[key], key);
 
 	return text;
 }
+
 function toJ(text, alwaysJ = false) {
 	return alwaysJ
 		? text.replace(/([аеёіоуыэюя] )і /g, '$1й ')
