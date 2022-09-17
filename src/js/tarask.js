@@ -25,6 +25,7 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 		};
 	};
 	text = ` ${text.trim()}  `
+		.replace(/г'/g, 'ґ')
 		.replace(/(\n|	)/g, ' $1 ')
 		.replace(/ - /g, ' — ')
 		.replace(/(\p{P}|\p{S}|\d)/gu, ' $1 ')
@@ -61,8 +62,8 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 			case 1:
 				text = text
 					.replace(/([AEIOUY])(?:<tarF>)?Ŭ(?:<\/tarF>)?/g, '$1U')
-					.replace(/g/g, '<tarG>h</tarG>')
-					.replace(/>G/g, '><tarG>H</tarG>');
+					.replace(/g/g, '<tarG>g</tarG>')
+					.replace(/>G/g, '><tarG>G</tarG>');
 				break;
 			default: text = text.replace(/غ/g, '<tarG>ه</tarG>');
 		};
