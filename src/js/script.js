@@ -62,6 +62,7 @@ const settings = new Proxy(stgs, {
 const {body} = document;
 const input = document.getElementById('input');
 const output = document.getElementById('output');
+const outputContainer = output.parentElement;
 const settingsButton = document.getElementById('settings-btn');
 const settingsElement = document.getElementById('settings');
 const edit = document.getElementById('edit');
@@ -245,12 +246,15 @@ function convert(text) {
 		localStorage.text = '';
 		return;
 	};
+
 	const taraskText = text.toTaraskConvert(true, settings);
+
 	output.innerHTML = taraskText;
 	counters.set({
 		input: text.length,
 		output: output.textContent.length
 	});
+
 	const spans = output.querySelectorAll('tarG, tarL');
 	while (changeList.length < spans.length) changeList[changeList.length] = false;
 	while (changeList.length > spans.length) changeList.pop();
@@ -270,12 +274,12 @@ const stopScroll = debounce(() => {
 
 const syncScroll = el => function() {
 	currScroll ||= this;
-	if (currScroll === this) el.scrollTop = this.scrollTop;
+	if (currScroll === this) el.scrollTop = this.scrollTop * (el.scrollHeight / this.scrollHeight);
 	stopScroll();
 };
 
-input.addEventListener('scroll', syncScroll(output.parentElement));
-output.parentElement.addEventListener('scroll', syncScroll(input));
+input.addEventListener('scroll', syncScroll(outputContainer));
+outputContainer.addEventListener('scroll', syncScroll(input));
 
 const upload = document.getElementById('upload');
 const download = document.getElementById('download');
