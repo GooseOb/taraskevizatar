@@ -10,9 +10,8 @@ const minHTML = require('gulp-htmlmin');
 const {readdirSync} = require('fs');
 const sass = require('gulp-sass')(require('sass'));
 
-// const param = process.argv.pop();
-// const isDev = param === '--dev';
-// const isProd = !isDev;
+const isDev = process.argv.includes('--dev');
+const isProd = !isDev;
 
 const getPathes = (src, dest = '') => ({
 	src: 'src/' + src,
@@ -67,33 +66,40 @@ const html = () => src(HTML)
 	}))
 	.pipe(dest(HTML));
 
-const scripts = () => src(SCRIPTS)
-	.pipe(uglify())
-	.pipe(concat('script.js'))
-	.pipe(replace(/^/, '(()=>{'))
-	.pipe(replace(/$/, '})()'))
-	.pipe(hash(hashParams))
-	.pipe(dest(SCRIPTS));
+const scripts = () => {
+	const $ = src(SCRIPTS)
+		.pipe(concat('script.js'));
+	if (isProd) $
+		.pipe(uglify())
+		.pipe(replace(/^/, '(()=>{'))
+		.pipe(replace(/$/, '})()'))
+		.pipe(hash(hashParams));
+	return $.pipe(dest(SCRIPTS));
+};
 
-const styles = () => src(STYLES)
-	.pipe(sass())
-	.pipe(minCSS())
-	.pipe(hash(hashParams))
-	.pipe(dest(STYLES));
+const styles = () => {
+	const $ = src(STYLES)
+		.pipe(sass());
+	if (isProd) $
+		.pipe(minCSS())
+		.pipe(hash(hashParams));
+	return $.pipe(dest(STYLES));
+};
 
-const icons = () => src('icons')
-	.pipe(minSVG({
-		collapseWhitespace: true
-	}))
-	.pipe(dest('icons'));
+const icons = () => {
+	const $ = src('icons');
+	if (isProd) $
+		.pipe(minSVG({
+			collapseWhitespace: true
+		}));
+	return $.pipe(dest('icons'));
+}
 
-const fonts = () => src('fonts')
-	.pipe(dest('fonts'));
+const getFileMover = type => () => src(type).pipe(dest(type));
 
-const og = () => src('og')
-	.pipe(dest('og'));
-const logo = () => src('logo')
-	.pipe(dest('logo'));
+const fonts = getFileMover('fonts');
+const og = getFileMover('og');
+const logo = getFileMover('logo');
 
 const updateFiles = (ext, fns) => gulp.series(
 	() => del(['docs/**/*.' + ext]),

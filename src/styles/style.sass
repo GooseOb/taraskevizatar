@@ -1,3 +1,6 @@
+@use 'sass:list'
+@use 'sass:map'
+
 *
   margin: 0
   padding: 0
@@ -9,7 +12,27 @@ $color-3: var(--3)
 $color-4: var(--4)
 $color-link: var(--link)
 $color-link-hover: var(--link-hover)
+$color-scrollbar-bg: var(--scrollbar-bg)
+$color-scrollbar: var(--scrollbar)
+$color-scrollbar-hover: var(--scrollbar-hover)
 $height-actions-block: 3rem
+
+:root
+  color: #000
+  --bg: #ddf
+  --1: #b9f
+  --2: #ff6
+  --3: #fd6
+  --4: #b5f
+  --link: #28f
+  --link-hover: #26f
+  --scrollbar-bg: #0002
+  --scrollbar: #0004
+  --scrollbar-hover: #0005
+
+@mixin mobile
+  @media screen and (max-width: 650px)
+    @content
 
 body
   font-family: sans-serif
@@ -18,20 +41,16 @@ body
   display: flex
   flex-direction: column
   justify-content: center
-  --bg: #ddf
-  --1: #b9f
-  --2: #ff6
-  --3: #fd6
-  --4: #b5f
-  --link: #28f
-  --link-hover: #26f
+
+:focus
+  outline: none
 
 a
   text-decoration: none
   font-weight: bold
   color: $color-link
   transition: color .2s
-  &:hover
+  &:hover, &:focus
     color: $color-link-hover
 
 .demo
@@ -53,12 +72,12 @@ header
   align-items: center
   padding: 0 1rem
   background-color: $color-1
-
+  
 main
   height: 80%
   width: 85%
   margin: 0 auto
-  @media screen and (max-width: 650px)
+  @include mobile
     width: 100%
 
 footer
@@ -75,7 +94,7 @@ footer
   @include themeIcon(light)
 #theme-dark
   @include themeIcon(dark)
-#settings-btn
+#showSettings
   @include icon(settings)
 #info
   @include icon(info)
@@ -85,6 +104,8 @@ footer
   margin-left: auto
 .copy
   @include icon(copy)
+#clear
+  @include icon(close)
 
 #theme
   background-color: $color-bg
@@ -104,6 +125,8 @@ footer
     background-size: 1.5rem
     cursor: pointer
     transition: .2s
+    &:hover, &:focus
+      background-color: #0002
     &:checked
       background-color: $color-4
 
@@ -112,9 +135,25 @@ footer
   display: flex
   flex-wrap: wrap
 
+@mixin hideSettings
+  height: 0
+  animation-name: hide
+  animation-duration: 1s
+
+@keyframes hide
+  from
+    height: auto
+  to
+    height: 0
+
 .hidden
   visibility: hidden
+  position: absolute
   opacity: 0
+  &#settings
+    @include hideSettings
+    div
+      @include hideSettings
 
 .select
   white-space: nowrap
@@ -140,57 +179,55 @@ footer
     list-style-type: none
     position: relative
     display: flex
-    li
+    button
+      color: inherit
       position: relative
       text-align: center
-      padding: .5rem 0
-      cursor: pointer
       z-index: 1
       transition: .2s
-      &:hover
+      align-self: center
+      width: 100%
+      height: 100%
+      padding: .5rem 0
+      font-size: inherit
+      border: none
+      background: none
+      cursor: pointer
+      &:hover, &:focus, &:focus-within
         background-color: #00000008
 
 .select .one-option
   width: 100%
   a
     width: 100%
-  li
+  button
     width: 100%
+    font: inherit
+    color: inherit
     text-align: center
     padding: .5rem 0
 
-@mixin settingOptions-2($w1, $w2, $isAnimated: true)
-  li
-    &:nth-child(1)
-      width: $w1
-    &:nth-child(2)
-      width: $w2
-  @if $isAnimated
-    .active
-      &:nth-child(1) ~ .animation
-        left: 0
-        width: $w1
-      &:nth-child(2) ~ .animation
-        left: $w1
-        width: $w2
-
-@mixin settingOptions-3($w1, $w2, $w3, $isAnimated: true)
-  @include settingOptions-2($w1, $w2, $isAnimated)
-  li
-    &:nth-child(3)
-      width: $w3
-  @if $isAnimated
-    .active
-      &:nth-child(3) ~ .animation
-        left: $w1 + $w2
-        width: $w3
+@mixin settingOptions($isAnimated, $widths...)
+  $i: 1
+  $left: 0rem
+  @each $w in $widths
+    button
+      &:nth-child(#{$i})
+        width: $w
+    @if $isAnimated
+      .active
+        &:nth-child(#{$i}) ~ .animation
+          left: $left
+          width: $w
+      $left: $left + $w
+    $i: $i + 1
 
 #abc
-  @include settingOptions-3(5.5rem, 4.5rem, 4.5rem)
+  @include settingOptions(true, 5.5rem, 4.5rem, 4.5rem)
 #i-to-j
-  @include settingOptions-3(4rem, 6rem, 5rem)
+  @include settingOptions(true, 4rem, 6rem, 5rem)
 #file-convert
-  @include settingOptions-2(8rem, 8rem, false)
+  @include settingOptions(false, 8rem, 8rem)
 
 .animation
   background-color: $color-3
@@ -204,13 +241,13 @@ footer
   border-radius: 1rem
   overflow: hidden
   box-shadow: 2px black
-  @media screen and (max-width: 650px)
+  @include mobile
     flex-direction: column
 
 .subcard
   width: 50%
   position: relative
-  @media screen and (max-width: 650px)
+  @include mobile
     width: 100%
   &:first-child
     background-color: $color-2
@@ -238,53 +275,59 @@ footer
       padding: 1rem
   textarea
     background: transparent
+    color: inherit
     border: none
     font: inherit
     resize: none
     outline: none
-  .actions
-    display: flex
-    bottom: 0
-    width: 100%
-    position: absolute
-    height: $height-actions-block - .4rem
-    user-select: none
-    padding: .2rem 0
-    .buttons
-      display: flex
-      width: 100%
-      list-style-type: none
-      margin: 0 0 0 2rem
-      li
-        margin-right: 1rem
-        opacity: .8
-        &:hover
-          opacity: 1
-    .num-counter
-      font-weight: bold
-      opacity: .8
-      margin: auto 2rem auto auto
   [contenteditable]
     outline: none
 
+.subcard-bottom
+  display: flex
+  bottom: 0
+  width: 100%
+  position: absolute
+  height: $height-actions-block - .4rem
+  user-select: none
+  padding: .2rem 0
+  .icon-btns
+    display: flex
+    width: 100%
+    list-style-type: none
+    margin: 0 0 0 2rem
+    button
+      margin-right: 1rem
+      background-color: #0000
+      border: none
+      background-repeat: no-repeat
+      background-position: center
+      background-size: 100%
+      width: 2rem
+      height: 100%
+      cursor: pointer
+      opacity: .8
+      &:hover
+        opacity: 1
+      &:focus
+        opacity: 1
+  .num-counter
+    font-weight: bold
+    opacity: .8
+    margin: auto 2rem auto auto
+
 .scrollbar::-webkit-scrollbar
   width: 0.625rem
-.scrollbar::-webkit-scrollbar-track 
-  background-color: #0002
+.scrollbar::-webkit-scrollbar-track
+  background-color: $color-scrollbar-bg
   border-radius: 0.375rem 0 0 0.375rem
 
-.scrollbar::-webkit-scrollbar-thumb 
-  background-color: #0002
+.scrollbar::-webkit-scrollbar-thumb
+  background-color: $color-scrollbar
   border-radius: 0.375rem
 
 .scrollbar::-webkit-scrollbar-thumb:hover
-  background-color: #0003
-
-.icon-btn
-  background-repeat: no-repeat
-  background-position: center
-  background-size: 100%
-  width: 2rem
+  background-color: $color-scrollbar-hover
 
 .snackbar
   background: $color-4
@@ -296,19 +339,24 @@ footer
   transition: .6s
   user-select: none
   text-align: center
-  @media screen and (max-width: 650px)
+  z-index: 2
+  @include mobile
     left: 50%
     transform: translateX(-50%)
     padding: .5rem 10%
     width: 60vw
 
-.load-btn
+#upload
   position: absolute
-  top: 0
-  left: 0
-  width: 100%
-  height: 100%
   opacity: 0
+label[for=upload]
+  align-self: center
+  cursor: pointer
+
+#download
+  font: inherit
+  color: inherit
+
 #file-convert
   li.active
     background-color: $color-3

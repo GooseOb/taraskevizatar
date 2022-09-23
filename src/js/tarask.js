@@ -74,14 +74,14 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 		: /(?:\([\p{L}’\- ]+\)){2,}/gu;
 	text = isColored
 		? text
-			.replace(regExp, a => {
-				a = a.slice(1, -1).split(')(');
-				const b = a.shift();
-				return `<tarL data-l='${a}'>${b}</tarL>`;
+			.replace(regExp, $1 => {
+				$1 = $1.slice(1, -1).split(')(');
+				const main = $1.shift();
+				return `<tarL data-l='${$1}'>${main}</tarL>`;
 			})
 			.replace(/ \n /g, '<br>')
 		: text
-			.replace(regExp, a => a.slice(1, -1).split(')(')[0]);
+			.replace(regExp, $1 => $1.slice(1, -1).split(')(')[0]);
 
 	return text.trim();
 }
@@ -102,7 +102,7 @@ function restoreRegister(text, orig) {
 		if (word === 'зь') text[i] = isUpCase(orig[i + 1]) ? 'ЗЬ' : 'Зь'
 		else if (isUpCase(oWord[oWord.length - 1])) text[i] = word.toUpperCase()
 		else text[i] = word[0] === '('
-			? word.replace(/\(./g, a => a.toUpperCase())
+			? word.replace(/\(./g, $1 => $1.toUpperCase())
 			: word[0].toUpperCase() + word.slice(1);
 	};
 
@@ -175,9 +175,9 @@ function toTarask(text) {
 	} while (true);
 
 	return text
-		.replace(/ без(ь? \S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' бяз' + b : a)
-		.replace(/ не (\S+)/g, (a, b) => b.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' ня ' + b : a)
-		.replace(/( (?:б[ея]|пра|цера)?з) і(\S*)/g, (a, b, c) => /([ая]ў|ну)$/.test(c) ? b + 'ь і' + c : a);
+		.replace(/ без(ь? \S+)/g, ($1, $2) => $2.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' бяз' + $2 : $1)
+		.replace(/ не (\S+)/g, ($1, $2) => $2.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' ня ' + $2 : $1)
+		.replace(/( (?:б[ея]|пра|цера)?з) і(\S*)/g, ($1, $2, $3) => /([ая]ў|ну)$/.test($3) ? $2 + 'ь і' + $3 : $1);
 }
 
 // function toBel(text) {
@@ -200,7 +200,7 @@ function toLatin(text, upCase = true) {
 			text = text.replace(latinLettersUpCase[key], key.toUpperCase());
 		text = text
 			.replace(/ CH(\p{Ll})/gu, ' Ch$1')
-			.replace(/ J[AEOU][\p{Ll} ]/gu, a => ' J' + a[2].toLowerCase() + a[3]);
+			.replace(/ J[AEOU][\p{Ll} ]/gu, $1 => ' J' + $1[2].toLowerCase() + $1[3]);
 	};
 
 	return text;
@@ -216,5 +216,5 @@ function toArab(text) {
 function toJ(text, alwaysJ = false) {
 	return alwaysJ
 		? text.replace(/([аеёіоуыэюя] )і /g, '$1й ')
-		: text.replace(/[аеёіоуыэюя] і /g, a => Math.random() >= 0.5 ? a[0] + ' й ' : a);
+		: text.replace(/[аеёіоуыэюя] і /g, $1 => Math.random() >= 0.5 ? $1[0] + ' й ' : $1);
 }

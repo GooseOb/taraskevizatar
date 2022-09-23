@@ -34,11 +34,12 @@
 				<div class='textfield-cont'>
 					<textarea id='input' class='textfield scrollbar' placeholder='Тэкст'></textarea>
 				</div>
-				<div class='actions'>
-					<ul class='buttons'>
-						<li class='icon-btn copy' title='official'></li>
-						<li class='icon-btn' id='info'></li>
-					</ul>
+				<div class='subcard-bottom'>
+					<div class='icon-btns' data-for='input'>
+						<button class='copy'></button>
+						<button id='clear'></button>
+						<button id='info'></button>
+					</div>
 					<div class='num-counter'>0</div>
 				</div>
 			</div>
@@ -49,12 +50,12 @@
 				<div class='textfield-cont scrollbar'>
 					<div id='output' class='textfield'></div>
 				</div>
-				<div class='actions'>
-					<ul class='buttons'>
-						<li class='icon-btn copy' title='classic'></li>
-						<li class='icon-btn' id='settings-btn'></li>
-						<li class='icon-btn' id='edit'></li>
-					</ul>
+				<div class='subcard-bottom'>
+					<div class='icon-btns' data-for='output'>
+						<button class='copy'></button>
+						<button id='showSettings'></button>
+						<button id='edit'></button>
+					</div>
 					<div class='num-counter'>0</div>
 				</div>
 			</div>
@@ -65,50 +66,65 @@
 				<div class='title'>
 					Альфабэт
 				</div>
-				<ul class='options' id='abc'>
-					<li value='0'>кірылічны</li>
-					<li value='1'>лацінскі</li>
-					<li value='2'>арабскі</li>
+				<div class='options' id='abc'>
+						<button value='0'>
+							кірылічны
+						</button>
+						<button value='1'>
+							лацінскі
+						</button>
+						<button value='2'>
+							арабскі
+						</button>
 					<div class='animation'></div>
-				</ul>
+				</div>
 			</div>
 			<div class='select'>
 				<div class='title'>
 					і > й пасьля галосных
 				</div>
-				<ul class='options' id='i-to-j'>
-					<li value='0'>ніколі</li>
-					<li value='1'>выпадкова</li>
-					<li value='2'>заўсёды</li>
+				<div class='options' id='i-to-j'>
+					<button value='0'>
+						ніколі
+					</button>
+					<button value='1'>
+						выпадкова
+					</button>
+					<button value='2'>
+						заўсёды
+					</button>
 					<div class='animation'></div>
-				</ul>
+				</div>
 			</div>
 			<div class='select'>
 				<div class='title'>
 					Канвэртацыя файлу
 				</div>
-				<ul class='options' id='file-convert'>
-					<li>
+				<div class='options' id='file-convert'>
+					<button tabindex='-1'>
 						<input class='load-btn' type="file" id='upload'>
-						Запампаваць
-					</li>
-					<li>
-						<a class='load-btn' id='download'></a>
-						Спампаваць
-					</li>
-				</ul>
+						<label for='upload'>
+							Запампаваць
+						</label>
+					</button>
+					<button tabindex='-1'>
+						<a class='load-btn' id='download' href='#'>
+							Спампаваць
+						</a>
+					</button>
+				</div>
 			</div>
 			<div class='select'>
 				<div class='title'>
 					Напісаць распрацоўніку
 				</div>
-				<ul class='options one-option' id='contacts'>
-					<a href="https://t.me/GooseOb">
-						<li>
+				<div class='options one-option' id='contacts'>
+					<button tabindex='-1'>
+						<a href='https://t.me/GooseOb'>
 							Тэлеграм
-						</li>
-					</a>
-				</ul>
+						</a>
+					</button>
+				</div>
 			</div>
 		</div>
 	</main>

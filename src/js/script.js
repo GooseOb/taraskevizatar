@@ -45,7 +45,7 @@ if (localStorage.settings) {
 } else {
 	['abc', 'j'].forEach(item => {
 		if (localStorage[item]) {
-			stgs[item] = localStorage[item];
+			stgs[item] = +localStorage[item];
 			delete localStorage[item];
 		};
 	});
@@ -63,10 +63,11 @@ const {body} = document;
 const input = document.getElementById('input');
 const output = document.getElementById('output');
 const outputContainer = output.parentElement;
-const settingsButton = document.getElementById('settings-btn');
+// const settingsButton = document.getElementById('settings-btn');
 const settingsElement = document.getElementById('settings');
-const edit = document.getElementById('edit');
-const info = document.getElementById('info');
+// const edit = document.getElementById('edit');
+// const info = document.getElementById('info');
+const clear = document.getElementById('clear');
 const copyButtons = document.querySelectorAll('.copy');
 const getCounter = id => document.getElementById(id).querySelector('.num-counter');
 const counters = {
@@ -134,16 +135,55 @@ fixConvert();
 
 input.addEventListener('input', inputHandler);
 
-copyButtons.forEach(el => {
-	const textfield = document
-		.getElementById(el.title)
-		.querySelector('.textfield');
-	const getText = textfield.tagName === 'TEXTAREA'
+const promptGenerator = (function*() {
+	while(true) {
+		yield '<tarL class="demo">Гэтыя часьціны</tarL> можна зьмяняць, націскаючы на іх';
+		yield 'Літары <tarG class="demo">г/ґ</tarG> таксама можна зьмяняць націскам';
+		yield 'Тэкст, які ня трэба канвэртаваць, вылучайце: <span class="demo" style="color:red">&lt! тэкст !></span>';
+	};
+})();
+const EDIT_ENABLE = 'Рэдагаваньне уключана';
+const EDIT_DISABLE = 'Рэдагаваньне выключана';
+
+const actions = {
+	clear() {
+		input.value = '';
+		input.fixHeight();
+		input.focus();
+		fixConvert();
+	},
+	info() {
+		const prompt = promptGenerator.next().value;
+		snackbar('info', prompt, 2500);
+	},
+	showSettings() {
+		settingsElement.classList.toggle('hidden');
+	},
+	edit() {
+		const isContentEditable = !output.isContentEditable;
+		output.contentEditable = isContentEditable;
+		snackbar('edit', isContentEditable
+			? EDIT_ENABLE
+			: EDIT_DISABLE
+		);
+		if (isContentEditable) output.focus();
+	}
+};
+
+Array.from(document.getElementsByClassName('icon-btns')).forEach((div, i) => {
+	const textfield = document.getElementById(div.dataset.for);
+	const getText = i === 0
 		? () => textfield.value
 		: () => textfield.innerText;
-	el.addEventListener('click', () => {
-		navigator.clipboard.writeText(getText());
-		snackbar('copy');
+
+	div.addEventListener('click', ({target: el}) => {
+		if (el === div) return;
+		if (el.classList.contains('copy')) {
+			navigator.clipboard.writeText(getText());
+			snackbar('copy');
+			return;
+		};
+		actions[el.id]();
 	});
 });
 
@@ -160,30 +200,6 @@ themeButtons.forEach((el, i) => {
 			setTheme(1);
 		};
 	});
-});
-
-const promptGenerator = (function*() {
-	while(true) {
-		yield '<tarL class="demo">Гэтыя часьціны</tarL> можна зьмяняць, націскаючы на іх';
-		yield 'Літары <tarG class="demo">г/ґ</tarG> таксама можна зьмяняць націскам';
-		yield 'Тэкст, які ня трэба канвэртаваць, вылучайце: <span class="demo" style="color:red">&lt! тэкст !></span>';
-	};
-})();
-
-info.addEventListener('click', () => {
-	const prompt = promptGenerator.next().value;
-	snackbar('info', prompt, 2500);
-});
-
-const EDIT_ENABLE = 'Рэдагаваньне уключана';
-const EDIT_DISABLE = 'Рэдагаваньне выключана';
-edit.addEventListener('click', () => {
-	const isContentEditable = !output.isContentEditable;
-	output.contentEditable = isContentEditable;
-	snackbar('edit', isContentEditable
-		? EDIT_ENABLE
-		: EDIT_DISABLE
-	);
 });
 
 const arabH = 'غ';
@@ -212,16 +228,16 @@ output.addEventListener('click', ({target: el}) => {
 
 const newSelect = (id, initialOption, callback) => {
 	const select = document.getElementById(id);
-	const options = select.querySelectorAll('li');
+	const options = select.querySelectorAll('button');
 	const activateOption = option => {
 		options.forEach(el => {
 			el.classList.remove('active');
 		});
 		option.classList.add('active');
 	};
-	select.addEventListener('click', ({target}) => {
-		activateOption(target);
-		callback(target.value);
+	select.addEventListener('click', ({target: el}) => {
+		activateOption(el);
+		callback(+el.value);
 	});
 	activateOption(options[initialOption]);
 };
@@ -233,10 +249,6 @@ newSelect('abc', settings.abc, value => {
 newSelect('i-to-j', settings.j, value => {
 	settings.j = value;
 	fixConvert();
-});
-
-settingsButton.addEventListener('click', () => {
-	settingsElement.classList.toggle('hidden');
 });
 
 function convert(text) {
@@ -303,6 +315,7 @@ upload.addEventListener('change', function() {
 	const [file] = this.files;
 	fileName = file.name;
 	reader.readAsText(file);
+	this.value = null;
 });
 
 let textFile = null;
