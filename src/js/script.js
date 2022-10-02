@@ -301,8 +301,9 @@ let fileName;
 reader.addEventListener('load', ({target}) => {
 	const text = target.result;
 	const taraskText = text
+		.replace(/\r/g, '')
 		.toTaraskConvert(false, settings)
-		.replace(/\s*\n\s*/g, '\n');
+		.replace(/\s(\n|\t)\s/g, '$1');
 	Object.assign(download, {
 		href: createTextFile(taraskText),
 		download: 'tarask-' + fileName
