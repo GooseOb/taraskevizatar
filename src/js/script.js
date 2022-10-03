@@ -1,3 +1,12 @@
+window.addEventListener('load', async () => {
+	if (!'serviceworker' in navigator) return;
+	try {
+		await navigator.serviceWorker.register('/sw.js');
+	} catch (e) {
+		console.log('Service worker register fail', e);
+	}
+});
+
 const darkTheme = document.getElementById('dark-css');
 const themeButtons = document.getElementById('theme').querySelectorAll('.checkbox');
 const themeStates = ['not all', '(prefers-color-scheme: dark)', 'all'];

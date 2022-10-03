@@ -3,7 +3,7 @@ const del = require('del');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
 const replace = require('gulp-replace');
-const hash = require('gulp-hash-filename');
+// const hash = require('gulp-hash-filename');
 const minCSS = require('gulp-clean-css');
 const minSVG = require('gulp-svgmin');
 const minHTML = require('gulp-htmlmin');
@@ -20,8 +20,10 @@ const getPathes = (src, dest = '') => ({
 
 const pathes = {
 	html: getPathes('index.html'),
-	logo: getPathes('logo.png'),
 	og: getPathes('og.jpg'),
+	sw: getPathes('sw.js'),
+	manifest: getPathes('manifest.json'),
+	logo: getPathes('logo/**/*', 'logo'),
 	styles: getPathes('styles/*.sass', 'styles'),
 	fonts: getPathes('fonts/**/*', 'fonts'),
 	icons: getPathes('icons/**/*.svg', 'icons'),
@@ -31,7 +33,7 @@ const pathes = {
 	},
 };
 
-const hashParams = {format: '{name}.{hash}{ext}'};
+// const hashParams = {format: '{name}.{hash}{ext}'};
 
 const src = fileType => gulp.src(pathes[fileType].src);
 const dest = fileType => gulp.dest(pathes[fileType].dest);
@@ -73,8 +75,15 @@ const scripts = () => {
 		.pipe(uglify())
 		.pipe(replace(/^/, '(()=>{'))
 		.pipe(replace(/$/, '})()'))
-		.pipe(hash(hashParams));
+		// .pipe(hash(hashParams));
 	return $.pipe(dest(SCRIPTS));
+};
+
+const sw = () => {
+	const $ = src('sw');
+	if (isProd) $
+		.pipe(uglify())
+	return $.pipe(dest('sw'));
 };
 
 const styles = () => {
@@ -82,7 +91,7 @@ const styles = () => {
 		.pipe(sass());
 	if (isProd) $
 		.pipe(minCSS())
-		.pipe(hash(hashParams));
+		// .pipe(hash(hashParams));
 	return $.pipe(dest(STYLES));
 };
 
@@ -100,6 +109,7 @@ const getFileMover = type => () => src(type).pipe(dest(type));
 const fonts = getFileMover('fonts');
 const og = getFileMover('og');
 const logo = getFileMover('logo');
+const manifest = getFileMover('manifest');
 
 const updateFiles = (ext, fns) => gulp.series(
 	() => del(['docs/**/*.' + ext]),
@@ -120,7 +130,7 @@ const watch = () => {
 
 const build = gulp.series(
 	clean,
-	gulp.parallel(styles, scripts, fonts, icons, og, logo),
+	gulp.parallel(styles, scripts, fonts, icons, og, logo, manifest, sw),
 	html
 );
 
