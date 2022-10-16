@@ -26,10 +26,10 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 	};
 	text = ` ${text.trim()}  `
 		.replace(/г'/g, 'ґ')
-		.replace(/(\n|	)/g, ' $1 ')
+		.replace(/(\n|\t)/g, ' $1 ')
 		.replace(/ - /g, ' — ')
 		.replace(/(\p{P}|\p{S}|\d)/gu, ' $1 ')
-		.replace(/ ['`’] (\S)/gu, '’$1');
+		.replace(/ ['`’] (?=\S)/g, '’');
 	let textSplit;
 	switch (abc) {
 		case 0: textSplit = text.split(' '); break;
@@ -61,7 +61,7 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 				break;
 			case 1:
 				text = text
-					.replace(/([AEIOUY])(?:<tarF>)?Ŭ(?:<\/tarF>)?/g, '$1U')
+					.replace(/(?=[AEIOUY])(?:<tarF>)?Ŭ(?:<\/tarF>)?/g, 'U')
 					.replace(/g/g, '<tarG>g</tarG>')
 					.replace(/>G/g, '><tarG>G</tarG>');
 				break;
@@ -74,14 +74,14 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 		: /(?:\([\p{L}’\- ]+\)){2,}/gu;
 	text = isColored
 		? text
-			.replace(regExp, $1 => {
-				$1 = $1.slice(1, -1).split(')(');
-				const main = $1.shift();
-				return `<tarL data-l='${$1}'>${main}</tarL>`;
+			.replace(regExp, $0 => {
+				$0 = $0.slice(1, -1).split(')(');
+				const main = $0.shift();
+				return `<tarL data-l='${$0}'>${main}</tarL>`;
 			})
 			.replace(/ \n /g, '<br>')
 		: text
-			.replace(regExp, $1 => $1.slice(1, -1).split(')(')[0]);
+			.replace(regExp, $0 => $0.slice(1, -1).split(')(')[0]);
 
 	return text.trim();
 }
@@ -102,7 +102,7 @@ function restoreRegister(text, orig) {
 		if (word === 'зь') text[i] = isUpCase(orig[i + 1]) ? 'ЗЬ' : 'Зь'
 		else if (isUpCase(oWord[oWord.length - 1])) text[i] = word.toUpperCase()
 		else text[i] = word[0] === '('
-			? word.replace(/\(./g, $1 => $1.toUpperCase())
+			? word.replace(/\(./g, $0 => $0.toUpperCase())
 			: word[0].toUpperCase() + word.slice(1);
 	};
 
@@ -129,34 +129,34 @@ function addColor(text, orig) {
 				text[i] = word.replace(/ь/g, '<tarF>ь</tarF>');
 				continue;
 			case word1 + 'ь':
-				text[i] = word.slice(0, -1).replace(/ь/g, '<tarF>ь</tarF>')+'ь';
+				text[i] = word.slice(0, -1).replace(/ь/g, '<tarF>ь</tarF>') + 'ь';
 				continue;
-			case word.replace(/(у|ю)/g, 'ір$1'):
-				text[i] = word.replace(/(у|ю)/g, '<tarF>$1</tarF>');
+			case word.replace(/[ую]/, 'ір$&'):
+				text[i] = word.replace(/[ую]/, '<tarF>$&</tarF>');
 				continue;
 		};
 		if (oWord.length !== word.replace(/\((\p{L}+)\)\(\p{L}+\)/gu, '$1').length) {
-			let iFromStart = 0;
-			let iFromWordEnd = word.length - 1;
-			const iFromOWordEnd_StartValue = oWord.length - 1;
-			let iFromOWordEnd = iFromOWordEnd_StartValue;
+			let fromStart = 0;
+			let fromWordEnd = word.length - 1;
+			const fromOWordEnd_StartValue = oWord.length - 1;
+			let fromOWordEnd = fromOWordEnd_StartValue;
 
-			while (word[iFromStart] === oWord[iFromStart])
-				iFromStart++;
-			while (word[iFromWordEnd] === oWord[iFromOWordEnd])
-				iFromWordEnd--, iFromOWordEnd--;
+			while (word[fromStart] === oWord[fromStart])
+				fromStart++;
+			while (word[fromWordEnd] === oWord[fromOWordEnd])
+				fromWordEnd--, fromOWordEnd--;
 
-			if (iFromWordEnd < iFromOWordEnd && iFromStart !== iFromWordEnd) { // калі ў зыходным слове больш літар
-				if (iFromStart === 0 && iFromOWordEnd === iFromOWordEnd_StartValue) {
+			if (fromWordEnd < fromOWordEnd && fromStart !== fromWordEnd) { // калі ў зыходным слове больш літар
+				if (fromStart === 0 && fromOWordEnd === fromOWordEnd_StartValue) {
 					text[i] = '<tarF>' + word + '</tarF>';
 					continue;
 				};
-				iFromStart--, iFromWordEnd++;
+				fromStart--, fromWordEnd++;
 			};
 
-			text[i] = word.slice(0, iFromStart) +
-				'<tarF>' + word.slice(iFromStart, iFromWordEnd + 1) + '</tarF>'
-				+ word.slice(iFromWordEnd + 1);
+			text[i] = word.slice(0, fromStart) +
+				'<tarF>' + word.slice(fromStart, fromWordEnd + 1) + '</tarF>'
+				+ word.slice(fromWordEnd + 1);
 		};
 	};
 
@@ -175,15 +175,15 @@ function toTarask(text) {
 	} while (true);
 
 	return text
-		.replace(/ без(ь? \S+)/g, ($1, $2) => $2.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' бяз' + $2 : $1)
-		.replace(/ не (\S+)/g, ($1, $2) => $2.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' ня ' + $2 : $1)
-		.replace(/( (?:б[ея]|пра|цера)?з) і(\S*)/g, ($1, $2, $3) => /([ая]ў|ну)$/.test($3) ? $2 + 'ь і' + $3 : $1);
+		.replace(/ без(ь? \S+)/g, ($0, $1) => $1.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' бяз' + $1 : $0)
+		.replace(/ не (\S+)/g, ($0, $1) => $1.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' ня ' + $1 : $0)
+		.replace(/( (?:б[ея]|пра|цера)?з) і(\S*)/g, ($0, $1, $2) => /([ая]ў|ну)$/.test($2) ? $1 + 'ь і' + $2 : $0);
 }
 
 // function toBel(text) {
 // 	return text
 // 		.replace(/и/g, 'і')
-// 		.replace(/([аеёіоуыэюя] ?)у/g, '$1ў')
+// 		.replace(/(?=[аеёіоуыэюя] ?)у/g, 'ў')
 // 		.replace(/ўм /g, 'ум ')
 // 		.replace(/ўс /g, 'ус ')
 // 		.replace(/ іўд(ай?|ав[аы]|у|зе) /g, ' іуд$1 ')
@@ -199,8 +199,8 @@ function toLatin(text, upCase = true) {
 		for (const key in latinLettersUpCase)
 			text = text.replace(latinLettersUpCase[key], key.toUpperCase());
 		text = text
-			.replace(/ CH(\p{Ll})/gu, ' Ch$1')
-			.replace(/ J[AEOU][\p{Ll} ]/gu, $1 => ' J' + $1[2].toLowerCase() + $1[3]);
+			.replace(/ CH(?=\p{Ll})/gu, ' Ch')
+			.replace(/ J[AEOU][\p{Ll} ]/gu, $0 => ' J' + $0[2].toLowerCase() + $0[3]);
 	};
 
 	return text;
@@ -214,7 +214,8 @@ function toArab(text) {
 }
 
 function toJ(text, alwaysJ = false) {
-	return alwaysJ
-		? text.replace(/([аеёіоуыэюя] )і /g, '$1й ')
-		: text.replace(/[аеёіоуыэюя] і /g, $1 => Math.random() >= 0.5 ? $1[0] + ' й ' : $1);
+	return text.replace(/(?=[аеёіоуыэюя] )і /g, alwaysJ
+		? 'й '
+		: $0 => Math.random() >= 0.5 ? 'й ' : $0
+	);
 }
