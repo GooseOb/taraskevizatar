@@ -61,7 +61,7 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 				break;
 			case 1:
 				text = text
-					.replace(/(?=[AEIOUY])(?:<tarF>)?Ŭ(?:<\/tarF>)?/g, 'U')
+					.replace(/([AEIOUY])(?:<tarF>)?Ŭ(?:<\/tarF>)?/g, '$1U')
 					.replace(/g/g, '<tarG>g</tarG>')
 					.replace(/>G/g, '><tarG>G</tarG>');
 				break;
@@ -183,7 +183,7 @@ function toTarask(text) {
 // function toBel(text) {
 // 	return text
 // 		.replace(/и/g, 'і')
-// 		.replace(/(?=[аеёіоуыэюя] ?)у/g, 'ў')
+// 		.replace(/([аеёіоуыэюя] ?)у/g, '$1ў')
 // 		.replace(/ўм /g, 'ум ')
 // 		.replace(/ўс /g, 'ус ')
 // 		.replace(/ іўд(ай?|ав[аы]|у|зе) /g, ' іуд$1 ')
@@ -214,7 +214,7 @@ function toArab(text) {
 }
 
 function toJ(text, alwaysJ = false) {
-	return text.replace(/(?=[аеёіоуыэюя] )і /g, alwaysJ
+	return text.replace(/([аеёіоуыэюя] )і /g, '$1' + alwaysJ
 		? 'й '
 		: $0 => Math.random() >= 0.5 ? 'й ' : $0
 	);
