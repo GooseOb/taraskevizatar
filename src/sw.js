@@ -1,4 +1,4 @@
-const cacheName = 'v1';
+const cacheName = 'v2';
 const staticCacheName = 'v1';
 
 const assetUrls = [
