@@ -3,7 +3,6 @@ const del = require('del');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
 const replace = require('gulp-replace');
-// const hash = require('gulp-hash-filename');
 const minCSS = require('gulp-clean-css');
 const minSVG = require('gulp-svgmin');
 const minHTML = require('gulp-htmlmin');
@@ -32,8 +31,6 @@ const pathes = {
 		dest: 'docs'
 	},
 };
-
-// const hashParams = {format: '{name}.{hash}{ext}'};
 
 const src = fileType => gulp.src(pathes[fileType].src);
 const dest = fileType => gulp.dest(pathes[fileType].dest);
@@ -75,7 +72,6 @@ const scripts = () => {
 		.pipe(uglify())
 		.pipe(replace(/^/, '(()=>{'))
 		.pipe(replace(/$/, '})()'))
-		// .pipe(hash(hashParams));
 	return $.pipe(dest(SCRIPTS));
 };
 
@@ -91,7 +87,6 @@ const styles = () => {
 		.pipe(sass());
 	if (isProd) $
 		.pipe(minCSS())
-		// .pipe(hash(hashParams));
 	return $.pipe(dest(STYLES));
 };
 
@@ -104,7 +99,10 @@ const icons = () => {
 	return $.pipe(dest('icons'));
 }
 
-const getFileMover = type => () => src(type).pipe(dest(type));
+const getFileMover = type => {
+	gulp.task(type, () => src(type).pipe(dest(type)));
+	return gulp.task(type);
+};
 
 const fonts = getFileMover('fonts');
 const og = getFileMover('og');

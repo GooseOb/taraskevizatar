@@ -214,8 +214,8 @@ function toArab(text) {
 }
 
 function toJ(text, alwaysJ = false) {
-	return text.replace(/([аеёіоуыэюя] )і /g, '$1' + alwaysJ
+	return text.replace(/([аеёіоуыэюя] )і /g, '$1' + (alwaysJ
 		? 'й '
 		: $0 => Math.random() >= 0.5 ? 'й ' : $0
-	);
+	));
 }
