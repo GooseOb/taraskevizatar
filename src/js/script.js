@@ -8,8 +8,10 @@ window.addEventListener('load', async () => {
 	}
 });
 
-const darkTheme = document.getElementById('dark-css');
-const themeButtons = document.getElementById('theme').querySelectorAll('.checkbox');
+const $ = id => document.getElementById(id);
+
+const darkTheme = $('dark-css');
+const themeButtons = $('theme').querySelectorAll('.checkbox');
 const themeStates = ['not all', '(prefers-color-scheme: dark)', 'all'];
 
 if (localStorage.theme) {
@@ -40,8 +42,11 @@ const DEFAULT_TEXT =
 11. Базіраваць, кадзіраваць, індуцыраваць, каменціраваць.
 12. Гаага, ганак, Эбінггаўз, Вашынгтон, Глазга.`;
 
-INPUT_CARD = 'official';
-OUTPUT_CARD = 'classic';
+const INPUT_CARD = 'official';
+const OUTPUT_CARD = 'classic';
+
+const EDIT_ENABLE = 'Рэдагаваньне уключана';
+const EDIT_DISABLE = 'Рэдагаваньне выключана';
 
 const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ'];
 
@@ -69,17 +74,10 @@ const settings = new Proxy(stgs, {
 	}
 });
 
-const {body} = document;
-const input = document.getElementById('input');
-const output = document.getElementById('output');
+const input = $('input');
+const output = $('output');
 const outputContainer = output.parentElement;
-// const settingsButton = document.getElementById('settings-btn');
-const settingsElement = document.getElementById('settings');
-// const edit = document.getElementById('edit');
-// const info = document.getElementById('info');
-const clear = document.getElementById('clear');
-const copyButtons = document.querySelectorAll('.copy');
-const getCounter = id => document.getElementById(id).querySelector('.num-counter');
+const getCounter = id => $(id).querySelector('.num-counter');
 const counters = {
 	input: getCounter(INPUT_CARD),
 	output: getCounter(OUTPUT_CARD),
@@ -130,7 +128,7 @@ const fixConvert = () => convert(input.value);
 
 const snackbarTimeouts = {};
 const snackbar = (id, msg = null, visiblityTime = 1000) => {
-	const el = document.getElementById('sb-' + id);
+	const el = $('sb-' + id);
 	if (msg) el.innerHTML = msg;
 	el.classList.remove('hidden');
 	const timeout = setTimeout(() => {
@@ -152,8 +150,6 @@ const promptGenerator = (function*() {
 		yield 'Тэкст, які ня трэба канвэртаваць, вылучайце: <span class="demo" style="color:red">&lt! тэкст !></span>';
 	};
 })();
-const EDIT_ENABLE = 'Рэдагаваньне уключана';
-const EDIT_DISABLE = 'Рэдагаваньне выключана';
 
 const actions = {
 	clear() {
@@ -181,7 +177,7 @@ const actions = {
 };
 
 Array.from(document.getElementsByClassName('icon-btns')).forEach((div, i) => {
-	const textfield = document.getElementById(div.dataset.for);
+	const textfield = $(div.dataset.for);
 	const getText = i === 0
 		? () => textfield.value
 		: () => textfield.innerText;
@@ -237,7 +233,7 @@ output.addEventListener('click', ({target: el}) => {
 });
 
 const newSelect = (id, initialOption, callback) => {
-	const select = document.getElementById(id);
+	const select = $(id);
 	const options = select.querySelectorAll('button');
 	const activateOption = option => {
 		options.forEach(el => {
@@ -303,8 +299,8 @@ const syncScroll = el => function() {
 input.addEventListener('scroll', syncScroll(outputContainer));
 outputContainer.addEventListener('scroll', syncScroll(input));
 
-const upload = document.getElementById('upload');
-const download = document.getElementById('download');
+const upload = $('upload');
+const download = $('download');
 
 const reader = new FileReader();
 let fileName;

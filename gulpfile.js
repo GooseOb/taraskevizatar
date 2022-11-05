@@ -12,42 +12,40 @@ const sass = require('gulp-sass')(require('sass'));
 const isDev = process.argv.includes('--dev');
 const isProd = !isDev;
 
-const getPathes = (src, dest = '') => ({
+const getPaths = (src, dest = '') => ({
 	src: 'src/' + src,
 	dest: 'docs/' + dest
 });
-
-const pathes = {
-	html: getPathes('index.html'),
-	og: getPathes('og.jpg'),
-	sw: getPathes('sw.js'),
-	manifest: getPathes('manifest.json'),
-	logo: getPathes('logo/**/*', 'logo'),
-	styles: getPathes('styles/*.sass', 'styles'),
-	fonts: getPathes('fonts/**/*', 'fonts'),
-	icons: getPathes('icons/**/*.svg', 'icons'),
-	scripts: {
-		src: ['srcs', 'tarask', 'script'].map(file => `src/js/${file}.js`),
-		dest: 'docs'
-	},
-};
-
-const src = fileType => gulp.src(pathes[fileType].src);
-const dest = fileType => gulp.dest(pathes[fileType].dest);
-
-const clean = () => del(['docs']);
-
-const getDestFileNames = (type, regExp) => {
-	return readdirSync(pathes[type].dest)
-		.filter(name => regExp.test(name));
-};
 
 const SCRIPTS = 'scripts';
 const STYLES = 'styles';
 const HTML = 'html';
 
+const paths = {
+	[HTML]: getPaths('index.html'),
+	og: getPaths('og.jpg'),
+	sw: getPaths('sw.js'),
+	manifest: getPaths('manifest.json'),
+	logo: getPaths('logo/**/*', 'logo'),
+	[STYLES]: getPaths('styles/*.sass', 'styles'),
+	fonts: getPaths('fonts/**/*', 'fonts'),
+	icons: getPaths('icons/**/*.svg', 'icons'),
+	[SCRIPTS]: {
+		src: ['srcs', 'tarask', 'script'].map(file => `src/js/${file}.js`),
+		dest: 'docs'
+	}
+};
+
+const src = fileType => gulp.src(paths[fileType].src);
+const dest = fileType => gulp.dest(paths[fileType].dest);
+
+const clean = () => del(['docs']);
+
+const getDestFileNames = (type, regExp) =>
+	readdirSync(paths[type].dest).filter(name => regExp.test(name));
+
 const html = () => src(HTML)
-	.pipe(replace(/<styles>/g, () => {
+	.pipe(replace('<styles/>', () => {
 		const fileNames = getDestFileNames(STYLES, /\.css$/);
 		const [main] = fileNames.filter(name => /^style/.test(name));
 		const [dark] = fileNames.filter(name => /^dark/.test(name));
@@ -55,7 +53,7 @@ const html = () => src(HTML)
 		const darkStyle = `<link rel='stylesheet' href='./styles/${dark}' id='dark-css' media='(prefers-color-scheme: dark)'>`;
 		return mainStyle + darkStyle;
 	}))
-	.pipe(replace(/<scripts>/g, () => {
+	.pipe(replace('<scripts/>', () => {
 		const [fileName] = getDestFileNames(SCRIPTS, /\.js$/);
 		return `<script defer src='./${fileName}'></script>`;
 	}))
@@ -65,9 +63,37 @@ const html = () => src(HTML)
 	}))
 	.pipe(dest(HTML));
 
+const GULP_MACROS = {
+	toPrototype(args) {
+		let [, name, body] = args.match(/(\S*)\,\s*\{((?:.|\s)*?)\}/);
+		body = body.trim()
+			.split(/,\s*/g)
+			.map(fn => {
+				const [name, argNum] = fn.split(':');
+				const areArgs = argNum !== '0';
+				const args = areArgs
+					? Array(+argNum).fill('a').map((arg, i) => arg + i).join(',')
+					: '';
+				return `${name}(${args}){return ${name}(this${areArgs ? (',' + args) : ''})}`;
+			})
+			.join(',');
+		return `Object.assign(${name}.prototype,{${body}})`;
+	},
+	toOneLine(words) {
+		return '\'' + words
+				.slice(1, words.length-1)
+				.trim()
+				.replace(/(?:[\n\r])+/g, '|')
+			+ '\'';
+	}
+}
+
 const scripts = () => {
 	const $ = src(SCRIPTS)
-		.pipe(concat('script.js'));
+		.pipe(concat('script.js'))
+		.pipe(replace(/GULP_MACROS\.(\S+)\(\(\(((?:.|\s)*?)\)\)\)/g,
+			($0, $1, $2) => GULP_MACROS[$1]($2.trim())
+		));
 	if (isProd) $
 		.pipe(uglify())
 		.pipe(replace(/^/, '(()=>{'))
@@ -122,7 +148,7 @@ const update = {
 
 const watch = () => {
 	[HTML, STYLES, SCRIPTS].forEach(item => {
-		gulp.watch(pathes[item].src, update[item]);
+		gulp.watch(paths[item].src, update[item]);
 	});
 };
 

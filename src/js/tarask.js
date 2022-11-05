@@ -1,30 +1,20 @@
-Object.assign(String.prototype, {
-	toTaraskConvert(arg1, arg2) {return toTaraskConvert(this, arg1, arg2)},
-	// toBel() {return toBel(this)},
-	toTarask() {return toTarask(this)},
-	toArab() {return toArab(this)},
-	toLatin(arg) {return toLatin(this, arg)},
-	toJ(arg) {return toJ(this, arg)}
-});
-Object.assign(Array.prototype, {
-	restoreRegister(value1) {return restoreRegister(this, value1)},
-	addColor(value) {return addColor(this, value)}
-});
+GULP_MACROS.toPrototype(((String, {
+	toTaraskConvert:2, toTarask:0, toArab:0, toLatin:1, toJ:1
+})));
+GULP_MACROS.toPrototype(((Array, {
+	restoreRegister:1, addColor:1
+})));
 const isUpCase = str => str === str.toUpperCase();
 
 function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 	const isArab = abc === 2;
-	const noFix = Array(text.match(/ !>/g)?.length || 0);
-	while (noFix.length > text.match(/<! /g)?.length) noFix.pop();
-	if (noFix.length) {
-		text = text.replace(/౦/g, '');
-		for (let i = 0; i < noFix.length; i++) {
-			text = text.replace(/<! /, '<!' + i).replace(/ !>/, i + '!>');
-			noFix[i] = text.match(/<!\d+(.+)\d+!>/)[1];
-			text = text.replace(/<!\d+.+\d+!>/, '౦');
-		};
-	};
+	const noFix = [];
+
 	text = ` ${text.trim()}  `
+		.replace(/<! ((?:.|\s)*?) !>/g, ($0, $1) => {
+			noFix[noFix.length] = $1;
+			return '౦'
+		})
 		.replace(/г'/g, 'ґ')
 		.replace(/(\n|\t)/g, ' $1 ')
 		.replace(/ - /g, ' — ')
@@ -69,19 +59,20 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 		};
 	};
 	if (noFix.length) text = text.replace(/౦/g, () => noFix.shift());
-	const regExp = isArab
-		? /(?:\([\p{L}’\- \u0600-\u06FF\u08AF]+\)){2,}/gu
-		: /(?:\([\p{L}’\- ]+\)){2,}/gu;
+	// const regExp = isArab
+	// 	? /(?:\([\p{L}’\- \u0600-\u06FF\u08AF]+\)){2,}/gu
+	// 	: /(?:\([\p{L}’\- ]+\)){2,}/gu;
+	const regExp = /\(.+?\)/g;
 	text = isColored
 		? text
 			.replace(regExp, $0 => {
-				$0 = $0.slice(1, -1).split(')(');
+				$0 = $0.slice(1, -1).split('|');
 				const main = $0.shift();
 				return `<tarL data-l='${$0}'>${main}</tarL>`;
 			})
 			.replace(/ \n /g, '<br>')
 		: text
-			.replace(regExp, $0 => $0.slice(1, -1).split(')(')[0]);
+			.replace(regExp, $0 => $0.slice(1, -1).split('|')[0]);
 
 	return text.trim();
 }
@@ -102,7 +93,7 @@ function restoreRegister(text, orig) {
 		if (word === 'зь') text[i] = isUpCase(orig[i + 1]) ? 'ЗЬ' : 'Зь'
 		else if (isUpCase(oWord[oWord.length - 1])) text[i] = word.toUpperCase()
 		else text[i] = word[0] === '('
-			? word.replace(/\(./g, $0 => $0.toUpperCase())
+			? word.replace(/[\(\|]./g, $0 => $0.toUpperCase())
 			: word[0].toUpperCase() + word.slice(1);
 	};
 
@@ -135,7 +126,7 @@ function addColor(text, orig) {
 				text[i] = word.replace(/[ую]/, '<tarF>$&</tarF>');
 				continue;
 		};
-		if (oWord.length !== word.replace(/\((\p{L}+)\)\(\p{L}+\)/gu, '$1').length) {
+		if (oWord.length !== word.replace(/\((\p{L}+)\|/gu, '$1').length) {
 			let fromStart = 0;
 			let fromWordEnd = word.length - 1;
 			const fromOWordEnd_StartValue = oWord.length - 1;
@@ -214,8 +205,8 @@ function toArab(text) {
 }
 
 function toJ(text, alwaysJ = false) {
-	return text.replace(/([аеёіоуыэюя] )і /g, '$1' + (alwaysJ
-		? 'й '
-		: $0 => Math.random() >= 0.5 ? 'й ' : $0
-	));
+	return text.replace(/([аеёіоуыэюя] )і /g, alwaysJ
+		? '$1й '
+		: ($0, $1) => Math.random() >= 0.5 ? ($1 + 'й ') : $0
+	);
 }

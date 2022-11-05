@@ -1,9 +1,12 @@
 {
   "name": "taraskevizatar",
   "author": "GooseOb",
-  "version": "1.0.0",
   "private": true,
   "license": "MIT",
+  "scripts": {
+    "dev": "gulp --dev && gulp watch --dev",
+    "build": "gulp && git add ."
+  },
   "devDependencies": {
     "del": "^6.0.0",
     "gulp": "^4.0.2",
