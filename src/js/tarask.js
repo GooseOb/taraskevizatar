@@ -62,7 +62,7 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 	// const regExp = isArab
 	// 	? /(?:\([\p{L}’\- \u0600-\u06FF\u08AF]+\)){2,}/gu
 	// 	: /(?:\([\p{L}’\- ]+\)){2,}/gu;
-	const regExp = /\(.+?\)/g;
+	const regExp = /\(.+?\|.+?\)/g;
 	text = isColored
 		? text
 			.replace(regExp, $0 => {
