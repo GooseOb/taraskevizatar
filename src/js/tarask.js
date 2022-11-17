@@ -19,7 +19,8 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 		.replace(/(\n|\t)/g, ' $1 ')
 		.replace(/ - /g, ' — ')
 		.replace(/(\p{P}|\p{S}|\d)/gu, ' $1 ')
-		.replace(/ ['`’] (?=\S)/g, '’');
+		.replace(/ ['`’] (?=\S)/g, '’')
+		.replace(/\(/g, '&#40');
 	let textSplit;
 	switch (abc) {
 		case 0: textSplit = text.split(' '); break;
@@ -41,7 +42,7 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 	text = text
 		.join(' ')
 		.replace(/&#160;/g, ' ')
-		.replace(/ (\p{P}|\p{S}|\d) /gu, '$1');
+		.replace(/ (\p{P}|\p{S}|\d|&#40) /gu, '$1');
 	if (isColored) {
 		switch (abc) {
 			case 0:
@@ -62,7 +63,7 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 	// const regExp = isArab
 	// 	? /(?:\([\p{L}’\- \u0600-\u06FF\u08AF]+\)){2,}/gu
 	// 	: /(?:\([\p{L}’\- ]+\)){2,}/gu;
-	const regExp = /\(.+?\|.+?\)/g;
+	const regExp = /\(.*?\|.*?\)/g;
 	text = isColored
 		? text
 			.replace(regExp, $0 => {
@@ -72,7 +73,8 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 			})
 			.replace(/ \n /g, '<br>')
 		: text
-			.replace(regExp, $0 => $0.slice(1, -1).split('|')[0]);
+			.replace(regExp, $0 => $0.slice(1, -1).split('|')[0])
+			.replace(/&#40/g, '(');
 
 	return text.trim();
 }
