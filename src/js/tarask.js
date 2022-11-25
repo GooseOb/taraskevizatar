@@ -30,7 +30,7 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 	text = text
 		.toLowerCase()
 		// .toBel()
-		.toTarask()
+		.toTarask();
 	if (j) text = text.toJ(j === 2);
 	switch (abc) {
 		case 1: text = text.toLatin(false); break;
@@ -124,33 +124,34 @@ function addColor(text, orig) {
 			case word1 + 'ь':
 				text[i] = word.slice(0, -1).replace(/ь/g, '<tarF>ь</tarF>') + 'ь';
 				continue;
-			case word.replace(/[ую]/, 'ір$&'):
-				text[i] = word.replace(/[ую]/, '<tarF>$&</tarF>');
+			case word.replace(/[аую]/, 'ір$&'):
+				text[i] = word.replace(/.[аую]/, '<tarF>$&</tarF>');
 				continue;
 		};
-		if (oWord.length !== word.replace(/\((\p{L}+)\|/gu, '$1').length) {
-			let fromStart = 0;
-			let fromWordEnd = word.length - 1;
-			const fromOWordEnd_StartValue = oWord.length - 1;
-			let fromOWordEnd = fromOWordEnd_StartValue;
 
-			while (word[fromStart] === oWord[fromStart])
-				fromStart++;
-			while (word[fromWordEnd] === oWord[fromOWordEnd])
-				fromWordEnd--, fromOWordEnd--;
+		let fromStart = 0;
+		let fromWordEnd = word.length - 1;
+		const fromOWordEnd_START_VALUE = oWord.length - 1;
+		let fromOWordEnd = fromOWordEnd_START_VALUE;
 
-			if (fromWordEnd < fromOWordEnd && fromStart !== fromWordEnd) { // калі ў зыходным слове больш літар
-				if (fromStart === 0 && fromOWordEnd === fromOWordEnd_StartValue) {
+		while (word[fromStart] === oWord[fromStart])
+			fromStart++;
+		while (word[fromWordEnd] === oWord[fromOWordEnd])
+			fromWordEnd--, fromOWordEnd--;
+
+		if (oWord.length > word.length) {
+			if (fromStart === 0) {
+				if (fromOWordEnd === fromOWordEnd_START_VALUE) {
 					text[i] = '<tarF>' + word + '</tarF>';
 					continue;
 				};
-				fromStart--, fromWordEnd++;
-			};
-
-			text[i] = word.slice(0, fromStart) +
-				'<tarF>' + word.slice(fromStart, fromWordEnd + 1) + '</tarF>'
-				+ word.slice(fromWordEnd + 1);
+			} else fromStart--, fromWordEnd++;
+			if (fromWordEnd < 0) fromWordEnd = 0;
 		};
+
+		text[i] = word.slice(0, fromStart) +
+			'<tarF>' + word.slice(fromStart, fromWordEnd + 1) + '</tarF>'
+			+ word.slice(fromWordEnd + 1);
 	};
 
 	return text;
