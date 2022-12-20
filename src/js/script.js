@@ -151,6 +151,8 @@ const promptGenerator = (function*() {
 	};
 })();
 
+const settingsElement = $('settings');
+
 const actions = {
 	clear() {
 		input.value = '';
