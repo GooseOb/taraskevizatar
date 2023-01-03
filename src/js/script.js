@@ -197,9 +197,7 @@ Array.from(document.getElementsByClassName('icon-btns')).forEach((div, i) => {
 
 themeButtons.forEach((el, i) => {
 	const themeId = +el.value;
-	const oppositeButton = i === 0
-		? themeButtons[1]
-		: themeButtons[0];
+	const oppositeButton = themeButtons[+!i];
 	el.addEventListener('click', () => {
 		if (el.checked) {
 			oppositeButton.checked = false;
@@ -305,7 +303,7 @@ const upload = $('upload');
 const download = $('download');
 
 const reader = new FileReader();
-let fileName;
+let textFile, fileName;
 reader.addEventListener('load', ({target}) => {
 	const text = target.result;
 	const taraskText = text
@@ -327,10 +325,9 @@ upload.addEventListener('change', function() {
 	this.value = null;
 });
 
-let textFile = null;
 function createTextFile(text) {
-	const data = new Blob([text], {type: 'text/plain'});
-	if (textFile !== null)
-		window.URL.revokeObjectURL(textFile);
-	return textFile = window.URL.createObjectURL(data);
+	if (textFile) URL.revokeObjectURL(textFile);
+	return textFile = URL.createObjectURL(
+		new Blob([text], {type: 'text/plain'})
+	);
 };
