@@ -1,15 +1,15 @@
 const cacheConfig = {
     names: ['html', 'css', 'js', 'static'],
     html: {
-        v: '2',
+        v: '3',
         files: ['index.html']
     },
     js: {
-        v: '9',
+        v: '10',
         files: ['script.js']
     },
     css: {
-        v: '1',
+        v: '2',
         files: [
             'styles/style.css',
             'styles/dark.css'

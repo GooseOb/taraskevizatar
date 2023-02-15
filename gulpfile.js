@@ -47,8 +47,8 @@ const getDestFileNames = (type, regExp) =>
 const html = () => src(HTML)
 	.pipe(replace('<styles/>', () => {
 		const fileNames = getDestFileNames(STYLES, /\.css$/);
-		const [main] = fileNames.filter(name => /^style/.test(name));
-		const [dark] = fileNames.filter(name => /^dark/.test(name));
+		const main = fileNames.find(name => /^style/.test(name));
+		const dark = fileNames.find(name => /^dark/.test(name));
 		const mainStyle = `<link rel='stylesheet' href='./styles/${main}'>`;
 		const darkStyle = `<link rel='stylesheet' href='./styles/${dark}' id='dark-css' media='(prefers-color-scheme: dark)'>`;
 		return mainStyle + darkStyle;
@@ -64,21 +64,7 @@ const html = () => src(HTML)
 	.pipe(dest(HTML));
 
 const GULP_MACROS = {
-	toPrototype(args) {
-		let [, name, body] = args.match(/(\S*)\,\s*\{((?:.|\s)*?)\}/);
-		body = body.trim()
-			.split(/,\s*/g)
-			.map(fn => {
-				const [name, argNum] = fn.split(':');
-				const areArgs = argNum !== '0';
-				const args = areArgs
-					? Array(+argNum).fill('a').map((arg, i) => arg + i).join(',')
-					: '';
-				return `${name}(${args}){return ${name}(this${areArgs ? (',' + args) : ''})}`;
-			})
-			.join(',');
-		return `Object.assign(${name}.prototype,{${body}})`;
-	},
+	CURRENT_TIME: () => (new Date).toLocaleDateString('ru'),
 	toOneLine(words) {
 		return '\'' + words
 				.slice(1, words.length-1)
@@ -91,8 +77,8 @@ const GULP_MACROS = {
 const scripts = () => {
 	const $ = src(SCRIPTS)
 		.pipe(concat('script.js'))
-		.pipe(replace(/GULP_MACROS\.(\S+)\(\(\(((?:.|\s)*?)\)\)\)/g,
-			($0, $1, $2) => GULP_MACROS[$1]($2.trim())
+		.pipe(replace(/GULP_MACROS\.(\S+)`((?:.|\s)*?)`/g,
+			($0, $1, $2) => GULP_MACROS[$1]($2)
 		));
 	if (isProd) $
 		.pipe(uglify())

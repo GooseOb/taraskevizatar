@@ -4,7 +4,7 @@ window.addEventListener('load', async () => {
 	try {
 		await navigator.serviceWorker.register(REPO_PATH + 'sw.js', {scope: REPO_PATH});
 	} catch (e) {
-		console.log('Service worker register fail', e);
+		console.warn('Service worker register fail', e);
 	}
 });
 
@@ -146,8 +146,9 @@ input.addEventListener('input', inputHandler);
 const promptGenerator = (function*() {
 	while(true) {
 		yield '<tarL class="demo">Гэтыя часьціны</tarL> можна зьмяняць, націскаючы на іх';
-		yield 'Літары <tarG class="demo">г/ґ</tarG> таксама можна зьмяняць націскам';
+		yield 'Літары <tarH class="demo">г/ґ</tarH> таксама можна зьмяняць націскам';
 		yield 'Тэкст, які ня трэба канвэртаваць, вылучайце: <span class="demo" style="color:red">&lt! тэкст !></span>';
+		yield 'Апошняе абнаўленьне: GULP_MACROS.CURRENT_TIME`hello guys`';
 	};
 })();
 
@@ -217,15 +218,15 @@ output.addEventListener('click', ({target: el}) => {
 			let data = el.dataset.l;
 			if (data.indexOf(',') !== -1) {
 				data = data.split(',');
-				data[data.length] = el.textContent;
-				el.textContent = data.shift();
+				data[data.length] = el.innerHTML;
+				el.innerHTML = data.shift();
 				el.dataset.l = data;
 				return;
 			};
-			el.dataset.l = el.textContent;
-			el.textContent = data;
+			el.dataset.l = el.innerHTML;
+			el.innerHTML = data;
 			return;
-		case 'TARG':
+		case 'TARH':
 			el.textContent = settings.abc === 2
 				? el.textContent === arabH ? arabG : arabH
 				: gobj[el.textContent]
@@ -248,13 +249,12 @@ const newSelect = (id, initialOption, callback) => {
 	activateOption(options[initialOption]);
 };
 
-newSelect('abc', settings.abc, value => {
-	settings.abc = value;
-	fixConvert();
-});
-newSelect('i-to-j', settings.j, value => {
-	settings.j = value;
-	fixConvert();
+const settingSelectIds = ['abc', 'j'];
+settingSelectIds.forEach(id => {
+	newSelect(id, settings[id], value => {
+		settings[id] = value;
+		fixConvert();
+	});
 });
 
 function convert(text) {
@@ -273,7 +273,7 @@ function convert(text) {
 		output: output.textContent.length
 	});
 
-	const spans = output.querySelectorAll('tarG, tarL');
+	const spans = output.querySelectorAll('tarH, tarL');
 	while (changeList.length < spans.length) changeList[changeList.length] = false;
 	while (changeList.length > spans.length) changeList.pop();
 	for (let i = 0; i < changeList.length; i++) {
