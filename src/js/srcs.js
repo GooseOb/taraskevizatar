@@ -1,4 +1,5 @@
-let wordlist, softers, arabLetters, latinLetters;
+let wordlist, softers, arabLetters, latinLetters, gobj;
+// json-start
 const latinLettersUpCase = {};
 
 const els1 = [];
@@ -92,7 +93,6 @@ wordlist = {
 ' азэн':/ азен/, // азена
 'айнштайн':/эйншэйн(?:ій)?/,
 'пэтальн':/петальн/, // акрапэтальны
-// 'аксэле':/акселе/, // аксэлератар, аксэлерограф
 ' аксэл':/ аксел/, // аксэлератар, аксэлерограф, аксэль
 'аксэра':/аксера/, // аксерафтол
 'фэнамід':/фенамід/, // аксафэнамід
@@ -265,7 +265,6 @@ wordlist = {
 	'легендар':/леґенд\(э\|а\)р/,
 ' генэ':/ гене/,
 'генэз':/генез/,
-'гер$1гліф':/іер(а|о)гліф/,
 'гератычн':/іератычн/,
 'г(е|э)р':/гер(?=о[ій] |аі)/,
 'ґібральтар':/гібралтар/,
@@ -1418,6 +1417,7 @@ wordlist = {
 	' райхск':/>хск/,
 '$1ўс':/([аеёіоуыэюя])вс/,
 '$1ар ':/((?:\S\S)д|т)р /,
+	' кндр ':/ кндар /,
 'маль ':/мль /,
 'сься ':/шся /,
 'нік ':/шчык /,
@@ -1469,6 +1469,9 @@ wordlist = {
 'ґ$1ртын':/г(э|е)ртын/,
 ' навіґа':/ навіга(?=ц|т)/,
 'ґе':/ге/,
+	' гера':/ ґера/, // геракратыя, гератычнае
+	'герэ':/ґерэ/, // -герэй
+'гер$1гліф':/іер(а|о)гліф/,
 /* Каранёвыя шыпячыя */
 'ждж':/здж/,
 ' пяшч':/ пясч/,
@@ -1756,20 +1759,7 @@ arabLetters = {
 // '؟':/\?/
 // };
 
-[wordlist, softers, arabLetters].forEach(obj => {
-	for (const key in obj) obj[key] = RegExp(obj[key], 'g');
-});
-for (const key in latinLetters) {
-	const letter = latinLetters[key];
-	latinLettersUpCase[key] = RegExp(letter.toUpperCase(), 'g');
-	latinLetters[key] = RegExp(letter, 'g');
-};
-while (gwords.length) {
-	const word = gwords.pop();
-	wordlist[word] = RegExp(word.replace(/ґ/g, 'г'), 'g');
-};
-
-const gobj = {
+gobj = {
 	'г':'ґ',
 	'Г':'Ґ',
 	'h':'g',
@@ -1779,4 +1769,22 @@ const gobj = {
 	'HIE':'GE',
 	'hIE':'gE',
 };
+while (gwords.length) {
+	const word = gwords.pop();
+	wordlist[word] = RegExp(word.replace(/ґ/g, 'г'), 'g');
+};
+// json-end
+
 for (const key in gobj) gobj[gobj[key]] = key;
+
+[wordlist, softers, arabLetters].forEach(obj => {
+	for (const key in obj) obj[key] = RegExp(obj[key], 'g');
+});
+
+for (const key in latinLetters) {
+	const letter = latinLetters[key];
+	let pattern = letter.toUpperCase();
+	if (letter.length > 1) pattern += '|' + letter[0].toUpperCase() + letter.slice(1);
+	latinLettersUpCase[key] = RegExp(pattern, 'g');
+	latinLetters[key] = RegExp(letter, 'g');
+};

@@ -6,8 +6,8 @@ Object.assign(String.prototype, {
 	toJ(arg) {return toJ(this, arg)}
 });
 Object.assign(Array.prototype, {
-	restoreRegister(value1) {return restoreRegister(this, value1)},
-	addColor(value) {return addColor(this, value)}
+	restoreRegister(arg) {return restoreRegister(this, arg)},
+	addColor(arg1, arg2) {return addColor(this, arg1, arg2)}
 });
 const isUpCase = str => str === str.toUpperCase();
 
@@ -42,7 +42,7 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 	};
 	text = text.split(' ');
 	if (!isArab) text = text.restoreRegister(textSplit);
-	if (isColored) text = text.addColor(textSplit);
+	if (isColored) text = text.addColor(textSplit, abc);
 	text = text
 		.join(' ')
 		.replace(/&#160;/g, ' ')
@@ -105,11 +105,15 @@ function restoreRegister(text, orig) {
 	return text;
 }
 
-function addColor(text, orig) {
+function addColor(text, orig, abc) {
 	for (let i = 0; i < text.length; i++) {
 		const  word = text[i];
 		const oWord = orig[i];
-		if (word === oWord || /\(/.test(word)) continue;
+		if (
+			word === oWord ||
+			/\(/.test(word) ||
+			(abc === 1 && oWord === word.replace(/[Gg][Ee]?/, $0 => gobj[$0]))
+		) continue;
 		if (word.length === oWord.length) {
 			const LettersText = word.split('');
 			for (let x = 0; x < LettersText.length; x++) {
@@ -119,17 +123,19 @@ function addColor(text, orig) {
 			text[i] = LettersText.join('');
 			continue;
 		};
-		const word1 = word.replace(/ь/g, '');
-		switch (oWord) {
-			case word1:
-				text[i] = word.replace(/ь/g, '<tarF>ь</tarF>');
-				continue;
-			case word1 + 'ь':
-				text[i] = word.slice(0, -1).replace(/ь/g, '<tarF>ь</tarF>') + 'ь';
-				continue;
-			case word.replace(/[аую]/, 'ір$&'):
-				text[i] = word.replace(/.[аую]/, '<tarF>$&</tarF>');
-				continue;
+		if (abc === 0) {
+			const word1 = word.replace(/ь/g, '');
+			switch (oWord) {
+				case word1:
+					text[i] = word.replace(/ь/g, '<tarF>ь</tarF>');
+					continue;
+				case word1 + 'ь':
+					text[i] = word.slice(0, -1).replace(/ь/g, '<tarF>ь</tarF>') + 'ь';
+					continue;
+				case word.replace(/[аую]/, 'ір$&'):
+					text[i] = word.replace(/.[аую]/, '<tarF>$&</tarF>');
+					continue;
+			};
 		};
 
 		let fromStart = 0;
@@ -145,7 +151,7 @@ function addColor(text, orig) {
 		if (oWord.length > word.length) {
 			if (fromStart === 0) {
 				if (fromOWordEnd === fromOWordEnd_START_VALUE) {
-					text[i] = '<tarF>' + word + '</tarF>';
+					text[i] = `<tarF>${word}</tarF>`;
 					continue;
 				};
 			} else fromStart--, fromWordEnd++;

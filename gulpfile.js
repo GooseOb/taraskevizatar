@@ -6,7 +6,7 @@ const replace = require('gulp-replace');
 const minCSS = require('gulp-clean-css');
 const minSVG = require('gulp-svgmin');
 const minHTML = require('gulp-htmlmin');
-const {readdirSync} = require('fs');
+const {readdirSync, promises: {readFile, writeFile}} = require('fs');
 const sass = require('gulp-sass')(require('sass'));
 
 const isDev = process.argv.includes('--dev');
@@ -33,6 +33,10 @@ const paths = {
 	[SCRIPTS]: {
 		src: ['srcs', 'tarask', 'script'].map(file => `src/js/${file}.js`),
 		dest: 'docs'
+	},
+	json: {
+		src: 'src/js/srcs.js',
+		dest: 'json'
 	}
 };
 
@@ -66,6 +70,7 @@ const html = () => src(HTML)
 const GULP_MACROS = {
 	CURRENT_TIME: () => (new Date).toLocaleDateString('ru'),
 	toOneLine(words) {
+		if (typeof words === 'object') [words] = words;
 		return '\'' + words
 				.slice(1, words.length-1)
 				.trim()
@@ -109,7 +114,26 @@ const icons = () => {
 			collapseWhitespace: true
 		}));
 	return $.pipe(dest('icons'));
-}
+};
+
+const regexToStr = obj => {
+	for (const key in obj) obj[key] = obj[key].source;
+	return obj;
+};
+const json = () => readFile(paths.json.src, 'utf-8').then(data => {
+	let wordlist, softers, gobj, latinLetters;
+	eval(
+		data.match(/\/\/ json-start([\S\s]+)\/\/ json-end/)[1]
+	);
+	return Promise.all([
+		['wordlist', regexToStr(wordlist)],
+		['softers', regexToStr(softers)],
+		['latinLetters', latinLetters],
+		['g', gobj]
+	].map(([fileName, obj]) =>
+		writeFile(`${paths.json.dest}/${fileName}.json`, JSON.stringify(obj))
+	));
+});
 
 const getFileMover = type => {
 	gulp.task(type, () => src(type).pipe(dest(type)));
@@ -141,14 +165,13 @@ const watch = () => {
 const build = gulp.series(
 	clean,
 	gulp.parallel(styles, scripts, fonts, icons, og, logo, manifest, sw),
-	html
+	gulp.parallel(html, json)
 );
 
 module.exports = {
 	default: build,
-	build,
 	watch,
 	clean,
-	icons,
-	...update
+	...update,
+	json
 };
