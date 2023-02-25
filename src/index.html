@@ -21,8 +21,8 @@
 		<h1>Тарашкевізатар</h1>
 	</div>
 	<div id='theme'>
-		<input type='checkbox' class='checkbox' id='theme-light' value='0' aria-label='Сьветлая'>
-		<input type='checkbox' class='checkbox' id='theme-dark' value='2' aria-label='Цёмная'>
+		<input type='checkbox' class='checkbox' id='theme-light' value='0' title='Сьветлая'>
+		<input type='checkbox' class='checkbox' id='theme-dark' value='2' title='Цёмная'>
 	</div>
 </header>
 
@@ -37,9 +37,9 @@
 			</div>
 			<div class='subcard-bottom'>
 				<div class='icon-btns' data-for='input'>
-					<button class='copy' aria-label='капіяваць'></button>
-					<button id='clear' aria-label='ачысьціць'></button>
-					<button id='info' aria-label='інфармацыя'></button>
+					<button class='copy' title='Капіяваць'></button>
+					<button id='clear' title='Ачысьціць'></button>
+					<button id='info' title='Інфармацыя'></button>
 				</div>
 				<div class='num-counter'>0</div>
 			</div>
@@ -53,9 +53,9 @@
 			</div>
 			<div class='subcard-bottom'>
 				<div class='icon-btns' data-for='output'>
-					<button class='copy' aria-label='капіяваць'></button>
-					<button id='showSettings' aria-label='налады'></button>
-					<button id='edit' aria-label='рэдагаваць рэзультат'></button>
+					<button class='copy' title='Капіяваць'></button>
+					<button id='showSettings' title='Налады'></button>
+					<button id='edit' title='Рэдагаваць рэзультат'></button>
 				</div>
 				<div class='num-counter'>0</div>
 			</div>
@@ -75,7 +75,7 @@
 					лацінскі
 				</button>
 				<button value='2'>
-					арабскі (не стандартызаваны)
+					арабскі (не&nbsp;стандартызаваны)
 				</button>
 				<div class='animation'></div>
 			</div>
@@ -104,7 +104,7 @@
 			<div class='options' id='file-convert'>
 				<button tabindex='-1'>
 					<input class='load-btn' type="file" id='upload'>
-					<label for='upload'>
+					<label for='upload' id='upload-label' title='Файл ня выбраны' data-title='Файл выбраны'>
 						Запампаваць
 					</label>
 				</button>

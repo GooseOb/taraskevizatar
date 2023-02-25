@@ -321,6 +321,7 @@ reader.addEventListener('load', ({target}) => {
 upload.addEventListener('change', function() {
 	const [file] = this.files;
 	fileName = file.name;
+	activateUpload();
 	reader.readAsText(file);
 	this.value = null;
 });
@@ -331,3 +332,9 @@ function createTextFile(text) {
 		new Blob([text], {type: 'text/plain'})
 	);
 };
+
+function activateUpload() {
+	const uploadLabel = $('upload-label');
+	uploadLabel.title = uploadLabel.dataset.title;
+	activateUpload = null;
+}
