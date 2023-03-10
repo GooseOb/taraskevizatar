@@ -11,14 +11,17 @@ Object.assign(Array.prototype, {
 });
 const isUpCase = str => str === str.toUpperCase();
 
+const NOFIX_CHAR = '\uffff';
+const NOFIX_REGEX = new RegExp(NOFIX_CHAR, 'g');
+
 function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 	const isArab = abc === 2;
 	const noFix = [];
 
 	text = ` ${text.trim()}  `
-		.replace(/<! ((?:.|\s)*?) !>/g, $1 => {
+		.replace(/<! ((?:.|\s)*?) !>/g, ($0, $1) => {
 			noFix[noFix.length] = $1;
-			return '౦'
+			return NOFIX_CHAR;
 		})
 		.replace(/г'/g, 'ґ')
 		.replace(/(\n|\t)/g, ' $1 ')
@@ -62,7 +65,7 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 			default: text = text.replace(/غ/g, '<tarH>ه</tarH>');
 		};
 	};
-	if (noFix.length) text = text.replace(/౦/g, () => noFix.shift());
+	if (noFix.length) text = text.replace(NOFIX_REGEX, () => noFix.shift());
 	// const regExp = isArab
 	// 	? /(?:\([\p{L}’\- \u0600-\u06FF\u08AF]+\)){2,}/gu
 	// 	: /(?:\([\p{L}’\- ]+\)){2,}/gu;

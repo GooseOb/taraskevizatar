@@ -209,8 +209,6 @@ themeButtons.forEach((el, i) => {
 	});
 });
 
-const arabH = 'غ';
-const arabG = 'ه';
 output.addEventListener('click', ({target: el}) => {
 	if ('num' in el) changeList[el.num] = !changeList[el.num];
 	switch(el.tagName) {
@@ -227,9 +225,7 @@ output.addEventListener('click', ({target: el}) => {
 			el.innerHTML = data;
 			return;
 		case 'TARH':
-			el.textContent = settings.abc === 2
-				? el.textContent === arabH ? arabG : arabH
-				: gobj[el.textContent]
+			el.textContent = gobj[el.textContent];
 	};
 });
 
@@ -265,9 +261,7 @@ function convert(text) {
 		return;
 	};
 
-	const taraskText = text.toTaraskConvert(true, settings);
-
-	output.innerHTML = taraskText;
+	output.innerHTML = text.toTaraskConvert(true, settings);
 	counters.set({
 		input: text.length,
 		output: output.textContent.length
