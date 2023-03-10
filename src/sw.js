@@ -9,7 +9,7 @@ const cacheConfig = {
         files: ['script.js']
     },
     css: {
-        v: '5',
+        v: '6',
         files: [
             'styles/style.css',
             'styles/dark.css'
