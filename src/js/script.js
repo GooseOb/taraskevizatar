@@ -151,7 +151,7 @@ const promptGenerator = (function*() {
 		yield '<tarL class="demo">Гэтыя часьціны</tarL> можна зьмяняць, націскаючы на іх';
 		yield 'Літары <tarH class="demo">г/ґ</tarH> таксама можна зьмяняць націскам';
 		yield 'Тэкст, які ня трэба канвэртаваць, вылучайце: <span class="demo" style="color:red">&lt! тэкст !&gt</span>';
-		yield 'Апошняе абнаўленьне: GULP_MACROS.CURRENT_TIME`hello guys`';
+		yield 'Апошняе абнаўленьне: GULP.CURRENT_DATE';
 	};
 })();
 

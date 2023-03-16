@@ -67,23 +67,11 @@ const html = () => src(HTML)
 	}))
 	.pipe(dest(HTML));
 
-const GULP_MACROS = {
-	CURRENT_TIME: () => (new Date).toLocaleDateString('ru'),
-	toOneLine(words) {
-		if (typeof words === 'object') [words] = words;
-		return '\'' + words
-				.slice(1, words.length-1)
-				.trim()
-				.replace(/(?:[\n\r])+/g, '|')
-			+ '\'';
-	}
-}
-
 const scripts = () => {
 	const $ = src(SCRIPTS)
 		.pipe(concat('script.js'))
-		.pipe(replace(/GULP_MACROS\.(\S+)`((?:.|\s)*?)`/g,
-			($0, $1, $2) => GULP_MACROS[$1]($2)
+		.pipe(replace(/GULP\.CURRENT_DATE/g,
+			(new Date).toLocaleDateString('ru')
 		));
 	if (isProd) $
 		.pipe(uglify())
