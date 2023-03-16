@@ -106,12 +106,13 @@ const inputHandler = debounce(({target}) => {
 	localStorage.text = text;
 }, 200);
 
-input.fixHeight = function() {
-	this.style.height = 0;
-	const newHeight = this.scrollHeight + 1;
-	this.style.height = newHeight + 'px';
-};
-Object.assign(input, localStorage.text ? {
+Object.assign(input, {
+	fixHeight() {
+		this.style.height = 0;
+		const newHeight = this.scrollHeight + 1;
+		this.style.height = newHeight + 'px';
+	}
+},localStorage.text ? {
 	value: localStorage.text
 } : {
 	value: DEFAULT_TEXT,
@@ -126,28 +127,30 @@ Object.assign(input, localStorage.text ? {
 
 const fixConvert = () => convert(input.value);
 
-const snackbarTimeouts = {};
-const snackbar = (id, msg = null, visiblityTime = 1000) => {
-	const el = $('sb-' + id);
-	if (msg) el.innerHTML = msg;
-	el.classList.remove('hidden');
-	const timeout = setTimeout(() => {
-		el.classList.add('hidden');
-	}, visiblityTime);
-	const prevTimeout = snackbarTimeouts[id];
-	if (prevTimeout) clearTimeout(prevTimeout);
-	snackbarTimeouts[id] = timeout;
-};
+const snackbar = Object.assign($('snackbar'), {
+	_lastTimeout: 0,
+	show(msg, visibilityTime = 1000) {
+		this.innerHTML = msg;
+		this.classList.remove('hidden');
+		clearTimeout(this._lastTimeout);
+		this._lastTimeout = setTimeout(() => {
+			this.classList.add('hidden');
+		}, visibilityTime);
+	}
+});
 
 fixConvert();
 
 input.addEventListener('input', inputHandler);
+window.addEventListener('keyup', e => {
+	if (e.ctrlKey && e.code === 'KeyA') input.select();
+});
 
 const promptGenerator = (function*() {
 	while(true) {
 		yield '<tarL class="demo">Гэтыя часьціны</tarL> можна зьмяняць, націскаючы на іх';
 		yield 'Літары <tarH class="demo">г/ґ</tarH> таксама можна зьмяняць націскам';
-		yield 'Тэкст, які ня трэба канвэртаваць, вылучайце: <span class="demo" style="color:red">&lt! тэкст !></span>';
+		yield 'Тэкст, які ня трэба канвэртаваць, вылучайце: <span class="demo" style="color:red">&lt! тэкст !&gt</span>';
 		yield 'Апошняе абнаўленьне: GULP_MACROS.CURRENT_TIME`hello guys`';
 	};
 })();
@@ -163,7 +166,7 @@ const actions = {
 	},
 	info() {
 		const prompt = promptGenerator.next().value;
-		snackbar('info', prompt, 2500);
+		snackbar.show(prompt, 2500);
 	},
 	showSettings() {
 		settingsElement.classList.toggle('hidden');
@@ -171,7 +174,7 @@ const actions = {
 	edit() {
 		const isContentEditable = !output.isContentEditable;
 		output.contentEditable = isContentEditable;
-		snackbar('edit', isContentEditable
+		snackbar.show(isContentEditable
 			? EDIT_ENABLE
 			: EDIT_DISABLE
 		);
@@ -189,7 +192,7 @@ Array.from(document.getElementsByClassName('icon-btns')).forEach((div, i) => {
 		if (el === div) return;
 		if (el.classList.contains('copy')) {
 			navigator.clipboard.writeText(getText());
-			snackbar('copy');
+			snackbar.show('Скапіявана');
 			return;
 		};
 		actions[el.id]();
@@ -309,7 +312,7 @@ reader.addEventListener('load', ({target}) => {
 		download: 'tarask-' + fileName
 	});
 	download.parentElement.classList.add('active');
-	snackbar('file-convert', null, 1500);
+	snackbar.show('Файл сканвэртаваны, можна спампоўваць', 1500);
 });
 
 upload.addEventListener('change', function() {

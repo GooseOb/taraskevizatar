@@ -7,14 +7,14 @@ Object.assign(String.prototype, {
 });
 Object.assign(Array.prototype, {
 	restoreRegister(arg) {return restoreRegister(this, arg)},
-	addColor(arg1, arg2) {return addColor(this, arg1, arg2)}
+	toHtmlTags(arg1, arg2) {return toHtmlTags(this, arg1, arg2)}
 });
 const isUpCase = str => str === str.toUpperCase();
 
 const NOFIX_CHAR = '\uffff';
 const NOFIX_REGEX = new RegExp(NOFIX_CHAR, 'g');
 
-function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
+function toTaraskConvert(text, isHtml, {abc = 0, j = 0}) {
 	const isArab = abc === 2;
 	const noFix = [];
 
@@ -45,12 +45,12 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 	};
 	text = text.split(' ');
 	if (!isArab) text = text.restoreRegister(textSplit);
-	if (isColored) text = text.addColor(textSplit, abc);
+	if (isHtml) text = text.toHtmlTags(textSplit, abc);
 	text = text
 		.join(' ')
 		.replace(/&#160;/g, ' ')
 		.replace(/ (\p{P}|\p{S}|\d|&#40) /gu, '$1');
-	if (isColored) {
+	if (isHtml) {
 		switch (abc) {
 			case 0:
 				text = text
@@ -70,7 +70,7 @@ function toTaraskConvert(text, isColored, {abc = 0, j = 0}) {
 	// 	? /(?:\([\p{L}’\- \u0600-\u06FF\u08AF]+\)){2,}/gu
 	// 	: /(?:\([\p{L}’\- ]+\)){2,}/gu;
 	const regExp = /\(.*?\)/g;
-	text = isColored
+	text = isHtml
 		? text
 			.replace(regExp, $0 => {
 				$0 = $0.slice(1, -1).split('|');
@@ -108,7 +108,7 @@ function restoreRegister(text, orig) {
 	return text;
 }
 
-function addColor(text, orig, abc) {
+function toHtmlTags(text, orig, abc) {
 	for (let i = 0; i < text.length; i++) {
 		const  word = text[i];
 		const oWord = orig[i];
