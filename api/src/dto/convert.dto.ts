@@ -1,5 +1,5 @@
 export class ConvertDto {
-  text: string
-  alphabet: number
-  alwaysJ: number
+  text: string;
+  alphabet: number;
+  alwaysJ: number;
 }
