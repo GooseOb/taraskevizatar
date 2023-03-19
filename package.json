@@ -1,23 +1,26 @@
 {
   "name": "taraskevizatar",
-  "author": "GooseOb",
-  "private": true,
-  "license": "MIT",
   "scripts": {
-    "dev": "gulp --dev && gulp watch --dev",
-    "build": "gulp && git add ."
+    "dev": "webpack serve",
+    "build": "node jsonGenerator.js && webpack --mode production"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GooseOb/taraskevizatar.git"
+  },
+  "author": "GooseOb",
+  "license": "MIT",
   "devDependencies": {
-    "del": "^6.0.0",
-    "gulp": "^4.0.2",
-    "gulp-clean-css": "^4.3.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-htmlmin": "^5.0.1",
-    "gulp-replace": "^1.1.3",
-    "gulp-sass": "^5.1.0",
-    "gulp-svgmin": "^4.1.0",
-    "gulp-uglify": "^3.0.2",
-    "local-web-server": "^5.2.1",
-    "sass": "^1.54.9"
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.7.3",
+    "mini-css-extract-plugin": "^2.7.5",
+    "remove-files-webpack-plugin": "^1.5.0",
+    "sass": "^1.59.3",
+    "sass-loader": "^13.2.1",
+    "ts-loader": "^9.4.2",
+    "typescript": "^5.0.2",
+    "webpack": "^5.76.2",
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-server": "^4.13.1"
   }
 }

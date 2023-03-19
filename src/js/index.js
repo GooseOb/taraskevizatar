@@ -1,3 +1,5 @@
+import {gobj, toTaraskConvert} from '/external';
+
 window.addEventListener('load', async () => {
 	if (!navigator.serviceWorker) return;
 	const REPO_PATH = '/taraskevizatar/';
@@ -70,7 +72,7 @@ if (localStorage.settings) {
 const settings = new Proxy(stgs, {
 	set(target, name, value) {
 		target[name] = value;
-		localStorage.settings = JSON.stringify(target);
+		return localStorage.settings = JSON.stringify(target);
 	}
 });
 
@@ -151,7 +153,7 @@ const promptGenerator = (function*() {
 		yield '<tarL class="demo">Гэтыя часьціны</tarL> можна зьмяняць, націскаючы на іх';
 		yield 'Літары <tarH class="demo">г/ґ</tarH> таксама можна зьмяняць націскам';
 		yield 'Тэкст, які ня трэба канвэртаваць, вылучайце: <span class="demo" style="color:red">&lt! тэкст !&gt</span>';
-		yield 'Апошняе абнаўленьне: GULP.CURRENT_DATE';
+		yield 'Апошняе абнаўленьне: ' + __BUILD_DATE__;
 	};
 })();
 
@@ -264,7 +266,7 @@ function convert(text) {
 		return;
 	};
 
-	output.innerHTML = text.toTaraskConvert(true, settings);
+	output.innerHTML = toTaraskConvert(text, true, settings);
 	counters.set({
 		input: text.length,
 		output: output.textContent.length
@@ -303,9 +305,9 @@ const reader = new FileReader();
 let textFile, fileName;
 reader.addEventListener('load', ({target}) => {
 	const text = target.result;
-	const taraskText = text
-		.replace(/\r/g, '')
-		.toTaraskConvert(false, settings)
+	const taraskText = toTaraskConvert(text
+		.replace(/\r/g, ''),
+		false, settings)
 		.replace(/\s(\n|\t)\s/g, '$1');
 	Object.assign(download, {
 		href: createTextFile(taraskText),

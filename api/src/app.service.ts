@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/scripts'
 import { toTaraskConvert } from './scripts/tarask'
 
 @Injectable()

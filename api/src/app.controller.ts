@@ -1,4 +1,4 @@
-import {Body, Controller, Post} from '@nestjs/common'
+import {Body, Controller, Post} from '@nestjs/scripts'
 import {AppService} from './app.service';
 import {ConvertDto} from './dto/convert.dto'
 

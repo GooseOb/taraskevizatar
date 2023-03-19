@@ -1,1 +1,145 @@
-<!DOCTYPE html><html lang="be" prefix="og: https://ogp.me/ns#"><head><meta charset="UTF-8"><meta name="google-site-verification" content="KXZiQUL_exzHelg3wyKaRXTU81VO7DujMLGUekdj_ns"><meta name="viewport" content="width=device-width,initial-scale=1"><meta property="og:title" content="Тарашкевізатар"><meta name="description" content="Пераклад наркамаўкі ў клясычны правапіс"><meta property="og:description" content="Пераклад наркамаўкі ў клясычны правапіс"><meta property="og:url" content="https://gooseob.github.io/taraskevizatar/"><meta property="og:image" content="og.jpg"><title>Тарашкевізатар</title><link rel="manifest" href="manifest.json"><link rel="icon" type="image/x-icon" href="./logo/144.png"><link rel="stylesheet" href="./styles/style.css"><link rel="stylesheet" href="./styles/dark.css" id="dark-css" media="(prefers-color-scheme: dark)"><script defer="defer" src="./script.js"></script></head><body><header><div><h1>Тарашкевізатар</h1></div><div id="theme"><input type="checkbox" class="checkbox" id="theme-light" value="0" title="Сьветлая"> <input type="checkbox" class="checkbox" id="theme-dark" value="2" title="Цёмная"></div></header><main><div class="main-card"><div class="subcard" id="official"><div class="header"><div class="name">Афіцыйны</div></div><div class="textfield-cont"><textarea id="input" class="textfield scrollbar" placeholder="Тэкст"></textarea></div><div class="subcard-bottom"><div class="icon-btns" data-for="input"><button class="copy" title="Капіяваць"></button> <button id="clear" title="Ачысьціць"></button> <button id="info" title="Інфармацыя"></button></div><div class="num-counter">0</div></div></div><div class="subcard" id="classic"><div class="header"><div class="name">Клясычны</div></div><div class="textfield-cont scrollbar"><div id="output" class="textfield"></div></div><div class="subcard-bottom"><div class="icon-btns" data-for="output"><button class="copy" title="Капіяваць"></button> <button id="showSettings" title="Налады"></button> <button id="edit" title="Рэдагаваць рэзультат"></button></div><div class="num-counter">0</div></div></div></div><div id="settings"><div class="select"><div class="title">Альфабэт</div><div class="options" id="abc"><button value="0">кірылічны</button> <button value="1">лацінскі</button> <button value="2">арабскі<div class="small">(не&nbsp;стандартызаваны)</div></button><div class="animation"></div></div></div><div class="select"><div class="title">і > й пасьля галосных</div><div class="options" id="j"><button value="0">ніколі</button> <button value="1">выпадкова</button> <button value="2">заўсёды</button><div class="animation"></div></div></div><div class="select"><div class="title">Канвэртацыя файлу</div><div class="options" id="file-convert"><button tabindex="-1"><input class="load-btn" type="file" id="upload"> <label for="upload" id="upload-label" title="Файл ня выбраны" data-title="Файл выбраны">Запампаваць</label></button> <button tabindex="-1"><a class="load-btn" id="download" href="#">Спампаваць</a></button></div></div><div class="select"><div class="title">Напісаць распрацоўніку</div><div class="options one-option" id="contacts"><button tabindex="-1"><a href="https://t.me/GooseOb">Тэлеграм</a></button></div></div></div></main><footer><p>Базуецца на <a target="_blank" href="https://knihi.com/storage/pravapis2005.html">БКП-2005</a></p><p>(c) 2021-2022 GooseOb</p></footer><div class="hidden" id="snackbar"></div></body></html>
+<!DOCTYPE html>
+<html lang='be' prefix='og: https://ogp.me/ns#'>
+<head>
+	<meta charset='UTF-8'>
+	<meta name='google-site-verification' content='KXZiQUL_exzHelg3wyKaRXTU81VO7DujMLGUekdj_ns'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<meta property='og:title' content='Тарашкевізатар'>
+	<meta name='description' content='Пераклад наркамаўкі ў клясычны правапіс'>
+	<meta property='og:description' content='Пераклад наркамаўкі ў клясычны правапіс'>
+	<meta property='og:url' content='https://gooseob.github.io/taraskevizatar/'>
+	<meta property='og:image' content='og.jpg'>
+	<title>Тарашкевізатар</title>
+	<link rel="manifest" href="manifest.json">
+	<link rel='icon' type='image/x-icon' href='./logo/144.png'>
+	<link rel='stylesheet' href='./styles/style.css'>
+	<link rel='stylesheet' href='./styles/dark.css' id='dark-css' media='(prefers-color-scheme: dark)'>
+	<script defer src='./index.js'></script>
+</head>
+<body>
+<header>
+	<div>
+		<h1>Тарашкевізатар</h1>
+	</div>
+	<div id='theme'>
+		<input type='checkbox' class='checkbox' id='theme-light' value='0' title='Сьветлая'>
+		<input type='checkbox' class='checkbox' id='theme-dark' value='2' title='Цёмная'>
+	</div>
+</header>
+
+<main>
+	<div class='main-card'>
+		<div class='subcard' id='official'>
+			<div class='header'>
+				<div class='name'>Афіцыйны</div>
+			</div>
+			<div class='textfield-cont'>
+				<textarea id='input' class='textfield scrollbar' placeholder='Тэкст'></textarea>
+			</div>
+			<div class='subcard-bottom'>
+				<div class='icon-btns' data-for='input'>
+					<button class='copy' title='Капіяваць'></button>
+					<button id='clear' title='Ачысьціць'></button>
+					<button id='info' title='Інфармацыя'></button>
+				</div>
+				<div class='num-counter'>0</div>
+			</div>
+		</div>
+		<div class='subcard' id='classic'>
+			<div class='header'>
+				<div class='name'>Клясычны</div>
+			</div>
+			<div class='textfield-cont scrollbar'>
+				<div id='output' class='textfield'></div>
+			</div>
+			<div class='subcard-bottom'>
+				<div class='icon-btns' data-for='output'>
+					<button class='copy' title='Капіяваць'></button>
+					<button id='showSettings' title='Налады'></button>
+					<button id='edit' title='Рэдагаваць рэзультат'></button>
+				</div>
+				<div class='num-counter'>0</div>
+			</div>
+		</div>
+	</div>
+
+	<div id='settings'>
+		<div class='select'>
+			<div class='title'>
+				Альфабэт
+			</div>
+			<div class='options' id='abc'>
+				<button value='0'>
+					кірылічны
+				</button>
+				<button value='1'>
+					лацінскі
+				</button>
+				<button value='2'>
+					арабскі
+					<div class="small">(не&nbsp;стандартызаваны)</div>
+				</button>
+				<div class='animation'></div>
+			</div>
+		</div>
+		<div class='select'>
+			<div class='title'>
+				і > й пасьля галосных
+			</div>
+			<div class='options' id='j'>
+				<button value='0'>
+					ніколі
+				</button>
+				<button value='1'>
+					выпадкова
+				</button>
+				<button value='2'>
+					заўсёды
+				</button>
+				<div class='animation'></div>
+			</div>
+		</div>
+		<div class='select'>
+			<div class='title'>
+				Канвэртацыя файлу
+			</div>
+			<div class='options' id='file-convert'>
+				<button tabindex='-1'>
+					<input class='load-btn' type="file" id='upload'>
+					<label for='upload' id='upload-label' title='Файл ня выбраны' data-title='Файл выбраны'>
+						Запампаваць
+					</label>
+				</button>
+				<button tabindex='-1'>
+					<a class='load-btn' id='download' href='#'>
+						Спампаваць
+					</a>
+				</button>
+			</div>
+		</div>
+		<div class='select'>
+			<div class='title'>
+				Напісаць распрацоўніку
+			</div>
+			<div class='options one-option' id='contacts'>
+				<button tabindex='-1'>
+					<a href='https://t.me/GooseOb'>
+						Тэлеграм
+					</a>
+				</button>
+			</div>
+		</div>
+	</div>
+</main>
+
+<footer>
+	<p>
+		Базуецца на
+		<a target='_blank' href='https://knihi.com/storage/pravapis2005.html'>БКП-2005</a>
+	</p>
+	<p>(c) 2021-2022 GooseOb</p>
+</footer>
+
+<div class='hidden' id='snackbar'></div>
+</body>
+</html>

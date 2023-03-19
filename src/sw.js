@@ -5,11 +5,11 @@ const cacheConfig = {
         files: ['index.html']
     },
     js: {
-        v: '15',
-        files: ['script.js']
+        v: '16',
+        files: ['index.js']
     },
     css: {
-        v: '7',
+        v: '8',
         files: [
             'styles/style.css',
             'styles/dark.css'

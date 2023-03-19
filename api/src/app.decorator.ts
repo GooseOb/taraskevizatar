@@ -1,4 +1,4 @@
-import { createParamDecorator, ExecutionContext, BadRequestException } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext, BadRequestException } from '@nestjs/scripts';
 import * as rawBody from "raw-body";
 
 export const PlainBody = createParamDecorator(async (_, context: ExecutionContext) => {
