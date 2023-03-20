@@ -1,19 +1,19 @@
-let wordlist, softers, arabLetters, latinLetters, latinLettersUpCase, gobj;
-// json-start
-// const latinLettersUpCase = {};
+type rawDict = {[key: string]: RegExp | string};
+type dict = {[key: string]: RegExp};
 
-const els1 = [];
+const els1: string[] = [];
 els1[0] = 'сканд|ванад|рубід|род|ірыд|рэзэрфорд|';
 els1[1] = 'стронц|бар|цэр|лютэц|самар| тор|амэрыц|кальц|кюр|дармштат|лівэрмор|натр';
 els1[2] = els1[1] + 'тэхнэц|прамэт|майтнэр|капэрніц';
 els1[3] = els1[0] + 'паляд|' + els1[2];
-const els2 = [];
+const els2: string[] = [];
 els2[0] = 'алюмін|магн|крэмн|цыркон|ніоб|рутэн|кадм|цэз|гафн|рэн|осм|эўроп|гандалін|тэрб|дыспроз|гольм| эрб|ітэрб|актын|пратактын|нэптун|плютон|каліфорн|фэрм|ляўрэнс|дубн|рэнтген|ніхон';
 els2[1] = els2[0] + '|айнштайн|мендзялев|сыборг|гас|флеров';
-const els3 = ' гал|гел|бэрыл|тул|бэркл|набэл|кал';
+const els3: string = ' гал|гел|бэрыл|тул|бэркл|набэл|кал';
 
-const toOneLine = str => str.replace(/\n/g, '|');
-const ia = (word, words) => ` ${word} (?=\\(?(?:[бвгджзйклмнпстфцчшў]*[оё]|${
+const toOneLine = (str: string): string =>
+	str.replace(/\n/g, '|');
+const ia = (word: string, words: string) => ` ${word} (?=\\(?(?:[бвгджзйклмнпстфцчшў]*[оё]|${
 	words.replace(/\(/g, '(?:')
 }|${iwords}))`;
 
@@ -68,7 +68,7 @@ const iwords = toOneLine(`і(
 ць?він
 шыяс)`);
 
-wordlist = {
+const wordlist: rawDict = {
 /* А */
 'аахэн':/аахен/,
 'абанэн':/абанен(?=т|ц)/,
@@ -796,7 +796,7 @@ wordlist = {
 	'спадзеве ':/спадзяванні /,
 	'спадзеву ':/спадзяванню /,
 	'спадзева':/спадзявання/,
-'спэ':/спе(ц|кт)/,
+'спэ':/спе(?=ц|кт)/,
 'стоўпц':/стоўбц/,
 'стра(ў|ву)с':/страус/,
 'стуардэс':/сцюардэс/,
@@ -1498,7 +1498,7 @@ wordlist = {
 ' расе(й|яў) ':/ расей /,
 };
 
-softers = {
+const softers: rawDict = {
 '$1ь$1':/([лнц])\1(?=[еёіюяь])/,
 '$1дзьдз':/(\S\S)дз?дз(?=[еёіюяь])/,
 	'аддз$1л':/адзьдз(е|я)л/,
@@ -1614,7 +1614,7 @@ const gwords = [
 'энэрґ',
 ].reverse();
 
-latinLetters = {
+const latinLetters: rawDict = {
 '$1je':'([аеёіоуыюяь’ ]\\(?)е',
 '$1jo':'([аеёіоуыюяь’ ]\\(?)ё',
 '$1ju':'([аеёіоуыюяь’ ]\\(?)ю',
@@ -1662,7 +1662,7 @@ latinLetters = {
 'li':'łi'
 };
 
-latinLettersUpCase = {
+const latinLettersUpCase: dict = {
 '$1JE':/([AEIOUŬYАЕЁІЎУЫЯЮЬ ]\(?)Е(?=\p{Lu})/u,
 '$1JO':/([AEIOUŬYАЕЁІЎУЫЯЮЬ ]\(?)Ё(?=\p{Lu})/u,
 '$1JU':/([AEIOUŬYАЕЁІЎУЫЯЮЬ ]\(?)Ю(?=\p{Lu})/u,
@@ -1721,7 +1721,7 @@ latinLettersUpCase = {
 const soft = '\u0652(?=[еёіюяь])';
 const presoft = '([تزكثࢮбвгджзйклмнпрстфхцчшў])\u0652?(\u0651?)';
 
-arabLetters = {
+const arabLetters: rawDict = {
 ' لا':/ л[ая]/,
 'ـلا':/л[ая]/,
 '$1\u0651':/([бвгджзйклмнпрстфхцчшў]|д[зж])\1/, // падваеньне зычнага, шадда
@@ -1824,7 +1824,7 @@ arabLetters = {
 // '؟':/\?/
 // };
 
-gobj = {
+const gobj: ({[key: string]: string}) = {
 	'г':'ґ',
 	'Г':'Ґ',
 	'h':'g',
@@ -1838,8 +1838,7 @@ gobj = {
 while (gwords.length) {
 	const word = gwords.pop();
 	wordlist[word] = RegExp(word.replace(/ґ/g, 'г'), 'g');
-};
-// json-end
+}
 
 for (const key in gobj) gobj[gobj[key]] = key;
 

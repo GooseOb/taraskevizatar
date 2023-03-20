@@ -1,33 +1,29 @@
 const path = require('path');
 const {
-    promises: {readFile, writeFile},
+    promises: {writeFile},
     existsSync, mkdirSync
 } = require('fs');
 
-const paths = {
-    input: path.resolve(__dirname, 'scripts', 'srcs.ts'),
-    output: path.resolve(__dirname, 'json')
-}
+const outputPath = path.resolve(__dirname, 'json');
 
-if (!existsSync(paths.output))
-    mkdirSync(paths.output);
+if (!existsSync(outputPath))
+    mkdirSync(outputPath);
 
 const regexToStr = obj => {
     for (const key in obj) obj[key] = obj[key].source;
     return obj;
 };
 
-readFile(paths.input, 'utf-8').then(data => {
+module.exports = function(source) {
     let wordlist, softers, gobj, latinLetters;
-    eval(
-        data.match(/\/\/ json-start([\S\s]+)\/\/ json-end/)[1]
-    );
-    return Promise.all([
+    eval(source.replace(/const|exports\.|"use strict";/g, ''));
+    Promise.all([
         ['wordlist', regexToStr(wordlist)],
         ['softers', regexToStr(softers)],
         ['latinLetters', latinLetters],
         ['g', gobj]
     ].map(([fileName, obj]) =>
-        writeFile(`${paths.output}/${fileName}.json`, JSON.stringify(obj))
+        writeFile(`${outputPath}/${fileName}.json`, JSON.stringify(obj))
     ));
-});
+    return source;
+};

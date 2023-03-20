@@ -1,2 +1,2 @@
 export {toTaraskConvert} from './tarask'
-export {gobj} from './srcs'
+export {gobj} from './dict'

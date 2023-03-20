@@ -16,10 +16,11 @@ const styleCacheGroups = groups => groups.reduce((acc, name) =>
         }
     }), {});
 
-module.exports = {
-    mode: 'none',
-    context: relativePath('src'),
-    // devtool: 'source-map',
+const tsRegex = /\.ts$/;
+const dictRegex = /dict.ts$/;
+
+const cfg = {
+    context: relativePath('client'),
     entry: {
         index: '/js/index.js',
         sw: '/sw.js',
@@ -48,11 +49,6 @@ module.exports = {
                 from: path,
                 to: path
             }))
-        }),
-        new RemovePlugin({
-            after: {
-                include: [relativePath('docs', 'style.js')]
-            }
         })
     ],
     optimization: {
@@ -78,7 +74,7 @@ module.exports = {
                     'sass-loader'
                 ]
             }, {
-                test: /\.ts$/,
+                test: tsRegex,
                 use: 'ts-loader'
             }
         ]
@@ -88,4 +84,29 @@ module.exports = {
         filename: '[name].js',
         clean: true
     }
+};
+
+module.exports = (env, argv) => {
+    if (argv.mode === 'production') {
+        const {plugins, module: {rules}} = cfg;
+        plugins.push(
+            new RemovePlugin({
+                after: {
+                    include: [relativePath('docs', 'style.js')]
+                }
+            })
+        );
+        rules.find(obj => obj.test === tsRegex)
+            .exclude = dictRegex;
+        rules.push({
+            test: dictRegex,
+            use: [
+                relativePath('jsonGenerator.js'),
+                'ts-loader'
+            ]
+        });
+    } else {
+        cfg.devtool = 'source-map';
+    }
+    return cfg;
 }
