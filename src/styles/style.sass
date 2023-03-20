@@ -5,16 +5,16 @@
   margin: 0
   padding: 0
 
-$color-bg: var(--bg)
-$color-1: var(--1)
-$color-2: var(--2)
-$color-3: var(--3)
-$color-4: var(--4)
-$color-link: var(--link)
-$color-link-hover: var(--link-hover)
-$color-scrollbar-bg: var(--scrollbar-bg)
-$color-scrollbar: var(--scrollbar)
-$color-scrollbar-hover: var(--scrollbar-hover)
+$clr-bg: var(--bg)
+$clr-1: var(--1)
+$clr-2: var(--2)
+$clr-3: var(--3)
+$clr-4: var(--4)
+$clr-link: var(--link)
+$clr-link-hover: var(--link-hover)
+$clr-scrollbar-bg: var(--scrollbar-bg)
+$clr-scrollbar: var(--scrollbar)
+$clr-scrollbar-hover: var(--scrollbar-hover)
 $height-actions-block: 3rem
 
 :root
@@ -36,8 +36,7 @@ $height-actions-block: 3rem
 
 body
   font-family: sans-serif
-  background-color: $color-bg
-  min-height: 100vh
+  background-color: $clr-bg
   display: flex
   flex-direction: column
   justify-content: center
@@ -48,13 +47,13 @@ body
 a
   text-decoration: none
   font-weight: bold
-  color: $color-link
+  color: $clr-link
   transition: color .2s
   &:hover, &:focus
-    color: $color-link-hover
+    color: $clr-link-hover
 
 .demo
-  background-color: $color-3
+  background-color: $clr-3
   padding: .2rem
   border-radius: .4rem
 tarF
@@ -71,7 +70,7 @@ header
   display: flex
   align-items: center
   padding: 0 1rem
-  background-color: $color-1
+  background-color: $clr-1
   
 main
   height: 80%
@@ -108,7 +107,7 @@ footer
   @include icon(close)
 
 #theme
-  background-color: $color-bg
+  background-color: $clr-bg
   margin-left: auto
   border-radius: 1rem
   overflow: hidden
@@ -128,7 +127,7 @@ footer
     &:hover, &:focus
       background-color: #0002
     &:checked
-      background-color: $color-4
+      background-color: $clr-4
 
 #settings
   transition: .2s
@@ -165,7 +164,7 @@ footer
   display: flex
   flex-wrap: wrap
   justify-content: center
-  background-color: $color-1
+  background-color: $clr-1
   align-items: center
   border-radius: 1rem
   overflow: hidden
@@ -176,7 +175,7 @@ footer
   .options
     user-select: none
     overflow: hidden
-    background-color: $color-2
+    background-color: $clr-2
     border-radius: 0 1rem 0 0
     list-style-type: none
     position: relative
@@ -232,7 +231,7 @@ footer
   @include settingOptions(false, 8rem, 8rem)
 
 .animation
-  background-color: $color-3
+  background-color: $clr-3
   position: absolute
   height: 100%
   transition: .2s
@@ -254,13 +253,13 @@ footer
   @include mobile
     width: 100%
   &:first-child
-    background-color: $color-2
+    background-color: $clr-2
   &:last-child
-    background-color: $color-3
+    background-color: $clr-3
   .header
     font-size: 1.5rem
     padding: .8rem
-    background-color: $color-1
+    background-color: $clr-1
     display: flex
     flex-direction: row
     .name
@@ -323,18 +322,18 @@ footer
 .scrollbar::-webkit-scrollbar
   width: 0.625rem
 .scrollbar::-webkit-scrollbar-track
-  background-color: $color-scrollbar-bg
+  background-color: $clr-scrollbar-bg
   border-radius: 0.375rem 0 0 0.375rem
 
 .scrollbar::-webkit-scrollbar-thumb
-  background-color: $color-scrollbar
+  background-color: $clr-scrollbar
   border-radius: 0.375rem
 
 .scrollbar::-webkit-scrollbar-thumb:hover
-  background-color: $color-scrollbar-hover
+  background-color: $clr-scrollbar-hover
 
 #snackbar
-  background: $color-4
+  background: $clr-4
   position: fixed
   bottom: 1rem
   left: 1rem
@@ -367,7 +366,7 @@ label[for=upload]
 
 #file-convert
   .active
-    background-color: $color-3
+    background-color: $clr-3
 
 input[type=file],
 input[type=file]::-webkit-file-upload-button
