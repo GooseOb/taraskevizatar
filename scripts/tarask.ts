@@ -48,7 +48,7 @@ export function toTaraskConvert(
 			text = toArab(text);
 	}
 	splitted = text.split(' ');
-	if (abc !== Abc.arabic) splitted = restoreRegister(splitted, splittedOrig);
+	if (abc !== Abc.arabic) splitted = restoreCase(splitted, splittedOrig);
 	if (isHtml) splitted = toHtmlTags(splitted, splittedOrig, abc);
 	text = splitted
 		.join(' ')
@@ -85,7 +85,7 @@ export function toTaraskConvert(
 	return text.trim();
 }
 
-function restoreRegister(text: string[], orig: string[]): string[] {
+function restoreCase(text: string[], orig: string[]): string[] {
 	for (let i = 0; i < text.length; i++) {
 		const  word = text[i];
 		const oWord = orig[i];
@@ -175,7 +175,7 @@ function toTarask(text: string): string {
 		for (const key in softers)
 			text = text.replace(softers[key], key);
 		for (const key in softers)
-			if (key !== '$1дзьдз$2' && (softers[key] as RegExp).test(text))
+			if (key !== '$1дзьдз$2' && softers[key].test(text))
 				continue loop;
 		break;
 	} while (true);
