@@ -2,7 +2,9 @@
   "name": "taraskevizatar",
   "scripts": {
     "dev": "webpack serve",
-    "build": "node jsonGenerator.js && webpack --mode production"
+    "buildx": "webpack --mode production",
+    "json": "node jsonGenerator.js",
+    "build": "concurrently \"npm run json\" \"npm run buildx\""
   },
   "repository": {
     "type": "git",
@@ -11,6 +13,7 @@
   "author": "GooseOb",
   "license": "MIT",
   "devDependencies": {
+    "concurrently": "^7.6.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
     "mini-css-extract-plugin": "^2.7.5",

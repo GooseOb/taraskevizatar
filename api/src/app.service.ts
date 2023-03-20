@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { toTaraskConvert } from './scripts/tarask';
+import { toTaraskConvert } from '../../scripts';
 
 @Injectable()
 export class AppService {

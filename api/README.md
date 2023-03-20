@@ -24,7 +24,7 @@ $ npm run start:prod
 ```
 {
     "text": text to convert
-    "abc": 0 - cyrillic, 1 - latin, 2 - arabic
-    "j": 0 - only i letter, 1 - й letter after vowels
+    "alphabet": 0 - cyrillic, 1 - latin, 2 - arabic
+    "alwaysJ": 0 - only i letter, 1 - й letter after vowels
 }
 ```
