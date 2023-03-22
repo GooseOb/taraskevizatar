@@ -1,5 +1,5 @@
-type rawDict = {[key: string]: RegExp | string};
-type dict = {[key: string]: RegExp};
+type RawDict = {[key: string]: RegExp | string};
+export type Dict = {[key: string]: RegExp};
 
 const els1: string[] = [];
 els1[0] = 'сканд|ванад|рубід|род|ірыд|рэзэрфорд|';
@@ -69,7 +69,7 @@ const iwords = toOneLine(`і(
 ць?він
 шыяс)`);
 
-const rawWordlist: rawDict = {
+const rawWordlist: RawDict = {
 /* А */
 'аахэн':/аахен/,
 'абанэн':/абанен(?=[тц])/,
@@ -1499,7 +1499,7 @@ const rawWordlist: rawDict = {
 ' расе(й|яў) ':/ расей /,
 };
 
-const rawSofters: rawDict = {
+const rawSofters: RawDict = {
 '$1ь$1':/([лнц])\1(?=[еёіюяь])/,
 '$1дзьдз':/(\S\S)дз?дз(?=[еёіюяь])/,
 	'аддз$1л':/адзьдз([ея])л/,
@@ -1615,63 +1615,67 @@ const gwords: string[] = [
 'энэрґ',
 ].reverse();
 
-const rawLatinLetters: rawDict = {
-'$1je':'([аеёіоуыюяь’ ]\\(?)е',
-'$1jo':'([аеёіоуыюяь’ ]\\(?)ё',
-'$1ju':'([аеёіоуыюяь’ ]\\(?)ю',
-'$1ja':'([аеёіоуыюяь’ ]\\(?)я',
-'':'’',
-'ć':'ць',
-'ź':'зь',
-'ś':'сь',
-'ń':'нь',
-'l':'ль',
-'a':'а',
-'b':'б',
-'v':'в',
-'h':'г',
-'ge':'ґе',
-'g':'ґ',
-'d':'д',
-'ie':'е',
-'io':'ё',
-'ž':'ж',
-'z':'з',
-'i':'і',
-'j':'й',
-'k':'к',
-'ł':'л',
-'m':'м',
-'n':'н',
-'o':'о',
-'p':'п',
-'r':'р',
-'s':'с',
-'t':'т',
-'u':'у',
-'ŭ':'ў',
-'f':'ф',
-'ch':'х',
-'c':'ц',
-'č':'ч',
-'š':'ш',
-'y':'ы',
-'e':'э',
-'iu':'ю',
-'ia':'я',
-'l$1':'[łl]i([eoua])',
-'li':'łi'
+const latinLetters: Dict = {
+'$1je':/([аеёіоуыюяь’ ]\(?)е/,
+'$1jo':/([аеёіоуыюяь’ ]\(?)ё/,
+'$1ju':/([аеёіоуыюяь’ ]\(?)ю/,
+'$1ja':/([аеёіоуыюяь’ ]\(?)я/,
+'':/’/,
+'ć':/ць/,
+'ź':/зь/,
+'ś':/сь/,
+'ń':/нь/,
+'l':/ль/,
+'a':/а/,
+'b':/б/,
+'v':/в/,
+'h':/г/,
+'ge':/ґе/,
+'g':/ґ/,
+'d':/д/,
+'ie':/е/,
+'io':/ё/,
+'ž':/ж/,
+'z':/з/,
+'i':/і/,
+'j':/й/,
+'k':/к/,
+'ł':/л/,
+'m':/м/,
+'n':/н/,
+'o':/о/,
+'p':/п/,
+'r':/р/,
+'s':/с/,
+'t':/т/,
+'u':/у/,
+'ŭ':/ў/,
+'f':/ф/,
+'ch':/х/,
+'c':/ц/,
+'č':/ч/,
+'š':/ш/,
+'y':/ы/,
+'e':/э/,
+'iu':/ю/,
+'ia':/я/,
+'l$1':/[łl]i([eoua])/,
+'li':/łi/
 };
 
-const latinLettersUpCase: dict = {
+const latinLettersUpCase: Dict = {
 ' Je':/ Е(?=[\p{Ll} ])/u,
 ' Jo':/ Ё(?=[\p{Ll} ])/u,
 ' Ju':/ Ю(?=[\p{Ll} ])/u,
 ' Ja':/ Я(?=[\p{Ll} ])/u,
-'JE':/Е/,
-'JO':/Ё/,
-'JU':/Ю/,
-'JA':/Я/,
+'$1JE':/([АЕЁІОУЫЮЯЬ’ ]\(?)Е/,
+'$1JO':/([АЕЁІОУЫЮЯЬ’ ]\(?)Ё/,
+'$1JU':/([АЕЁІОУЫЮЯЬ’ ]\(?)Ю/,
+'$1JA':/([АЕЁІОУЫЮЯЬ’ ]\(?)Я/,
+'IE':/Е/,
+'IO':/Ё/,
+'IU':/Ю/,
+'IA':/Я/,
 'Ć':/Ц[Ьь]/,
 'Ź':/З[Ьь]/,
 'Ś':/С[Ьь]/,
@@ -1685,8 +1689,6 @@ const latinLettersUpCase: dict = {
 'GE':/ҐЕ/,
 'G':/Ґ/,
 'D':/Д/,
-'IE':/Е/,
-'IO':/Ё/,
 'Ž':/Ж/,
 'Z':/З/,
 'I':/І/,
@@ -1703,17 +1705,13 @@ const latinLettersUpCase: dict = {
 'U':/У/,
 'Ŭ':/Ў/,
 'F':/Ф/,
-'CH':/Х(?=\p{Lu})/u,
-'Ch':/Х/,
+' Ch':/ Х(?=[\p{Ll} ])/u,
+'CH':/Х/,
 'C':/Ц/,
 'Č':/Ч/,
 'Š':/Ш/,
 'Y':/Ы/,
 'E':/Э/,
-'IU':/Ю(?=\p{Lu})/u,
-'IA':/Я(?=\p{Lu})/u,
-'Iu':/Ю/,
-'Ia':/Я/,
 'L$1':/[ŁL][Ii]([AEOUaeou])/,
 'Li':/Łi/,
 'LI':/ŁI/
@@ -1722,7 +1720,7 @@ const latinLettersUpCase: dict = {
 const soft = '\u0652(?=[еёіюяь])';
 const presoft = '([تزكثࢮбвгджзйклмнпрстфхцчшў])\u0652?(\u0651?)';
 
-const rawArabLetters: rawDict = {
+const rawArabLetters: RawDict = {
 ' لا':/ л[ая]/,
 'ـلا':/л[ая]/,
 '$1\u0651':/([бвгджзйклмнпрстфхцчшў]|д[зж])\1/, // падваеньне зычнага, шадда
@@ -1833,37 +1831,34 @@ const gobj: ({[key: string]: string}) = {
 	'Hie':'Ge',
 	'hie':'ge',
 	'HIE':'GE',
-	'hIE':'gE',
+	// 'hIE':'gE',
 	'غ':'ه'
 };
+
 for (const key in gobj) gobj[gobj[key]] = key;
 
 const
-	wordlist: dict = {},
-	softers: dict = {},
-	arabLetters: dict = {},
-	latinLetters: dict = {};
+	wordlist: Dict = {},
+	softers: Dict = {},
+	arabLetters: Dict = {};
 
-([
+const arr = [
 	[rawWordlist, wordlist],
 	[rawSofters, softers],
 	[rawArabLetters, arabLetters]
-] as [rawDict, dict][]).forEach(([raw, obj]) => {
+] as [RawDict, Dict][];
+
+for (const [raw, obj] of arr)
 	for (const key in raw) obj[key] = RegExp(raw[key], 'g');
-});
 
-while (gwords.length) {
-	const word = gwords.pop();
+for (const obj of [latinLetters, latinLettersUpCase]) {
+	for (const key in obj) {
+		const pattern = obj[key];
+		obj[key] = RegExp(pattern, 'g' + pattern.flags);
+	}
+}
+
+for (const word of gwords)
 	wordlist[word] = RegExp(word.replace(/ґ/g, 'г'), 'g');
-}
-
-for (const key in rawLatinLetters)
-	latinLetters[key] = RegExp(rawLatinLetters[key], 'g');
-for (const key in latinLettersUpCase) {
-	const pattern = latinLettersUpCase[key];
-	let flags = 'g';
-	if (pattern.flags) flags += pattern.flags;
-	latinLettersUpCase[key] = RegExp(pattern, flags);
-}
 
 export {wordlist, softers, arabLetters, latinLetters, latinLettersUpCase, gobj};

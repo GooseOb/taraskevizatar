@@ -8,9 +8,9 @@ declare const enum J {
     random = 1,
     always = 2
 }
-interface options {
+interface Options {
     abc: Abc;
     j: J;
 }
-export declare function toTaraskConvert(text: string, isHtml: boolean, { abc, j }: options): string;
+export declare function toTaraskConvert(text: string, isHtml: boolean, { abc, j }: Options): string;
 export {};

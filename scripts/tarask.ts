@@ -1,4 +1,4 @@
-import {wordlist, softers, arabLetters, latinLetters, latinLettersUpCase, gobj} from './dict';
+import {wordlist, softers, arabLetters, latinLetters, latinLettersUpCase, gobj, Dict} from './dict';
 
 const isUpCase = (str: string): boolean =>
 	str === str.toUpperCase();
@@ -9,12 +9,35 @@ const NOFIX_REGEX = new RegExp(NOFIX_CHAR, 'g');
 const enum Abc {cyrillic, latin, arabic}
 const enum J {never, random, always}
 
-interface options {abc: Abc, j: J}
+type AbcDependent<T> = {[key in Abc]?: T};
+type Letters = AbcDependent<Dict>;
+const letters: Letters = {
+	[Abc.latin]: latinLetters,
+	[Abc.arabic]: arabLetters
+};
+const lettersUpCase: Letters = {
+	[Abc.latin]: latinLettersUpCase
+};
+const gReplacements: AbcDependent<[string, RegExp][]> = {
+	[Abc.cyrillic]: [
+		['<tarH>г</tarH>', /ґ/g],
+		['<tarH>Г</tarH>', /Ґ/g]
+	],
+	[Abc.latin]: [
+		['$1U', /([AEIOUY])(?:<tarF>)?Ŭ(?:<\/tarF>)?/g],
+		['<tarH>$1</tarH>', /([Gg][Ee]?)/g]
+	],
+	[Abc.arabic]: [
+		['<tarH>ه</tarH>', /غ/g]
+	]
+};
+
+interface Options {abc: Abc, j: J}
 
 export function toTaraskConvert(
 	text: string,
 	isHtml: boolean,
-	{abc = 0, j = 0}: options
+	{abc = 0, j = 0}: Options
 ) {
 	const noFix: string[] = [];
 
@@ -31,22 +54,11 @@ export function toTaraskConvert(
 		.replace(/ ['`’] (?=\S)/g, '’')
 		.replace(/\(/g, '&#40');
 	let splittedOrig: string[], splitted: string[];
-	switch (abc) {
-		case Abc.cyrillic:
-			splittedOrig = text.split(' ');
-		break;case Abc.latin:
-			splittedOrig = toLatin(text).split(' ');
-		break;case Abc.arabic:
-			splittedOrig = toArab(text.toLowerCase()).split(' ');
-	}
+	splittedOrig = toAbc(toAbc(text, letters[abc]), lettersUpCase[abc])
+		.split(' ');
 	text = toTarask(text.toLowerCase());
 	if (j) text = toJ(text, j === J.always);
-	switch (abc) {
-		case Abc.latin:
-			text = toLatin(text, false);
-		break;case Abc.arabic:
-			text = toArab(text);
-	}
+	text = toAbc(text, letters[abc]);
 	splitted = text.split(' ');
 	if (abc !== Abc.arabic) splitted = restoreCase(splitted, splittedOrig);
 	if (isHtml) splitted = toHtmlTags(splitted, splittedOrig, abc);
@@ -54,32 +66,20 @@ export function toTaraskConvert(
 		.join(' ')
 		.replace(/&#160;/g, ' ')
 		.replace(/ (\p{P}|\p{S}|\d|&#40) /gu, '$1');
-	if (isHtml) {
-		switch (abc) {
-			case Abc.cyrillic:
-				text = text
-					.replace(/ґ/g, '<tarH>г</tarH>')
-					.replace(/Ґ/g, '<tarH>Г</tarH>');
-			break;case Abc.latin:
-				text = text
-					.replace(/([AEIOUY])(?:<tarF>)?Ŭ(?:<\/tarF>)?/g, '$1U')
-					.replace(/([Gg][Ee]?)/g, '<tarH>$1</tarH>');
-			break;case Abc.arabic:
-				text = text.replace(/غ/g, '<tarH>ه</tarH>');
-		}
-	}
+	if (isHtml) for (const [result, pattern] of gReplacements[abc])
+		text = text.replace(pattern, result);
 	if (noFix.length) text = text.replace(NOFIX_REGEX, () => noFix.shift());
-	const regExp = /\(.*?\)/g;
+	const optionalWordsRegExp = /\(.*?\)/g;
 	text = isHtml
 		? text
-			.replace(regExp, $0 => {
+			.replace(optionalWordsRegExp, $0 => {
 				const options = $0.slice(1, -1).split('|');
 				const main = options.shift();
 				return `<tarL data-l='${options}'>${main}</tarL>`;
 			})
 			.replace(/ \n /g, '<br>')
 		: text
-			.replace(regExp, $0 => $0.slice(1, -1).split('|')[0])
+			.replace(optionalWordsRegExp, $0 => $0.slice(1, -1).split('|')[0])
 			.replace(/&#40/g, '(');
 
 	return text.trim();
@@ -93,7 +93,7 @@ function restoreCase(text: string[], orig: string[]): string[] {
 		if (word === oWord.toLowerCase()) {
 			text[i] = oWord;
 			continue;
-		};
+		}
 		if (
 			!oWord[0] ||
 			!isUpCase(oWord[0])
@@ -101,7 +101,7 @@ function restoreCase(text: string[], orig: string[]): string[] {
 		if (word === 'зь') text[i] = isUpCase(orig[i + 1]) ? 'ЗЬ' : 'Зь'
 		else if (isUpCase(oWord[oWord.length - 1])) text[i] = word.toUpperCase()
 		else text[i] = word[0] === '('
-			? word.replace(/[\(\|]./g, $0 => $0.toUpperCase())
+			? word.replace(/[(|]./g, $0 => $0.toUpperCase())
 			: word[0].toUpperCase() + word.slice(1);
 	}
 
@@ -183,27 +183,18 @@ function toTarask(text: string): string {
 	return text
 		.replace(/ сьнід /, ' снід ')
 		.replace(/ сьмі /, ' смі ')
-		.replace(/ без(ь? \S+)/g, ($0, $1) => $1.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' бяз' + $1 : $0)
-		.replace(/ не (\S+)/g, ($0, $1) => $1.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' ня ' + $1 : $0)
-		.replace(/( (?:б[ея]|пра|цера)?з) і(\S*)/g, ($0, $1, $2) => /([ая]ў|ну)$/.test($2) ? $1 + 'ь і' + $2 : $0);
+		.replace(/ без(ь? \S+)/g, ($0, $1) =>
+			$1.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' бяз' + $1 : $0
+		).replace(/ не (\S+)/g, ($0, $1) =>
+			$1.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' ня ' + $1 : $0
+		).replace(/( (?:б[ея]|пра|цера)?з) і(\S*)/g, ($0, $1, $2) =>
+			/([ая]ў|ну)$/.test($2) ? $1 + 'ь і' + $2 : $0
+		);
 }
 
-function toLatin(text: string, upCase = true): string {
-	for (const key in latinLetters)
-		text = text.replace(latinLetters[key], key);
-	if (upCase) {
-		for (const key in latinLettersUpCase)
-			text = text.replace(latinLettersUpCase[key], key);
-		text = text
-			.replace(/ CH(?=\p{Ll})/gu, ' Ch')
-			.replace(/ J[AEOU][\p{Ll} ]/gu, $0 => ' J' + $0[2].toLowerCase() + $0[3]);
-	}
-	return text;
-}
-
-function toArab(text: string): string {
-	for (const key in arabLetters)
-		text = text.replace(arabLetters[key], key);
+function toAbc(text: string, letters: Dict = null): string {
+	for (const key in letters)
+		text = text.replace(letters[key], key);
 
 	return text;
 }
