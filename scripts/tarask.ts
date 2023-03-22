@@ -1,38 +1,38 @@
 import {wordlist, softers, arabLetters, latinLetters, latinLettersUpCase, gobj, Dict} from './dict';
 
-const isUpCase = (str: string): boolean =>
+const isUpperCase = (str: string): boolean =>
 	str === str.toUpperCase();
 
 const NOFIX_CHAR = ' \uffff ';
 const NOFIX_REGEX = new RegExp(NOFIX_CHAR, 'g');
 
-const enum Abc {cyrillic, latin, arabic}
+const enum Alphabet {cyrillic, latin, arabic}
 const enum J {never, random, always}
 
-type AbcDependent<T> = {[key in Abc]?: T};
+type AbcDependent<T> = {[key in Alphabet]?: T};
 type Letters = AbcDependent<Dict>;
 const letters: Letters = {
-	[Abc.latin]: latinLetters,
-	[Abc.arabic]: arabLetters
+	[Alphabet.latin]: latinLetters,
+	[Alphabet.arabic]: arabLetters
 };
 const lettersUpCase: Letters = {
-	[Abc.latin]: latinLettersUpCase
+	[Alphabet.latin]: latinLettersUpCase
 };
 const gReplacements: AbcDependent<[string, RegExp][]> = {
-	[Abc.cyrillic]: [
+	[Alphabet.cyrillic]: [
 		['<tarH>г</tarH>', /ґ/g],
 		['<tarH>Г</tarH>', /Ґ/g]
 	],
-	[Abc.latin]: [
+	[Alphabet.latin]: [
 		['$1U', /([AEIOUY])(?:<tarF>)?Ŭ(?:<\/tarF>)?/g],
 		['<tarH>$1</tarH>', /([Gg][Ee]?)/g]
 	],
-	[Abc.arabic]: [
+	[Alphabet.arabic]: [
 		['<tarH>ه</tarH>', /غ/g]
 	]
 };
 
-interface Options {abc: Abc, j: J}
+interface Options {abc: Alphabet, j: J}
 
 export function toTaraskConvert(
 	text: string,
@@ -54,13 +54,13 @@ export function toTaraskConvert(
 		.replace(/ ['`’] (?=\S)/g, '’')
 		.replace(/\(/g, '&#40');
 	let splittedOrig: string[], splitted: string[];
-	splittedOrig = toAbc(toAbc(text, letters[abc]), lettersUpCase[abc])
+	splittedOrig = changeAlphabet(changeAlphabet(text, letters[abc]), lettersUpCase[abc])
 		.split(' ');
 	text = toTarask(text.toLowerCase());
 	if (j) text = toJ(text, j === J.always);
-	text = toAbc(text, letters[abc]);
+	text = changeAlphabet(text, letters[abc]);
 	splitted = text.split(' ');
-	if (abc !== Abc.arabic) splitted = restoreCase(splitted, splittedOrig);
+	if (abc !== Alphabet.arabic) splitted = restoreCase(splitted, splittedOrig);
 	if (isHtml) splitted = toHtmlTags(splitted, splittedOrig, abc);
 	text = splitted
 		.join(' ')
@@ -96,10 +96,10 @@ function restoreCase(text: string[], orig: string[]): string[] {
 		}
 		if (
 			!oWord[0] ||
-			!isUpCase(oWord[0])
+			!isUpperCase(oWord[0])
 		) continue;
-		if (word === 'зь') text[i] = isUpCase(orig[i + 1]) ? 'ЗЬ' : 'Зь'
-		else if (isUpCase(oWord[oWord.length - 1])) text[i] = word.toUpperCase()
+		if (word === 'зь') text[i] = isUpperCase(orig[i + 1]) ? 'ЗЬ' : 'Зь'
+		else if (isUpperCase(oWord[oWord.length - 1])) text[i] = word.toUpperCase()
 		else text[i] = word[0] === '('
 			? word.replace(/[(|]./g, $0 => $0.toUpperCase())
 			: word[0].toUpperCase() + word.slice(1);
@@ -108,14 +108,14 @@ function restoreCase(text: string[], orig: string[]): string[] {
 	return text;
 }
 
-function toHtmlTags(text: string[], orig: string[], abc: Abc): string[] {
+function toHtmlTags(text: string[], orig: string[], abc: Alphabet): string[] {
 	for (let i = 0; i < text.length; i++) {
 		const  word = text[i];
 		const oWord = orig[i];
 		if (
 			word === oWord ||
 			/\(/.test(word) ||
-			(abc === Abc.latin && oWord === word.replace(/[Gg][Ee]?/, $0 => gobj[$0]))
+			(abc === Alphabet.latin && oWord === word.replace(/[Gg][Ee]?/, $0 => gobj[$0]))
 		) continue;
 		if (word.length === oWord.length) {
 			const LettersText = word.split('');
@@ -126,7 +126,7 @@ function toHtmlTags(text: string[], orig: string[], abc: Abc): string[] {
 			text[i] = LettersText.join('');
 			continue;
 		}
-		if (abc === Abc.cyrillic) {
+		if (abc === Alphabet.cyrillic) {
 			const word1 = word.replace(/ь/g, '');
 			switch (oWord) {
 				case word1:
@@ -192,7 +192,7 @@ function toTarask(text: string): string {
 		);
 }
 
-function toAbc(text: string, letters: Dict = null): string {
+function changeAlphabet(text: string, letters: Dict = null): string {
 	for (const key in letters)
 		text = text.replace(letters[key], key);
 
