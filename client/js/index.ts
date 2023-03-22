@@ -1,33 +1,38 @@
-import {gobj, toTaraskConvert} from '/external';
+import {gobj, toTaraskConvert, Options} from '../external';
+declare const __BUILD_DATE__: string;
+type ChangeableElement = HTMLSpanElement & {seqNum: number};
 
 window.addEventListener('load', async () => {
 	if (!navigator.serviceWorker) return;
 	const REPO_PATH = '/taraskevizatar/';
 	try {
 		await navigator.serviceWorker.register(REPO_PATH + 'sw.js', {scope: REPO_PATH});
-	} catch (e) {
-		console.warn('Service worker register fail', e);
+	} catch (err) {
+		console.warn('Service worker register fail', err);
 	}
 });
 
-const $ = id => document.getElementById(id);
+const $ = (id: string): HTMLElement => document.getElementById(id);
 
-const darkTheme = $('dark-css');
-const themeButtons = $('theme').querySelectorAll('.checkbox');
-const themeStates = ['not all', '(prefers-color-scheme: dark)', 'all'];
+const enum Theme {light, auto, dark}
+const darkTheme = $('dark-css') as HTMLLinkElement;
+const themeButtons = $('theme').querySelectorAll('.checkbox') as NodeListOf<HTMLInputElement>;
+const darkThemeStates = ['not all', '(prefers-color-scheme: dark)', 'all'];
+
+const themeByIdButtons: {[key in Theme]?: HTMLInputElement} = {
+	[Theme.light]: themeButtons[0],
+	[Theme.dark]: themeButtons[1]
+}
 
 if (localStorage.theme) {
-	const {theme} = localStorage;
-	darkTheme.media = themeStates[theme];
-	switch (+theme) {
-		case 0: themeButtons[0].checked = true; break;
-		case 2: themeButtons[1].checked = true;
-	}
-};
+	const themeId = localStorage.theme;
+	darkTheme.media = darkThemeStates[themeId];
+	themeByIdButtons[themeId].checked = true;
+}
 
-const setTheme = themeId => {
+const setTheme = (themeId: Theme) => {
 	localStorage.theme = themeId;
-	darkTheme.media = themeStates[themeId];
+	darkTheme.media = darkThemeStates[themeId];
 };
 
 const DEFAULT_TEXT =
@@ -47,63 +52,68 @@ const DEFAULT_TEXT =
 Спецыяльныя канструкцыі:
 <Планета>   <.Планета>   <,Планета>`;
 
-const INPUT_CARD = 'official';
-const OUTPUT_CARD = 'classic';
-
-const EDIT_ENABLE = 'Рэдагаваньне уключана';
-const EDIT_DISABLE = 'Рэдагаваньне выключана';
+const enum CARD {
+	INPUT = 'official',
+	OUTPUT = 'classic'
+}
+const enum EDIT {
+	ENABLE = 'Рэдагаваньне уключана',
+	DISABLE = 'Рэдагаваньне выключана'
+}
 
 const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ'];
 
-const stgs = {
-	abc: 0,
-	j: 0,
-};
+const stgs: Options = {abc: 0, j: 0};
+const settingIds = ['abc', 'j'];
 
 if (localStorage.settings) {
 	Object.assign(stgs, JSON.parse(localStorage.settings));
 } else {
-	['abc', 'j'].forEach(item => {
-		if (localStorage[item]) {
-			stgs[item] = +localStorage[item];
-			delete localStorage[item];
-		};
-	});
+	for (const id of settingIds)
+		if (localStorage[id]) {
+			stgs[id] = +localStorage[id];
+			delete localStorage[id];
+		}
 	localStorage.settings = JSON.stringify(stgs);
-};
+}
 
 const settings = new Proxy(stgs, {
-	set(target, name, value) {
+	set(target, name, value: string) {
 		target[name] = value;
-		return localStorage.settings = JSON.stringify(target);
+		localStorage.settings = JSON.stringify(target);
+		return true;
 	}
 });
 
-const input = $('input');
-const output = $('output');
-const outputContainer = output.parentElement;
-const getCounter = id => $(id).querySelector('.num-counter');
+const input = $('input') as HTMLTextAreaElement & {fixHeight: () => void};
+const output = $('output') as HTMLDivElement;
+const outputContainer = output.parentElement as HTMLDivElement;
+const getCounter = (id: string): HTMLDivElement =>
+	$(id).querySelector('.num-counter');
+interface counterValues {
+	input: number | string
+	output: number | string
+}
 const counters = {
-	input: getCounter(INPUT_CARD),
-	output: getCounter(OUTPUT_CARD),
-	set(nums) {
-		for (const key in nums) {
+	input: getCounter(CARD.INPUT),
+	output: getCounter(CARD.OUTPUT),
+	set(nums: counterValues) {
+		for (const key in nums)
 			this[key].textContent = nums[key];
-		};
 	}
 };
 
-const debounce = (callback, cooldown) => {
-	let timeout;
-	return e => {
+const debounce = (callback: Function, cooldown: number) => {
+	let timeout: number;
+	return (e?) => {
 		clearTimeout(timeout);
-		timeout = setTimeout(() => {
+		timeout = window.setTimeout(() => {
 			callback(e);
 		}, cooldown);
 	};
 };
 
-let changeList = [];
+let changeList: boolean[] = [];
 
 const inputHandler = debounce(({target}) => {
 	const text = target.value.trim();
@@ -132,9 +142,9 @@ Object.assign(input, {
 
 const fixConvert = () => convert(input.value);
 
-const snackbar = Object.assign($('snackbar'), {
+const snackbar = Object.assign($('snackbar') as HTMLDivElement, {
 	_lastTimeout: 0,
-	show(msg, visibilityTime = 1000) {
+	show(msg: string, visibilityTime = 1000) {
 		this.innerHTML = msg;
 		this.classList.remove('hidden');
 		clearTimeout(this._lastTimeout);
@@ -156,10 +166,10 @@ const promptGenerator = (function*() {
 		yield '<tarL class="demo">Гэтыя часьціны</tarL> можна зьмяняць, націскаючы на іх';
 		yield 'Літары <tarH class="demo">г/ґ</tarH> таксама можна зьмяняць націскам';
 		yield 'Апошняе абнаўленьне: ' + __BUILD_DATE__;
-	};
+	}
 })();
 
-const settingsElement = $('settings');
+const settingsElement = $('settings') as HTMLDivElement;
 
 const actions = {
 	clear() {
@@ -177,28 +187,29 @@ const actions = {
 	},
 	edit() {
 		const isContentEditable = !output.isContentEditable;
-		output.contentEditable = isContentEditable;
+		output.contentEditable = isContentEditable.toString();
 		snackbar.show(isContentEditable
-			? EDIT_ENABLE
-			: EDIT_DISABLE
+			? EDIT.ENABLE
+			: EDIT.DISABLE
 		);
 		if (isContentEditable) output.focus();
 	}
 };
 
-Array.from(document.getElementsByClassName('icon-btns')).forEach((div, i) => {
-	const textfield = $(div.dataset.for);
+Array.from(document.getElementsByClassName('icon-btns')).forEach((div: HTMLDivElement, i) => {
+	const textfield = $(div.dataset.for) as HTMLTextAreaElement | HTMLDivElement;
 	const getText = i === 0
-		? () => textfield.value
-		: () => textfield.innerText;
+		? () => (textfield as HTMLTextAreaElement).value
+		: () => (textfield as HTMLDivElement).innerText;
 
-	div.addEventListener('click', ({target: el}) => {
+	div.addEventListener('click', e => {
+		const el = e.target as HTMLElement;
 		if (el === div) return;
 		if (el.classList.contains('copy')) {
 			navigator.clipboard.writeText(getText());
 			snackbar.show('Скапіявана');
 			return;
-		};
+		}
 		actions[el.id]();
 	});
 });
@@ -211,54 +222,55 @@ themeButtons.forEach((el, i) => {
 			oppositeButton.checked = false;
 			setTheme(themeId);
 		} else {
-			setTheme(1);
-		};
+			setTheme(Theme.auto);
+		}
 	});
 });
 
-output.addEventListener('click', ({target: el}) => {
-	if ('num' in el) changeList[el.num] = !changeList[el.num];
+const isChangeableElement = (el: HTMLElement): el is ChangeableElement => 'seqNum' in el;
+
+output.addEventListener('click', e => {
+	const el = e.target as HTMLElement;
+	if (isChangeableElement(el)) changeList[el.seqNum] = !changeList[el.seqNum];
 	switch(el.tagName) {
 		case 'TARL':
 			let data = el.dataset.l;
-			if (data.indexOf(',') !== -1) {
-				data = data.split(',');
-				data[data.length] = el.innerHTML;
-				el.innerHTML = data.shift();
-				el.dataset.l = data;
+			if (/,/.test(data)) {
+				const [first, ...dataArr] = data.split(',');
+				dataArr[dataArr.length] = el.innerHTML;
+				el.innerHTML = first;
+				el.dataset.l = dataArr.toString();
 				return;
-			};
+			}
 			el.dataset.l = el.innerHTML;
 			el.innerHTML = data;
 			return;
 		case 'TARH':
 			el.textContent = gobj[el.textContent];
-	};
+	}
 });
 
 const newSelect = (id, initialOption, callback) => {
 	const select = $(id);
 	const options = select.querySelectorAll('button');
 	const activateOption = option => {
-		options.forEach(el => {
+		for (const el of options)
 			el.classList.remove('active');
-		});
 		option.classList.add('active');
 	};
-	select.addEventListener('click', ({target: el}) => {
+	select.addEventListener('click', e => {
+		const el = e.target as HTMLSelectElement;
 		activateOption(el);
 		callback(+el.value);
 	});
 	activateOption(options[initialOption]);
 };
 
-const settingSelectIds = ['abc', 'j'];
-settingSelectIds.forEach(id => {
+for (const id of settingIds)
 	newSelect(id, settings[id], value => {
 		settings[id] = value;
 		fixConvert();
 	});
-});
 
 function convert(text) {
 	if (!text) {
@@ -266,7 +278,7 @@ function convert(text) {
 		counters.set({input: 0, output: 0});
 		localStorage.text = '';
 		return;
-	};
+	}
 
 	output.innerHTML = toTaraskConvert(text, true, settings);
 	counters.set({
@@ -274,19 +286,19 @@ function convert(text) {
 		output: output.textContent.length
 	});
 
-	const spans = output.querySelectorAll('tarH, tarL');
+	const spans = output.querySelectorAll('tarH, tarL') as NodeListOf<ChangeableElement>;
 	while (changeList.length < spans.length) changeList[changeList.length] = false;
 	while (changeList.length > spans.length) changeList.pop();
 	for (let i = 0; i < changeList.length; i++) {
 		if (changeList[i]) spans[i].click();
-		spans[i].num = i;
-	};
+		spans[i].seqNum = i;
+	}
 }
 
 input.fixHeight();
 input.addEventListener('input', input.fixHeight, false);
 
-let currScroll;
+let currScroll: null | typeof input | typeof outputContainer;
 const stopScroll = debounce(() => {
 	currScroll = null;
 }, 200);
@@ -300,13 +312,13 @@ const syncScroll = el => function() {
 input.addEventListener('scroll', syncScroll(outputContainer));
 outputContainer.addEventListener('scroll', syncScroll(input));
 
-const upload = $('upload');
-const download = $('download');
+const upload = $('upload') as HTMLInputElement;
+const download = $('download') as HTMLAnchorElement;
 
 const reader = new FileReader();
-let textFile, fileName;
+let textFileURL: string, fileName: string;
 reader.addEventListener('load', ({target}) => {
-	const text = target.result;
+	const text = target.result as string;
 	const taraskText = toTaraskConvert(text
 		.replace(/\r/g, ''),
 		false, settings)
@@ -328,13 +340,13 @@ upload.addEventListener('change', function() {
 });
 
 function createTextFile(text) {
-	if (textFile) URL.revokeObjectURL(textFile);
-	return textFile = URL.createObjectURL(
+	if (textFileURL) URL.revokeObjectURL(textFileURL);
+	return textFileURL = URL.createObjectURL(
 		new Blob([text], {type: 'text/plain'})
 	);
-};
+}
 
-function activateUpload() {
+let activateUpload: Function | null = () => {
 	const uploadLabel = $('upload-label');
 	uploadLabel.title = uploadLabel.dataset.title;
 	activateUpload = null;

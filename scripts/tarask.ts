@@ -6,8 +6,8 @@ const isUpperCase = (str: string): boolean =>
 const NOFIX_CHAR = ' \uffff ';
 const NOFIX_REGEX = new RegExp(NOFIX_CHAR, 'g');
 
-const enum Alphabet {cyrillic, latin, arabic}
-const enum J {never, random, always}
+export const enum Alphabet {cyrillic, latin, arabic}
+export const enum J {never, random, always}
 
 type AbcDependent<T> = {[key in Alphabet]?: T};
 type Letters = AbcDependent<Dict>;
@@ -32,7 +32,7 @@ const gReplacements: AbcDependent<[string, RegExp][]> = {
 	]
 };
 
-interface Options {abc: Alphabet, j: J}
+export interface Options {abc: Alphabet, j: J}
 
 export function toTaraskConvert(
 	text: string,

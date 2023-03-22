@@ -22,7 +22,7 @@ const dictRegex = /dict.ts$/;
 const cfg = {
     context: relativePath('client'),
     entry: {
-        index: '/js/index.js',
+        index: '/js/index.ts',
         sw: '/sw.js',
         style: '/style.js'
     },
