@@ -4,7 +4,7 @@ const {
     existsSync, mkdirSync
 } = require('fs');
 
-const outputPath = path.resolve(__dirname, '..', '..', 'json');
+const outputPath = path.resolve(rootPath, 'json');
 
 if (!existsSync(outputPath))
     mkdirSync(outputPath);
@@ -20,7 +20,7 @@ module.exports = function(source) {
     Promise.all([
         ['wordlist', regexToStr(wordlist)],
         ['softers', regexToStr(softers)],
-        ['latinLetters', latinLetters],
+        ['latinLetters', regexToStr(latinLetters)],
         ['g', gobj]
     ].map(([fileName, obj]) =>
         writeFile(`${outputPath}/${fileName}.json`, JSON.stringify(obj))

@@ -6,7 +6,7 @@ window.addEventListener('load', async () => {
 	if (!navigator.serviceWorker) return;
 	const REPO_PATH = '/taraskevizatar/';
 	try {
-		await navigator.serviceWorker.register(REPO_PATH + 'index.js', {scope: REPO_PATH});
+		await navigator.serviceWorker.register(REPO_PATH + 'sw.js', {scope: REPO_PATH});
 	} catch (err) {
 		console.warn('Service worker register fail', err);
 	}
