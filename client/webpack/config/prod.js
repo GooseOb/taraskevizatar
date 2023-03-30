@@ -6,11 +6,11 @@ const path = require('path');
 const RemovePlugin = require('remove-files-webpack-plugin');
 
 const {plugins, module: {rules}} = cfg;
-
+console.log(path.resolve(rootPath, 'docs', 'style.js'))
 plugins.push(
     new RemovePlugin({
         after: {
-            include: [path.resolve(rootPath, 'docs', 'style.js')]
+            include: [path.resolve(rootPath, 'docs', 'style.js')] // does not work
         }
     })
 );
