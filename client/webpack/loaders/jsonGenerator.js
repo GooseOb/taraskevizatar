@@ -4,7 +4,7 @@ const {
     existsSync, mkdirSync
 } = require('fs');
 
-const outputPath = path.resolve(__dirname, 'json');
+const outputPath = path.resolve(__dirname, '..', '..', 'json');
 
 if (!existsSync(outputPath))
     mkdirSync(outputPath);

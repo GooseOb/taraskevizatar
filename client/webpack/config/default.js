@@ -2,9 +2,11 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const RemovePlugin = require('remove-files-webpack-plugin');
 
-const relativePath = (...relPath) => path.resolve(__dirname, ...relPath);
+global.rootPath = path.resolve(__dirname, '..', '..', '..');
+
+const tsRegex = /\.ts$/;
+const dictRegex = /dict.ts$/;
 
 const styleCacheGroups = groups => groups.reduce((acc, name) =>
     Object.assign(acc, {
@@ -16,14 +18,14 @@ const styleCacheGroups = groups => groups.reduce((acc, name) =>
         }
     }), {});
 
-const tsRegex = /\.ts$/;
-const dictRegex = /dict.ts$/;
-
 const cfg = {
-    context: relativePath('client'),
+    context: path.resolve(rootPath, 'client'),
+    performance: {
+        assetFilter: filename => !/\.map$/.test(filename) && filename !== 'og.jpg'
+    },
     entry: {
         index: '/js/index.ts',
-        sw: '/sw.js',
+        sw: '/serviceWorker/index.js',
         style: '/style.js'
     },
     resolve: {
@@ -80,33 +82,15 @@ const cfg = {
         ]
     },
     output: {
-        path: relativePath('docs'),
+        path: path.resolve(rootPath, 'docs'),
         filename: '[name].js',
         clean: true
     }
 };
 
-module.exports = (env, argv) => {
-    if (argv.mode === 'production') {
-        const {plugins, module: {rules}} = cfg;
-        plugins.push(
-            new RemovePlugin({
-                after: {
-                    include: [relativePath('docs', 'style.js')]
-                }
-            })
-        );
-        rules.find(obj => obj.test === tsRegex)
-            .exclude = dictRegex;
-        rules.push({
-            test: dictRegex,
-            use: [
-                relativePath('jsonGenerator.js'),
-                'ts-loader'
-            ]
-        });
-    } else {
-        cfg.devtool = 'source-map';
-    }
-    return cfg;
+module.exports = {
+    cfg,
+    additional: {
+        tsRegex, dictRegex
+    },
 }

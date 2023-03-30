@@ -1,0 +1,34 @@
+{
+  "html": {
+    "v": "7",
+    "files": [
+      "index.html"
+    ]
+  },
+  "js": {
+    "v": "20",
+    "files": [
+      "index.js"
+    ]
+  },
+  "css": {
+    "v": "8",
+    "files": [
+      "styles/style.css",
+      "styles/dark.css"
+    ]
+  },
+  "static": {
+    "v": "1",
+    "files": [
+      "fonts/NotoSansArabic-SemiBold.ttf",
+      "icons/close.svg",
+      "icons/copy.svg",
+      "icons/edit.svg",
+      "icons/info.svg",
+      "icons/settings.svg",
+      "icons/theme/light.svg",
+      "icons/theme/dark.svg"
+    ]
+  }
+}
