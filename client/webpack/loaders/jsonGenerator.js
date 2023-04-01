@@ -4,7 +4,7 @@ const {
     existsSync, mkdirSync
 } = require('fs');
 
-const outputPath = path.resolve(rootPath, 'json');
+const outputPath = path.resolve(paths.root, 'json');
 
 if (!existsSync(outputPath))
     mkdirSync(outputPath);
@@ -23,7 +23,7 @@ module.exports = function(source) {
         ['latinLetters', regexToStr(latinLetters)],
         ['g', gobj]
     ].map(([fileName, obj]) =>
-        writeFile(`${outputPath}/${fileName}.json`, JSON.stringify(obj))
+        writeFile(path.resolve(outputPath, fileName + '.json'), JSON.stringify(obj))
     ));
     return source;
 };

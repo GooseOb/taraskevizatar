@@ -3,7 +3,15 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-global.rootPath = path.resolve(__dirname, '..', '..', '..');
+const rootPath = path.resolve('..');
+const contextPath = path.resolve(rootPath, 'client');
+const outputPath = path.resolve(contextPath, 'build');
+
+global.paths = {
+    root: rootPath,
+    context: contextPath,
+    output: outputPath
+};
 
 const tsRegex = /\.ts$/;
 const dictRegex = /dict.ts$/;
@@ -19,14 +27,14 @@ const styleCacheGroups = groups => groups.reduce((acc, name) =>
     }), {});
 
 const cfg = {
-    context: path.resolve(rootPath, 'client'),
+    context: contextPath,
     performance: {
         assetFilter: filename => !/\.map$/.test(filename) && filename !== 'og.jpg'
     },
     entry: {
         index: '/js/index.ts',
         sw: '/serviceWorker/index.js',
-        style: '/style.js'
+        style: '/styles/index.js'
     },
     resolve: {
         extensions: ['.js', '.ts']
@@ -46,7 +54,6 @@ const cfg = {
                 'index.html',
                 'manifest.json',
                 'og.jpg',
-                'logo.png'
             ].map(path => ({
                 from: path,
                 to: path
@@ -82,7 +89,7 @@ const cfg = {
         ]
     },
     output: {
-        path: path.resolve(rootPath, 'docs'),
+        path: outputPath,
         filename: '[name].js',
         clean: true
     }
@@ -90,7 +97,5 @@ const cfg = {
 
 module.exports = {
     cfg,
-    additional: {
-        tsRegex, dictRegex
-    },
+    additional: {tsRegex, dictRegex}
 }

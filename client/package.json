@@ -2,7 +2,9 @@
   "name": "taraskevizatar",
   "scripts": {
     "dev": "webpack serve --config webpack/config/dev.js",
-    "build": "node serviceWorker/updater.js && webpack --config webpack/config/prod.js"
+    "build": "webpack --config webpack/config/prod.js",
+    "buildx": "node serviceWorker/updater.js && npm run build",
+    "deploy": "npm run buildx && gh-pages -d build"
   },
   "repository": {
     "type": "git",
@@ -13,6 +15,7 @@
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
+    "gh-pages": "^5.0.0",
     "mini-css-extract-plugin": "^2.7.5",
     "remove-files-webpack-plugin": "^1.5.0",
     "sass": "^1.59.3",
