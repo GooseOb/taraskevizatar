@@ -4,19 +4,30 @@ const readline = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout
 });
+const exec = require('util').promisify(require('node:child_process').exec);
 
 const filePath = path.resolve(__dirname, 'cacheConfig.json');
 const cacheConfig = require(filePath);
 
-readline.question('Do you want to update cache? (y/n): ', answer => {
+const changeChecks = {
+    html: /index.html/,
+    js: /\/js\/|scripts\//,
+    css: /\/styles\//,
+    static: /\/(fonts|icons)\//
+};
+
+readline.question('Update service worker cache? (y/n): ', async answer => {
     if (answer !== 'y' && answer !== 'Y') {
         readline.close();
         console.log('No cache updated');
         return;
     }
+    const {stdout: changedFilePaths} = await exec('git diff --name-only');
+    const updateSuggestion = name => changeChecks[name].test(changedFilePaths)
+        ? '<- uncommitted changes' : '';
     const cacheNames = Object.keys(cacheConfig);
     const options = cacheNames
-        .map((name, i) => `${i}. ${name}`)
+        .map((name, i) => `${i}. ${name} ${updateSuggestion(name)}`)
         .join('\n');
     readline.question(`Choose caches to update (any separator)\n${options}\n> `, answer => {
         readline.close();
