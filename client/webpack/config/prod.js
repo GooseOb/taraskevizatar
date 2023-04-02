@@ -1,16 +1,13 @@
-const {
-    cfg,
-    additional: {dictRegex, tsRegex}
-} = require('./default');
-const path = require('path');
-const RemovePlugin = require('remove-files-webpack-plugin');
+import cfg, {dictRegex, tsRegex} from './default.js';
+import path from 'path';
+import RemovePlugin from 'remove-files-webpack-plugin';
 
 const {plugins, module: {rules}} = cfg;
 
 plugins.push(
     new RemovePlugin({
         after: {
-            include: [path.resolve(paths.output, 'style.js')] // does not work
+            include: [path.resolve(paths.output, 'style.js')]
         }
     })
 );
@@ -21,11 +18,11 @@ rules.find(obj => obj.test === tsRegex)
 rules.push({
     test: dictRegex,
     use: [
-        path.resolve('webpack', 'loaders', 'jsonGenerator.js'),
+        path.resolve('webpack', 'loaders', 'jsonGenerator.cjs'),
         'ts-loader'
     ]
 });
 
-module.exports = Object.assign(cfg, {
+export default Object.assign(cfg, {
     mode: 'production'
 });

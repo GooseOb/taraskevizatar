@@ -1670,7 +1670,7 @@ const latinLetters: Dict = {
 'li':/łi/
 };
 
-const latinLettersUpCase: Dict = {
+const latinLettersUpperCase: Dict = {
 ' Je':/ Е(?=[\p{Ll} ])/u,
 ' Jo':/ Ё(?=[\p{Ll} ])/u,
 ' Ju':/ Ю(?=[\p{Ll} ])/u,
@@ -1858,7 +1858,7 @@ const arr = [
 for (const [raw, obj] of arr)
 	for (const key in raw) obj[key] = RegExp(raw[key], 'g');
 
-for (const obj of [latinLetters, latinLettersUpCase]) {
+for (const obj of [latinLetters, latinLettersUpperCase]) {
 	for (const key in obj) {
 		const pattern = obj[key];
 		obj[key] = RegExp(pattern, 'g' + pattern.flags);
@@ -1868,4 +1868,4 @@ for (const obj of [latinLetters, latinLettersUpCase]) {
 for (const word of gwords)
 	wordlist[word] = RegExp(word.replace(/ґ/g, 'г'), 'g');
 
-export {wordlist, softers, arabLetters, latinLetters, latinLettersUpCase, gobj};
+export {wordlist, softers, arabLetters, latinLetters, latinLettersUpperCase, gobj};

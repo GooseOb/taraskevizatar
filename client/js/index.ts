@@ -1,4 +1,4 @@
-import {gobj, toTaraskConvert, Options} from '../external';
+import {gobj, toTarask, Options} from '../external';
 declare const __BUILD_DATE__: string;
 type ChangeableElement = HTMLSpanElement & {seqNum: number};
 
@@ -280,7 +280,7 @@ function convert(text) {
 		return;
 	}
 
-	output.innerHTML = toTaraskConvert(text, true, settings);
+	output.innerHTML = toTarask(text, true, settings);
 	counters.set({
 		input: text.length,
 		output: output.textContent.length
@@ -319,7 +319,7 @@ const reader = new FileReader();
 let textFileURL: string, fileName: string;
 reader.addEventListener('load', ({target}) => {
 	const text = target.result as string;
-	const taraskText = toTaraskConvert(text
+	const taraskText = toTarask(text
 		.replace(/\r/g, ''),
 		false, settings)
 		.replace(/\s(\n|\t)\s/g, '$1');

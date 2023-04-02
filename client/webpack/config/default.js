@@ -1,7 +1,7 @@
-const path = require('path');
-const webpack = require('webpack');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+import path from 'path';
+import webpack from 'webpack';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import CopyPlugin from 'copy-webpack-plugin';
 
 const rootPath = path.resolve('..');
 const contextPath = path.resolve(rootPath, 'client');
@@ -13,8 +13,8 @@ global.paths = {
     output: outputPath
 };
 
-const tsRegex = /\.ts$/;
-const dictRegex = /dict.ts$/;
+export const tsRegex = /\.ts$/;
+export const dictRegex = /dict.ts$/;
 
 const styleCacheGroups = groups => groups.reduce((acc, name) =>
     Object.assign(acc, {
@@ -46,7 +46,7 @@ const cfg = {
         new MiniCssExtractPlugin({
             filename: 'styles/[name].css'
         }),
-        new CopyWebpackPlugin({
+        new CopyPlugin({
             patterns: [
                 'icons',
                 'fonts',
@@ -95,7 +95,4 @@ const cfg = {
     }
 };
 
-module.exports = {
-    cfg,
-    additional: {tsRegex, dictRegex}
-}
+export default cfg;

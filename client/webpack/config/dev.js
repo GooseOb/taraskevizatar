@@ -1,6 +1,6 @@
-const {cfg} = require('./default');
+import cfg from './default.js'
 
-module.exports = Object.assign(cfg, {
+export default Object.assign(cfg, {
     mode: 'development',
     devtool: 'source-map'
 });

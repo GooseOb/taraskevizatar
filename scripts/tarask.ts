@@ -1,4 +1,4 @@
-import {wordlist, softers, arabLetters, latinLetters, latinLettersUpCase, gobj, Dict} from './dict';
+import {wordlist, softers, arabLetters, latinLetters, latinLettersUpperCase, gobj, Dict} from './dict';
 
 const isUpperCase = (str: string): boolean =>
 	str === str.toUpperCase();
@@ -9,16 +9,16 @@ const NOFIX_REGEX = new RegExp(NOFIX_CHAR, 'g');
 export const enum Alphabet {cyrillic, latin, arabic}
 export const enum J {never, random, always}
 
-type AbcDependent<T> = {[key in Alphabet]?: T};
-type Letters = AbcDependent<Dict>;
+type AlphabetDependent<T> = {[key in Alphabet]?: T};
+type Letters = AlphabetDependent<Dict>;
 const letters: Letters = {
 	[Alphabet.latin]: latinLetters,
 	[Alphabet.arabic]: arabLetters
 };
-const lettersUpCase: Letters = {
-	[Alphabet.latin]: latinLettersUpCase
+const lettersUpperCase: Letters = {
+	[Alphabet.latin]: latinLettersUpperCase
 };
-const gReplacements: AbcDependent<[string, RegExp][]> = {
+const gReplacements: AlphabetDependent<[string, RegExp][]> = {
 	[Alphabet.cyrillic]: [
 		['<tarH>г</tarH>', /ґ/g],
 		['<tarH>Г</tarH>', /Ґ/g]
@@ -34,7 +34,7 @@ const gReplacements: AbcDependent<[string, RegExp][]> = {
 
 export interface Options {abc: Alphabet, j: J}
 
-export function toTaraskConvert(
+export function toTarask(
 	text: string,
 	isHtml: boolean,
 	{abc = 0, j = 0}: Options
@@ -54,10 +54,10 @@ export function toTaraskConvert(
 		.replace(/ ['`’] (?=\S)/g, '’')
 		.replace(/\(/g, '&#40');
 	let splittedOrig: string[], splitted: string[];
-	splittedOrig = changeAlphabet(changeAlphabet(text, letters[abc]), lettersUpCase[abc])
+	splittedOrig = changeAlphabet(changeAlphabet(text, letters[abc]), lettersUpperCase[abc])
 		.split(' ');
-	text = toTarask(text.toLowerCase());
-	if (j) text = toJ(text, j === J.always);
+	text = tarask(text.toLowerCase());
+	if (j) text = replaceIbyJ(text, j === J.always);
 	text = changeAlphabet(text, letters[abc]);
 	splitted = text.split(' ');
 	if (abc !== Alphabet.arabic) splitted = restoreCase(splitted, splittedOrig);
@@ -169,7 +169,7 @@ function toHtmlTags(text: string[], orig: string[], abc: Alphabet): string[] {
 	return text;
 }
 
-function toTarask(text: string): string {
+function tarask(text: string): string {
 	for (const key in wordlist) text = text.replace(wordlist[key], key);
 	loop: do {
 		for (const key in softers)
@@ -199,12 +199,12 @@ function changeAlphabet(text: string, letters: Dict = null): string {
 	return text;
 }
 
-const subtoJ = ($1: string, $2: string): string =>
+const toJ = ($1: string, $2: string): string =>
 	$1 + 'й ' + ($2 ? 'у' : '');
-function toJ(text: string, alwaysJ = false): string {
-	return text.replace(/([аеёіоуыэюя] )і (ў?)/g, alwaysJ
-		? ($0, $1, $2) => subtoJ($1, $2)
+function replaceIbyJ(text: string, always = false): string {
+	return text.replace(/([аеёіоуыэюя] )і (ў?)/g, always
+		? ($0, $1, $2) => toJ($1, $2)
 		: ($0, $1, $2) =>
-			Math.random() >= 0.5 ? subtoJ($1, $2) : $0
+			Math.random() >= 0.5 ? toJ($1, $2) : $0
 	);
 }

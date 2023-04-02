@@ -12,4 +12,4 @@ export interface Options {
     abc: Alphabet;
     j: J;
 }
-export declare function toTaraskConvert(text: string, isHtml: boolean, { abc, j }: Options): string;
+export declare function toTarask(text: string, isHtml: boolean, { abc, j }: Options): string;

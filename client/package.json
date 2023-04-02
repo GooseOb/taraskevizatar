@@ -1,17 +1,18 @@
 {
   "name": "taraskevizatar",
-  "scripts": {
-    "dev": "webpack serve --config webpack/config/dev.js",
-    "build": "webpack --config webpack/config/prod.js",
-    "buildx": "node serviceWorker/updater.js && npm run build",
-    "deploy": "npm run buildx && gh-pages -d build"
-  },
+  "author": "GooseOb",
+  "license": "MIT",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/GooseOb/taraskevizatar.git"
   },
-  "author": "GooseOb",
-  "license": "MIT",
+  "scripts": {
+    "dev": "webpack serve --config webpack/config/dev.js",
+    "build": "webpack --config webpack/config/prod.js",
+    "buildx": "node --no-warnings serviceWorker/updater.js && npm run build",
+    "deploy": "npm run buildx && gh-pages -d build"
+  },
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
