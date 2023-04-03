@@ -8,7 +8,7 @@ const tarask: Promisify<Tarask> = (
   return fetch('http://localhost:3000/', {
     method: 'POST',
     mode: 'cors',
-    body: JSON.stringify({ text, alphabet, alwaysJ }),
+    body: JSON.stringify({ text, alphabet, alwaysJ, isHtml }),
     headers: {
       'Content-type': 'application/json; charset=UTF-8',
     },

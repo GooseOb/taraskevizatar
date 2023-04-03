@@ -8,6 +8,11 @@ export class AppController {
 
   @Post()
   Convert(@Body() dto: ConvertDto): string {
-    return this.appService.convert(dto.text, dto.alphabet, dto.alwaysJ);
+    return this.appService.convert(
+      dto.text,
+      dto.alphabet,
+      dto.alwaysJ,
+      dto?.isHtml,
+    );
   }
 }
