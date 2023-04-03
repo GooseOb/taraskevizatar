@@ -2,6 +2,7 @@ import path from 'path';
 import webpack from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
+import dotenv from 'dotenv'
 
 const rootPath = path.resolve('..');
 const contextPath = path.resolve(rootPath, 'client');
@@ -13,8 +14,13 @@ global.paths = {
     output: outputPath
 };
 
+const dotEnv = dotenv.config({path: path.resolve(paths.root, '.env')}).parsed;
 export const tsRegex = /\.ts$/;
 export const dictRegex = /dict.ts$/;
+
+const definedEnv = {};
+for (const key in dotEnv)
+    definedEnv['process.env.' + key] = `'${dotEnv[key]}'`;
 
 const styleCacheGroups = groups => groups.reduce((acc, name) =>
     Object.assign(acc, {
@@ -27,27 +33,25 @@ const styleCacheGroups = groups => groups.reduce((acc, name) =>
     }), {});
 
 const cfg = {
-    context: contextPath,
+    context: paths.context,
     performance: {
         assetFilter: filename => !/\.map$/.test(filename) && filename !== 'og.jpg'
     },
     entry: {
-        index: '/js/index.ts',
-        sw: '/serviceWorker/index.js',
+        index: '/scripts/index.ts',
+        sw: '/scripts/serviceWorker/index.js',
         style: '/styles/index.js'
     },
     resolve: {
         extensions: ['.js', '.ts'],
         alias: {
-            '@scripts': path.resolve(paths.root, 'scripts'),
-            '@api': false
-                ? path.resolve(paths.root, 'scripts', 'tarask.ts')
-                : path.resolve(paths.root, 'api', 'api.ts')
+            '@scripts': path.resolve(paths.root, 'scripts')
         }
     },
     plugins: [
         new webpack.DefinePlugin({
-            __BUILD_DATE__: JSON.stringify((new Date()).toLocaleDateString('ru'))
+            __BUILD_DATE__: JSON.stringify((new Date()).toLocaleDateString('ru')),
+            ...definedEnv
         }),
         new MiniCssExtractPlugin({
             filename: 'styles/[name].css'
@@ -75,7 +79,7 @@ const cfg = {
     },
     devServer: {
         static: ['fonts', 'icons', 'logo'],
-        port: 3010,
+        port: dotEnv.CLIENT_PORT,
         open: true,
         hot: true
     },
@@ -95,10 +99,17 @@ const cfg = {
         ]
     },
     output: {
-        path: outputPath,
+        path: paths.output,
         filename: '[name].js',
         clean: true
     }
+};
+
+export const finalize = cfgProps => env => {
+    cfg.resolve.alias['@api'] = path.resolve(paths.root,
+        env.api ? 'client/scripts/api.ts' : 'scripts/tarask.ts'
+    );
+    return Object.assign(cfg, cfgProps);
 };
 
 export default cfg;

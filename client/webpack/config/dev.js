@@ -1,6 +1,6 @@
-import cfg from './default.js'
+import {finalize} from './default.js'
 
-export default Object.assign(cfg, {
+export default finalize({
     mode: 'development',
     devtool: 'source-map'
 });
