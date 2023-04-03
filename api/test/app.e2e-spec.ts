@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
-import { AppModule } from './../src/app.module'
+import { AppModule } from '../src/app.module'
 
-describe('AppController (e2e)', () => {
+describe('Converter without HTML (e2e)', () => {
   let app: INestApplication
 
   beforeEach(async () => {
@@ -15,10 +15,15 @@ describe('AppController (e2e)', () => {
     await app.init()
   })
 
-  it('/ (GET)', () => {
+  it('/ (POST)', () => {
     return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!')
+      .post('/')
+      .send({
+        text: 'Чэшскі і польскі, Джонні, асяроддзе',
+        alphabet: 0,
+        alwaysJ: 2,
+      })
+      .expect(201)
+      .expect('Чэскі й польскі, Джоньні, асяродзьдзе')
   })
 })
