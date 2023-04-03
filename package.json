@@ -1,0 +1,17 @@
+{
+  "name": "taraskevizatar",
+  "author": "GooseOb",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GooseOb/taraskevizatar.git"
+  },
+  "scripts": {
+    "dev": "concurrently --kill-others \"npm run --prefix api start:dev\" \"npm run --prefix client dev:api\"",
+    "build": "concurrently --kill-others \"npm run --prefix api start:prod\" \"npm run --prefix client build:api\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.1"
+  }
+}
