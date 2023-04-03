@@ -1,6 +1,6 @@
 export class ConvertDto {
-  text: string;
-  alphabet: number;
-  alwaysJ: number;
-  isHtml?: boolean;
+  text: string
+  alphabet: number
+  alwaysJ: number
+  isHtml?: boolean
 }
