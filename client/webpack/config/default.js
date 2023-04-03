@@ -37,7 +37,13 @@ const cfg = {
         style: '/styles/index.js'
     },
     resolve: {
-        extensions: ['.js', '.ts']
+        extensions: ['.js', '.ts'],
+        alias: {
+            '@scripts': path.resolve(paths.root, 'scripts'),
+            '@api': false
+                ? path.resolve(paths.root, 'scripts', 'tarask.ts')
+                : path.resolve(paths.root, 'api', 'api.ts')
+        }
     },
     plugins: [
         new webpack.DefinePlugin({
@@ -69,7 +75,7 @@ const cfg = {
     },
     devServer: {
         static: ['fonts', 'icons', 'logo'],
-        port: 3000,
+        port: 3010,
         open: true,
         hot: true
     },

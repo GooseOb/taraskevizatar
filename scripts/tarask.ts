@@ -1,13 +1,11 @@
 import {wordlist, softers, arabLetters, latinLetters, latinLettersUpperCase, gobj, Dict} from './dict';
+import {Alphabet, J, Options, Promisify} from './taraskTypes';
 
 const isUpperCase = (str: string): boolean =>
 	str === str.toUpperCase();
 
 const NOFIX_CHAR = ' \uffff ';
 const NOFIX_REGEX = new RegExp(NOFIX_CHAR, 'g');
-
-export const enum Alphabet {cyrillic, latin, arabic}
-export const enum J {never, random, always}
 
 type AlphabetDependent<T> = {[key in Alphabet]?: T};
 type Letters = AlphabetDependent<Dict>;
@@ -32,13 +30,11 @@ const gReplacements: AlphabetDependent<[string, RegExp][]> = {
 	]
 };
 
-export interface Options {abc: Alphabet, j: J}
-
-export function toTarask(
+const processText = (
 	text: string,
 	isHtml: boolean,
 	{abc = 0, j = 0}: Options
-) {
+) => {
 	const noFix: string[] = [];
 
 	text = ` ${text.trim()}  `
@@ -56,7 +52,7 @@ export function toTarask(
 	let splittedOrig: string[], splitted: string[];
 	splittedOrig = changeAlphabet(changeAlphabet(text, letters[abc]), lettersUpperCase[abc])
 		.split(' ');
-	text = tarask(text.toLowerCase());
+	text = toTarask(text.toLowerCase());
 	if (j) text = replaceIbyJ(text, j === J.always);
 	text = changeAlphabet(text, letters[abc]);
 	splitted = text.split(' ');
@@ -84,6 +80,11 @@ export function toTarask(
 
 	return text.trim();
 }
+
+const tarask: Promisify<typeof processText> = (...args) =>
+	new Promise(res => res(processText(...args)));
+export default tarask;
+export const taraskSync = processText;
 
 function restoreCase(text: string[], orig: string[]): string[] {
 	for (let i = 0; i < text.length; i++) {
@@ -169,7 +170,7 @@ function toHtmlTags(text: string[], orig: string[], abc: Alphabet): string[] {
 	return text;
 }
 
-function tarask(text: string): string {
+function toTarask(text: string): string {
 	for (const key in wordlist) text = text.replace(wordlist[key], key);
 	loop: do {
 		for (const key in softers)

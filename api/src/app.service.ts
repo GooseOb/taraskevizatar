@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { toTarask } from '../../scripts';
+import { taraskSync } from '../../scripts/tarask';
 
 @Injectable()
 export class AppService {
   convert(text: string, abc: number, j: number): string {
-    return toTarask(text, false, { abc, j });
+    return taraskSync(text, false, { abc, j });
   }
 }

@@ -1,4 +1,4 @@
-import {gobj, toTarask, Options} from '../external';
+import {tarask, gobj, Options} from '@scripts';
 declare const __BUILD_DATE__: string;
 type ChangeableElement = HTMLSpanElement & {seqNum: number};
 
@@ -272,7 +272,7 @@ for (const id of settingIds)
 		fixConvert();
 	});
 
-function convert(text) {
+async function convert(text) {
 	if (!text) {
 		output.innerHTML = OUTPUT_PLACEHOLDER[settings.abc];
 		counters.set({input: 0, output: 0});
@@ -280,7 +280,7 @@ function convert(text) {
 		return;
 	}
 
-	output.innerHTML = toTarask(text, true, settings);
+	output.innerHTML = await tarask(text, true, settings);
 	counters.set({
 		input: text.length,
 		output: output.textContent.length
@@ -317,14 +317,11 @@ const download = $('download') as HTMLAnchorElement;
 
 const reader = new FileReader();
 let textFileURL: string, fileName: string;
-reader.addEventListener('load', ({target}) => {
-	const text = target.result as string;
-	const taraskText = toTarask(text
-		.replace(/\r/g, ''),
-		false, settings)
-		.replace(/\s(\n|\t)\s/g, '$1');
+reader.addEventListener('load', async ({target}) => {
+	const text = (target.result as string).replace(/\r/g, '');
+	const taraskText = await tarask(text, false, settings);
 	Object.assign(download, {
-		href: createTextFile(taraskText),
+		href: createTextFile(taraskText.replace(/\s(\n|\t)\s/g, '$1')),
 		download: 'tarask-' + fileName
 	});
 	download.parentElement.classList.add('active');
