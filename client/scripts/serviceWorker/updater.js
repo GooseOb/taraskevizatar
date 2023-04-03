@@ -20,10 +20,13 @@ function question(query) {
 const filePath = path.resolve(path.dirname(utp(import.meta.url)), 'cacheConfig.json');
 
 const changeChecks = {
-    html: /index.html/,
-    js: /\/js\/|scripts\//,
-    css: /\/styles\//,
-    static: /\/(fonts|icons)\//
+    html: {test: /index.html/},
+    js: {
+        test: /scripts\//,
+        exclude: /serviceWorker/
+    },
+    css: {test: /\/styles\//},
+    static: {test: /\/(fonts|icons)\//}
 };
 
 const ALL_UNCOMMITTED_ID = 'x';
@@ -38,7 +41,12 @@ const doUpdate = /[Yy]/.test(await question('Update service worker cache? (y/n):
 if (!doUpdate) exit('No cache updated');
 const gitDiffFilePaths = execSync('git diff --name-only').toString();
 const cacheNames = Object.keys(cacheConfig);
-const gitDiffCacheNames = cacheNames.filter(name => changeChecks[name].test(gitDiffFilePaths));
+const checkForChanges = name => {
+    const data = changeChecks[name];
+    return data.test.test(gitDiffFilePaths) &&
+        !data.exclude?.test(gitDiffFilePaths);
+};
+const gitDiffCacheNames = cacheNames.filter(checkForChanges);
 const getSuggestion = name => gitDiffCacheNames.includes(name) ? '<- uncommitted changes' : '';
 let options = cacheNames
     .map((name, i) => `${i}. ${name} ${getSuggestion(name)}`)

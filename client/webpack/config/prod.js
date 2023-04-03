@@ -1,4 +1,4 @@
-import cfg, {dictRegex, tsRegex} from './default.js';
+import cfg, {finalize, dictRegex, tsRegex} from './default.js';
 import path from 'path';
 import RemovePlugin from 'remove-files-webpack-plugin';
 
@@ -23,6 +23,6 @@ rules.push({
     ]
 });
 
-export default Object.assign(cfg, {
+export default finalize( {
     mode: 'production'
 });

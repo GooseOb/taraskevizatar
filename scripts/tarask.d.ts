@@ -1,15 +1,5 @@
-export declare const enum Alphabet {
-    cyrillic = 0,
-    latin = 1,
-    arabic = 2
-}
-export declare const enum J {
-    never = 0,
-    random = 1,
-    always = 2
-}
-export interface Options {
-    abc: Alphabet;
-    j: J;
-}
-export declare function toTarask(text: string, isHtml: boolean, { abc, j }: Options): string;
+import { Options, Promisify } from './taraskTypes';
+declare const processText: (text: string, isHtml: boolean, { abc, j }: Options) => string;
+declare const tarask: Promisify<typeof processText>;
+export default tarask;
+export declare const taraskSync: (text: string, isHtml: boolean, { abc, j }: Options) => string;
