@@ -43,8 +43,11 @@ const gitDiffFilePaths = execSync('git diff --name-only').toString();
 const cacheNames = Object.keys(cacheConfig);
 const checkForChanges = name => {
     const data = changeChecks[name];
-    return data.test.test(gitDiffFilePaths) &&
-        !data.exclude?.test(gitDiffFilePaths);
+    for (const line of gitDiffFilePaths.split('\n')) {
+        if (data.exclude?.test(line)) continue;
+        if (data.test.test(line)) return true
+    }
+    return false;
 };
 const gitDiffCacheNames = cacheNames.filter(checkForChanges);
 const getSuggestion = name => gitDiffCacheNames.includes(name) ? '<- uncommitted changes' : '';
@@ -60,7 +63,7 @@ rl.close();
 const cacheNamesToUpdate = optionIdsToUpdate.includes(ALL_UNCOMMITTED_ID)
     ? gitDiffCacheNames : [];
 for (const cacheName of optionIdsToUpdate.map(id => cacheNames[id]))
-    if (cacheName && !cacheNamesToUpdate.includes(cacheName)) cacheNamesToUpdate.add(cacheName);
+    if (cacheName && !cacheNamesToUpdate.includes(cacheName)) cacheNamesToUpdate.push(cacheName);
 for (const cacheName of cacheNamesToUpdate) {
     const cache = cacheConfig[cacheName];
     cache.v = String(+cache.v + 1);
