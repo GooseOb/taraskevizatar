@@ -9,13 +9,12 @@ const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
-function question(query) {
-    return new Promise(resolve => {
-        rl.question(query, res => {
-            resolve(res.trim());
+const question = query =>
+    new Promise(res => {
+        rl.question(query, answer => {
+            res(answer.trim());
         });
     });
-}
 
 const filePath = path.resolve(path.dirname(utp(import.meta.url)), 'cacheConfig.json');
 

@@ -3,6 +3,7 @@ import webpack from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
 import dotenv from 'dotenv'
+import tsConfig from '../../tsconfig.json' assert { type: 'json' }
 
 const rootPath = path.resolve('..');
 const contextPath = path.resolve(rootPath, 'client');
@@ -17,6 +18,10 @@ global.paths = {
 const dotEnv = dotenv.config({path: path.resolve(paths.root, '.env')}).parsed;
 export const tsRegex = /\.ts$/;
 export const dictRegex = /dict.ts$/;
+
+const alias = tsConfig.compilerOptions.paths;
+for (const key in alias)
+    alias[key] = path.resolve(paths.context, alias[key][0]);
 
 const definedEnv = {};
 for (const key in dotEnv)
@@ -44,9 +49,7 @@ const cfg = {
     },
     resolve: {
         extensions: ['.js', '.ts'],
-        alias: {
-            '@scripts': path.resolve(paths.root, 'scripts')
-        }
+        alias
     },
     plugins: [
         new webpack.DefinePlugin({
@@ -106,9 +109,7 @@ const cfg = {
 };
 
 export const finalize = cfgProps => env => {
-    cfg.resolve.alias['@api'] = path.resolve(paths.root,
-        env.api ? 'client/scripts/api.ts' : 'scripts/tarask.ts'
-    );
+    if (env.api) alias['@api'] = path.resolve(paths.context, 'scripts', 'api.ts');
     return Object.assign(cfg, cfgProps);
 };
 
