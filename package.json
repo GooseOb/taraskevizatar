@@ -9,7 +9,6 @@
   },
   "scripts": {
     "dev": "concurrently --kill-others \"npm run --prefix api start:dev\" \"npm run --prefix client dev:api\"",
-    "build": "concurrently --kill-others \"npm run --prefix api start:prod\" \"npm run --prefix client build:api\""
   },
   "devDependencies": {
     "concurrently": "^8.0.1"
