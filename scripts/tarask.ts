@@ -30,7 +30,7 @@ const gReplacements: AlphabetDependent<[string, RegExp][]> = {
 	]
 };
 
-const processText = (
+export const taraskSync = (
 	text: string,
 	isHtml: boolean,
 	{abc = 0, j = 0}: Options
@@ -81,10 +81,9 @@ const processText = (
 	return text.trim();
 }
 
-const tarask: Promisify<typeof processText> = (...args) =>
-	new Promise(res => res(processText(...args)));
+const tarask: Promisify<typeof taraskSync> = (...args) =>
+	new Promise(res => res(taraskSync(...args)));
 export default tarask;
-export const taraskSync = processText;
 
 function restoreCase(text: string[], orig: string[]): string[] {
 	for (let i = 0; i < text.length; i++) {
@@ -182,8 +181,7 @@ function toTarask(text: string): string {
 	} while (true);
 
 	return text
-		.replace(/ сьнід /, ' снід ')
-		.replace(/ сьмі /, ' смі ')
+		.replace(/ сь(?=нід |мі)/g, ' с')
 		.replace(/ без(ь? \S+)/g, ($0, $1) =>
 			$1.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' бяз' + $1 : $0
 		).replace(/ не (\S+)/g, ($0, $1) =>
