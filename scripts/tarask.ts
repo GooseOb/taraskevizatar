@@ -81,9 +81,8 @@ export const taraskSync = (
 	return text.trim();
 }
 
-const tarask: Promisify<typeof taraskSync> = (...args) =>
+export const tarask: Promisify<typeof taraskSync> = (...args) =>
 	new Promise(res => res(taraskSync(...args)));
-export default tarask;
 
 function restoreCase(text: string[], orig: string[]): string[] {
 	for (let i = 0; i < text.length; i++) {

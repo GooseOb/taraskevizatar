@@ -1,6 +1,6 @@
 import { Tarask, Promisify } from '@scripts';
 
-const tarask: Promisify<Tarask> = async (
+export const tarask: Promisify<Tarask> = async (
     text,
     isHtml,
     { abc: alphabet, j: alwaysJ },
@@ -16,5 +16,3 @@ const tarask: Promisify<Tarask> = async (
   if (res.ok) return res.text();
   throw new Error(res.statusText);
 };
-
-export default tarask;

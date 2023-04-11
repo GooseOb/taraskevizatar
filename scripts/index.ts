@@ -1,4 +1,3 @@
 export * from './taraskTypes'
-import tarask from '@api'
-export {tarask}
+export {tarask, taraskSync} from '@api'
 export {gobj} from './dict'

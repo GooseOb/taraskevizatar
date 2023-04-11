@@ -8,7 +8,7 @@
     "url": "git+https://github.com/GooseOb/taraskevizatar.git"
   },
   "scripts": {
-    "dev": "concurrently --kill-others \"npm run --prefix api start:dev\" \"npm run --prefix client dev:api\"",
+    "dev": "concurrently --kill-others \"npm run --prefix api start:dev\" \"npm run --prefix client dev:api\""
   },
   "devDependencies": {
     "concurrently": "^8.0.1"

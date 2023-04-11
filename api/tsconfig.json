@@ -18,7 +18,8 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@api": ["../api/api.ts"]
+      "@scripts": ["../scripts"],
+      "@api": ["../scripts/tarask"]
     }
   }
 }
