@@ -280,7 +280,14 @@ async function convert(text) {
 		return;
 	}
 
-	output.innerHTML = await tarask(text, true, settings);
+	let result: string;
+	try {
+		result = await tarask(text, true, settings);
+	} catch (e) {
+		result = e;
+	}
+
+	output.innerHTML = result;
 	counters.set({
 		input: text.length,
 		output: output.textContent.length

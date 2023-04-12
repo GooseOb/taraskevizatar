@@ -146,9 +146,9 @@ function toHtmlTags(text: string[], orig: string[], abc: Alphabet): string[] {
 		let fromOWordEnd = fromOWordEnd_START_VALUE;
 
 		while (word[fromStart] === oWord[fromStart])
-			fromStart++;
+			++fromStart;
 		while (word[fromWordEnd] === oWord[fromOWordEnd])
-			fromWordEnd--, fromOWordEnd--;
+			--fromWordEnd, --fromOWordEnd;
 
 		if (oWord.length > word.length) {
 			if (fromStart === 0) {
@@ -156,7 +156,7 @@ function toHtmlTags(text: string[], orig: string[], abc: Alphabet): string[] {
 					text[i] = `<tarF>${word}</tarF>`;
 					continue;
 				}
-			} else fromStart--, fromWordEnd++;
+			} else ++fromStart, ++fromWordEnd;
 			if (fromWordEnd < 0) fromWordEnd = 0;
 		}
 
