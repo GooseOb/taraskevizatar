@@ -19,15 +19,15 @@ const darkTheme = $('dark-css') as HTMLLinkElement;
 const themeButtons = $('theme').querySelectorAll('.checkbox') as NodeListOf<HTMLInputElement>;
 const darkThemeStates = ['not all', '(prefers-color-scheme: dark)', 'all'];
 
-const themeByIdButtons: {[key in Theme]?: HTMLInputElement} = {
+const themeByIdButtons: {[key in Exclude<Theme, Theme.auto>]: HTMLInputElement} = {
 	[Theme.light]: themeButtons[0],
 	[Theme.dark]: themeButtons[1]
-}
+};
 
 if (localStorage.theme) {
-	const themeId: number = localStorage.theme;
+	const themeId = localStorage.theme as `${Theme}`;
 	darkTheme.media = darkThemeStates[themeId];
-	themeByIdButtons[themeId].checked = true;
+	if (themeId !== '1') themeByIdButtons[themeId].checked = true;
 }
 
 const setTheme = (themeId: Theme) => {
