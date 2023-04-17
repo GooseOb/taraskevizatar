@@ -16,18 +16,18 @@ const $ = (id: string): HTMLElement => document.getElementById(id);
 
 const enum Theme {light, auto, dark}
 const darkTheme = $('dark-css') as HTMLLinkElement;
-const themeButtons = $('theme').querySelectorAll('.checkbox') as NodeListOf<HTMLInputElement>;
+const themeCheckboxes = $('theme').querySelectorAll('.checkbox') as NodeListOf<HTMLInputElement>;
 const darkThemeStates = ['not all', '(prefers-color-scheme: dark)', 'all'];
 
-const themeByIdButtons: {[key in Exclude<Theme, Theme.auto>]: HTMLInputElement} = {
-	[Theme.light]: themeButtons[0],
-	[Theme.dark]: themeButtons[1]
+const checkboxesByThemeId: {[key in Exclude<Theme, Theme.auto>]: HTMLInputElement} = {
+	[Theme.light]: themeCheckboxes[0],
+	[Theme.dark]: themeCheckboxes[1]
 };
 
 if (localStorage.theme) {
-	const themeId = localStorage.theme as `${Theme}`;
+	const themeId: `${Theme}` = localStorage.theme;
 	darkTheme.media = darkThemeStates[themeId];
-	if (themeId !== '1') themeByIdButtons[themeId].checked = true;
+	checkboxesByThemeId[themeId].checked = true;
 }
 
 const setTheme = (themeId: Theme) => {
@@ -214,9 +214,9 @@ Array.from(document.getElementsByClassName('icon-btns')).forEach((div: HTMLDivEl
 	});
 });
 
-themeButtons.forEach((el, i) => {
+themeCheckboxes.forEach((el, i) => {
 	const themeId = +el.value;
-	const oppositeButton = themeButtons[+!i];
+	const oppositeButton = themeCheckboxes[+!i];
 	el.addEventListener('click', () => {
 		if (el.checked) {
 			oppositeButton.checked = false;
