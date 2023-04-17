@@ -25,7 +25,7 @@ const themeByIdButtons: {[key in Theme]?: HTMLInputElement} = {
 }
 
 if (localStorage.theme) {
-	const themeId = localStorage.theme;
+	const themeId: number = localStorage.theme;
 	darkTheme.media = darkThemeStates[themeId];
 	themeByIdButtons[themeId].checked = true;
 }

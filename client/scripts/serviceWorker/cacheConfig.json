@@ -1,12 +1,12 @@
 {
   "html": {
-    "v": "7",
+    "v": "8",
     "files": [
       "index.html"
     ]
   },
   "js": {
-    "v": "24",
+    "v": "25",
     "files": [
       "index.js"
     ]
