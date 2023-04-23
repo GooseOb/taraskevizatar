@@ -4,16 +4,14 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
 import dotenv from 'dotenv'
 import tsConfig from '../../tsconfig.json' assert { type: 'json' }
-
-const rootPath = path.resolve('..');
-const contextPath = path.resolve(rootPath, 'client');
-const outputPath = path.resolve(contextPath, 'build');
+import {readFile} from 'fs/promises';
 
 global.paths = {
-    root: rootPath,
-    context: contextPath,
-    output: outputPath
+    root: path.resolve('..')
 };
+
+paths.context = path.resolve(paths.root, 'client');
+paths.output = path.resolve(paths.context, 'build');
 
 const dotEnv = dotenv.config({path: path.resolve(paths.root, '.env')}).parsed;
 export const tsRegex = /\.ts$/;
@@ -53,7 +51,8 @@ const cfg = {
     },
     plugins: [
         new webpack.DefinePlugin({
-            __BUILD_DATE__: JSON.stringify((new Date()).toLocaleDateString('ru')),
+            __BUILD_DATE__: Date.now(),
+            __DEFAULT_TEXT__: `\`${await readFile('default-text.txt', 'utf-8')}\``,
             ...definedEnv
         }),
         new MiniCssExtractPlugin({

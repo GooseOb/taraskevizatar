@@ -1,21 +1,20 @@
 import {tarask, gobj, Options} from '@scripts';
-declare const __BUILD_DATE__: string;
+import {$, debounce} from './utils';
+declare const __BUILD_DATE__: number;
+declare const __DEFAULT_TEXT__: string;
 type ChangeableElement = HTMLSpanElement & {seqNum: number};
 
 window.addEventListener('load', async () => {
 	if (!navigator.serviceWorker) return;
-	const REPO_PATH = '/taraskevizatar/';
 	try {
-		await navigator.serviceWorker.register(REPO_PATH + 'sw.js', {scope: REPO_PATH});
+		await navigator.serviceWorker.register(process.env.SW_PATH, {scope: process.env.SW_SCOPE});
 	} catch (err) {
 		console.warn('Service worker register fail', err);
 	}
 });
 
-const $ = (id: string): HTMLElement => document.getElementById(id);
-
 const enum Theme {light, auto, dark}
-const darkTheme = $('dark-css') as HTMLLinkElement;
+const darkTheme = $<HTMLLinkElement>('dark-css');
 const themeCheckboxes = $('theme').querySelectorAll('.checkbox') as NodeListOf<HTMLInputElement>;
 const darkThemeStates = ['not all', '(prefers-color-scheme: dark)', 'all'];
 
@@ -27,7 +26,7 @@ const checkboxesByThemeId: {[key in Exclude<Theme, Theme.auto>]: HTMLInputElemen
 if (localStorage.theme) {
 	const themeId: `${Theme}` = localStorage.theme;
 	darkTheme.media = darkThemeStates[themeId];
-	checkboxesByThemeId[themeId].checked = true;
+	if (themeId !== '1') checkboxesByThemeId[themeId].checked = true;
 }
 
 const setTheme = (themeId: Theme) => {
@@ -35,22 +34,19 @@ const setTheme = (themeId: Theme) => {
 	darkTheme.media = darkThemeStates[themeId];
 };
 
-const DEFAULT_TEXT =
-`1. Без волі, без цукру, не буду, не прыйдзеш.
-2. Абедзве, свята, праз лес.
-З. Цераз ямы, з'ява, з іншымі.
-4. Калоссе, насенне.
-5. Тэатр, метр, кадр.
-6. у акне, у адзін вагон, у аранжавым святле.
-7. Ва Уроцлаў, да Уладзі
-8. Белавежскі, казахскі, узбекскі, пясчаны, езджу, смяешся.
-9. План, калона, філасофія,
-10. Перыяд, праспект, сінонім, Бразілія.
-11. Базіраваць, кадзіраваць, індуцыраваць, каменціраваць.
-12. Гаага, ганак, Эбінггаўз, Вашынгтон, Глазга.
-
-Спецыяльныя канструкцыі:
-<Планета>   <.Планета>   <,Планета>`;
+$('delete-cache').addEventListener('click', async () => {
+	try {
+		const cacheNames = await caches.keys();
+		if (!cacheNames.length) {
+			snackbar.show('Кэш ужо пусты');
+			return;
+		}
+		await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+		snackbar.show('Кэш выдалены');
+	} catch (e) {
+		snackbar.show('Памылка выдаленьня кэшу: ' + e);
+	}
+});
 
 const enum CARD {
 	INPUT = 'official',
@@ -61,10 +57,10 @@ const enum EDIT {
 	DISABLE = 'Рэдагаваньне выключана'
 }
 
-const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ'];
+const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ'] as const;
 
 const stgs: Options = {abc: 0, j: 0};
-const settingIds = ['abc', 'j'];
+const settingIds = Object.keys(stgs);
 
 if (localStorage.settings) {
 	Object.assign(stgs, JSON.parse(localStorage.settings));
@@ -85,12 +81,16 @@ const settings = new Proxy(stgs, {
 	}
 });
 
-const input = $('input') as HTMLTextAreaElement & {fixHeight: () => void};
-const output = $('output') as HTMLDivElement;
+const input = $<HTMLTextAreaElement & {fixHeight: () => void}>('input');
+const settingsElement = $<HTMLDivElement>('settings');
+const output = $<HTMLDivElement>('output');
 const outputContainer = output.parentElement as HTMLDivElement;
+const download = $<HTMLAnchorElement>('download');
+const upload = $<HTMLInputElement>('upload');
+const uploadLabel = $<HTMLLabelElement>('upload-label');
 const getCounter = (id: string): HTMLDivElement =>
 	$(id).querySelector('.num-counter');
-interface counterValues {
+type counterValues = {
 	input: number | string
 	output: number | string
 }
@@ -103,23 +103,7 @@ const counters = {
 	}
 };
 
-const debounce = (callback: Function, cooldown: number) => {
-	let timeout: number;
-	return (e?) => {
-		clearTimeout(timeout);
-		timeout = window.setTimeout(() => {
-			callback(e);
-		}, cooldown);
-	};
-};
-
 let changeList: boolean[] = [];
-
-const inputHandler = debounce(({target}) => {
-	const text = target.value.trim();
-	convert(text);
-	localStorage.text = text;
-}, 200);
 
 Object.assign(input, {
 	fixHeight() {
@@ -130,7 +114,7 @@ Object.assign(input, {
 },localStorage.text ? {
 	value: localStorage.text
 } : {
-	value: DEFAULT_TEXT,
+	value: __DEFAULT_TEXT__,
 	onclick() {
 		this.onclick = null;
 		this.value = '';
@@ -142,7 +126,7 @@ Object.assign(input, {
 
 const fixConvert = () => convert(input.value);
 
-const snackbar = Object.assign($('snackbar') as HTMLDivElement, {
+const snackbar = Object.assign($<HTMLDivElement>('snackbar'), {
 	_lastTimeout: 0,
 	show(msg: string, visibilityTime = 1000) {
 		this.innerHTML = msg;
@@ -156,6 +140,12 @@ const snackbar = Object.assign($('snackbar') as HTMLDivElement, {
 
 fixConvert();
 
+const inputHandler = debounce(({target}) => {
+	const text = target.value.trim();
+	convert(text);
+	localStorage.text = text;
+}, 200);
+
 input.addEventListener('input', inputHandler);
 window.addEventListener('keyup', e => {
 	if (e.ctrlKey && e.code === 'KeyA') input.select();
@@ -165,11 +155,9 @@ const promptGenerator = (function*() {
 	while(true) {
 		yield '<tarL class="demo">Гэтыя часьціны</tarL> можна зьмяняць, націскаючы на іх';
 		yield 'Літары <tarH class="demo">г/ґ</tarH> таксама можна зьмяняць націскам';
-		yield 'Апошняе абнаўленьне: ' + __BUILD_DATE__;
+		yield 'Апошняе абнаўленьне: ' + new Date(__BUILD_DATE__).toLocaleDateString();
 	}
 })();
-
-const settingsElement = $('settings') as HTMLDivElement;
 
 const actions = {
 	clear() {
@@ -197,7 +185,7 @@ const actions = {
 };
 
 Array.from(document.getElementsByClassName('icon-btns')).forEach((div: HTMLDivElement, i) => {
-	const textfield = $(div.dataset.for) as HTMLTextAreaElement | HTMLDivElement;
+	const textfield = $<HTMLTextAreaElement | HTMLDivElement>(div.dataset.for);
 	const getText = i === 0
 		? () => (textfield as HTMLTextAreaElement).value
 		: () => (textfield as HTMLDivElement).innerText;
@@ -303,7 +291,7 @@ async function convert(text) {
 }
 
 input.fixHeight();
-input.addEventListener('input', input.fixHeight, false);
+input.addEventListener('input', input.fixHeight);
 
 let currScroll: null | typeof input | typeof outputContainer;
 const stopScroll = debounce(() => {
@@ -319,9 +307,6 @@ const syncScroll = el => function() {
 input.addEventListener('scroll', syncScroll(outputContainer));
 outputContainer.addEventListener('scroll', syncScroll(input));
 
-const upload = $('upload') as HTMLInputElement;
-const download = $('download') as HTMLAnchorElement;
-
 const reader = new FileReader();
 let textFileURL: string, fileName: string;
 reader.addEventListener('load', async ({target}) => {
@@ -332,13 +317,13 @@ reader.addEventListener('load', async ({target}) => {
 		download: 'tarask-' + fileName
 	});
 	download.parentElement.classList.add('active');
+	activateUpload();
 	snackbar.show('Файл сканвэртаваны, можна спампоўваць', 1500);
 });
 
 upload.addEventListener('change', function() {
 	const [file] = this.files;
 	fileName = file.name;
-	activateUpload();
 	reader.readAsText(file);
 	this.value = null;
 });
@@ -350,8 +335,7 @@ function createTextFile(text) {
 	);
 }
 
-let activateUpload: Function | null = () => {
-	const uploadLabel = $('upload-label');
+let activateUpload = () => {
 	uploadLabel.title = uploadLabel.dataset.title;
 	activateUpload = null;
 }
