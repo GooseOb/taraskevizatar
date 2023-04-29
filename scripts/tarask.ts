@@ -1,5 +1,5 @@
 import {wordlist, softers, arabLetters, latinLetters, latinLettersUpperCase, gobj, Dict} from './dict';
-import {Alphabet, J, Options, Promisify} from './taraskTypes';
+import {Alphabet, J, Tarask, TaraskPromise} from './taraskTypes';
 
 const isUpperCase = (str: string): boolean =>
 	str === str.toUpperCase();
@@ -30,10 +30,10 @@ const gReplacements: AlphabetDependent<[string, RegExp][]> = {
 	]
 };
 
-export const taraskSync = (
-	text: string,
-	isHtml: boolean,
-	{abc = 0, j = 0}: Options
+export const taraskSync: Tarask = (
+	text,
+	isHtml,
+	{abc = 0, j = 0}
 ) => {
 	const noFix: string[] = [];
 
@@ -47,7 +47,7 @@ export const taraskSync = (
 		.replace(/(\n|\t)/g, ' $1 ')
 		.replace(/ - /g, ' — ')
 		.replace(/(\p{P}|\p{S}|\d)/gu, ' $1 ')
-		.replace(/ ['`’] (?=\S)/g, '’')
+		.replace(/ ['`’] (?=\S)/g, 'ʼ')
 		.replace(/\(/g, '&#40');
 	let splittedOrig: string[], splitted: string[];
 	splittedOrig = changeAlphabet(changeAlphabet(text, letters[abc]), lettersUpperCase[abc])
@@ -81,7 +81,7 @@ export const taraskSync = (
 	return text.trim();
 }
 
-export const tarask: Promisify<typeof taraskSync> = (...args) =>
+export const tarask: TaraskPromise = (...args) =>
 	new Promise(res => res(taraskSync(...args)));
 
 function restoreCase(text: string[], orig: string[]): string[] {
@@ -174,7 +174,7 @@ function toTarask(text: string): string {
 		for (const key in softers)
 			text = text.replace(softers[key], key);
 		for (const key in softers)
-			if (key !== '$1дзьдз$2' && softers[key].test(text))
+			if (key !== '$1дзьдз' && softers[key].test(text))
 				continue loop;
 		break;
 	} while (true);

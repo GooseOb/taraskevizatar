@@ -4,13 +4,11 @@ declare const __BUILD_DATE__: number;
 declare const __DEFAULT_TEXT__: string;
 type ChangeableElement = HTMLSpanElement & {seqNum: number};
 
-window.addEventListener('load', async () => {
-	if (!navigator.serviceWorker) return;
-	try {
-		await navigator.serviceWorker.register(process.env.SW_PATH, {scope: process.env.SW_SCOPE});
-	} catch (err) {
-		console.warn('Service worker register fail', err);
-	}
+window.addEventListener('load', () => {
+	navigator.serviceWorker?.register(process.env.SW_PATH, {scope: process.env.SW_SCOPE})
+		.catch(err => {
+			console.warn('Service worker register fail', err);
+		});
 });
 
 const enum Theme {light, auto, dark}

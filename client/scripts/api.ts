@@ -1,6 +1,6 @@
-import { Tarask, Promisify } from '@scripts';
+import {TaraskPromise} from '@scripts';
 
-export const tarask: Promisify<Tarask> = async (
+export const tarask: TaraskPromise = async (
     text,
     isHtml,
     { abc: alphabet, j: alwaysJ },

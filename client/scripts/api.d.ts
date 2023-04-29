@@ -1,2 +1,2 @@
-import { Tarask, Promisify } from '@scripts';
-export declare const tarask: Promisify<Tarask>;
+import { TaraskPromise } from '@scripts';
+export declare const tarask: TaraskPromise;
