@@ -33,6 +33,10 @@ const setTheme = (themeId: Theme) => {
 };
 
 $('delete-cache').addEventListener('click', async () => {
+	if (!navigator.onLine) {
+		snackbar.show('Нельга выдаліць кэш пакуль вы афлайн');
+		return;
+	}
 	try {
 		const cacheNames = await caches.keys();
 		if (!cacheNames.length) {
