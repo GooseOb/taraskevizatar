@@ -37,10 +37,12 @@ export const taraskSync: Tarask = (
 ) => {
 	const noFix: string[] = [];
 
+	const LEFT_ANGLE_BRACKET = isHtml ? '&lt;' : '<';
+
 	text = ` ${text.trim()}  `
-		.replace(/<[,.]?((?:.|\s)*?)>/g, ($0, $1) => {
-			if ($0[1] === ',') return `<${$1}>`;
-			noFix[noFix.length] = $0[1] === '.' ? $1 : $0;
+		.replace(/<([,.]?)((?:.|\s)*?)>/g, ($0, $1, $2) => {
+			if ($1 === ',') return LEFT_ANGLE_BRACKET + $2 + '>';
+			noFix[noFix.length] = $1 === '.' ? $2 : $0;
 			return NOFIX_CHAR;
 		})
 		.replace(/г'/g, 'ґ')
@@ -49,24 +51,31 @@ export const taraskSync: Tarask = (
 		.replace(/(\p{P}|\p{S}|\d)/gu, ' $1 ')
 		.replace(/ ['`’] (?=\S)/g, 'ʼ')
 		.replace(/\(/g, '&#40');
+
 	let splittedOrig: string[], splitted: string[];
-	splittedOrig = changeAlphabet(changeAlphabet(text, letters[abc]), lettersUpperCase[abc])
+	splittedOrig = replaceWithDict(replaceWithDict(text, letters[abc]), lettersUpperCase[abc])
 		.split(' ');
+
 	text = toTarask(text.toLowerCase());
 	if (j) text = replaceIbyJ(text, j === J.always);
-	text = changeAlphabet(text, letters[abc]);
+	text = replaceWithDict(text, letters[abc]);
+
 	splitted = text.split(' ');
 	if (abc !== Alphabet.arabic) splitted = restoreCase(splitted, splittedOrig);
 	if (isHtml) splitted = toHtmlTags(splitted, splittedOrig, abc);
+
 	text = splitted
 		.join(' ')
 		.replace(/&#160;/g, ' ')
 		.replace(/ (\p{P}|\p{S}|\d|&#40) /gu, '$1');
+
 	if (isHtml) for (const [result, pattern] of gReplacements[abc])
 		text = text.replace(pattern, result);
+
 	if (noFix.length) text = text.replace(NOFIX_REGEX, () => noFix.shift());
 	const optionalWordsRegExp = /\(.*?\)/g;
-	text = isHtml
+
+	return (isHtml
 		? text
 			.replace(optionalWordsRegExp, $0 => {
 				const options = $0.slice(1, -1).split('|');
@@ -76,9 +85,8 @@ export const taraskSync: Tarask = (
 			.replace(/ \n /g, '<br>')
 		: text
 			.replace(optionalWordsRegExp, $0 => $0.slice(1, -1).split('|')[0])
-			.replace(/&#40/g, '(');
-
-	return text.trim();
+			.replace(/&#40/g, '(')
+	).trim();
 }
 
 export const tarask: TaraskPromise = (...args) =>
@@ -169,10 +177,9 @@ function toHtmlTags(text: string[], orig: string[], abc: Alphabet): string[] {
 }
 
 function toTarask(text: string): string {
-	for (const key in wordlist) text = text.replace(wordlist[key], key);
+	text = replaceWithDict(text, wordlist);
 	loop: do {
-		for (const key in softers)
-			text = text.replace(softers[key], key);
+		text = replaceWithDict(text, softers);
 		for (const key in softers)
 			if (key !== '$1дзьдз' && softers[key].test(text))
 				continue loop;
@@ -190,9 +197,9 @@ function toTarask(text: string): string {
 		);
 }
 
-function changeAlphabet(text: string, letters: Dict = null): string {
-	for (const key in letters)
-		text = text.replace(letters[key], key);
+function replaceWithDict(text: string, dict: Dict = null): string {
+	for (const key in dict)
+		text = text.replace(dict[key], key);
 
 	return text;
 }
