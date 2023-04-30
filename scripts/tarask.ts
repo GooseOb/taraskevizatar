@@ -148,10 +148,10 @@ function toHtmlTags(text: string[], orig: string[], abc: Alphabet): string[] {
 			}
 		}
 
+		const oWordEnd = oWord.length - 1;
 		let fromStart = 0;
 		let fromWordEnd = word.length - 1;
-		const fromOWordEnd_START_VALUE = oWord.length - 1;
-		let fromOWordEnd = fromOWordEnd_START_VALUE;
+		let fromOWordEnd = oWordEnd;
 
 		while (word[fromStart] === oWord[fromStart])
 			++fromStart;
@@ -160,7 +160,7 @@ function toHtmlTags(text: string[], orig: string[], abc: Alphabet): string[] {
 
 		if (oWord.length > word.length) {
 			if (fromStart === 0) {
-				if (fromOWordEnd === fromOWordEnd_START_VALUE) {
+				if (fromOWordEnd === oWordEnd) {
 					text[i] = `<tarF>${word}</tarF>`;
 					continue;
 				}
