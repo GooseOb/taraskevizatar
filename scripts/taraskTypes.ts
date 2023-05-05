@@ -4,4 +4,4 @@ export type Options = {abc: Alphabet, j: J}
 export type Promisify<T> = T extends (...args: infer TArgs) => infer TReturn
     ? (...args: TArgs) => Promise<TReturn> : never;
 export type Tarask = (text: string, isHtml: boolean, {abc, j}: Options) => string;
-export type TaraskPromise = Promisify<Tarask>;
+export type TaraskAsync = Promisify<Tarask>;

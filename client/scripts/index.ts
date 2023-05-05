@@ -262,6 +262,11 @@ for (const id of settingIds)
 		fixConvert();
 	});
 
+const describeConversionError = (err: string) => {
+	if (/toUpperCase/.test(err)) err += '<br><br>Магчыма памылка з сымбалямі прабелу ў слоўніку';
+	return err;
+}
+
 async function convert(text) {
 	if (!text) {
 		output.innerHTML = OUTPUT_PLACEHOLDER[settings.abc];
@@ -273,8 +278,8 @@ async function convert(text) {
 	let result: string;
 	try {
 		result = await tarask(text, true, settings);
-	} catch (e) {
-		result = e;
+	} catch (e: unknown) {
+		result = describeConversionError(e.toString());
 	}
 
 	output.innerHTML = result;

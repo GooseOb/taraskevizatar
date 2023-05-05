@@ -1,5 +1,5 @@
 import {wordlist, softers, arabLetters, latinLetters, latinLettersUpperCase, gobj, Dict} from './dict';
-import {Alphabet, J, Tarask, TaraskPromise} from './taraskTypes';
+import {Alphabet, J, Tarask, TaraskAsync} from './taraskTypes';
 
 const isUpperCase = (str: string): boolean =>
 	str === str.toUpperCase();
@@ -89,7 +89,7 @@ export const taraskSync: Tarask = (
 	).trim();
 }
 
-export const tarask: TaraskPromise = (...args) =>
+export const tarask: TaraskAsync = (...args) =>
 	new Promise(res => res(taraskSync(...args)));
 
 function restoreCase(text: string[], orig: string[]): string[] {
