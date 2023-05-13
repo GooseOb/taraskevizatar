@@ -42,7 +42,7 @@ const cfg = {
     },
     entry: {
         index: '/scripts/index.ts',
-        sw: '/scripts/serviceWorker/index.js',
+        sw: '/scripts/serviceWorker/index.ts',
         style: '/styles/index.js'
     },
     resolve: {

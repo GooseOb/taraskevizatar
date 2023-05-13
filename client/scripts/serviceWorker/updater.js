@@ -1,9 +1,9 @@
 import path from 'path';
 import readline from 'readline';
-import {writeFile} from 'fs';
+import {writeFile} from 'fs/promises';
 import {execSync} from 'child_process';
-import cacheConfig from './cacheConfig.json' assert { type: "json" };
 import {fileURLToPath as utp} from 'url';
+import cacheConfig from './cacheConfig.json' assert { type: "json" };
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -68,9 +68,7 @@ for (const cacheName of cacheNamesToUpdate) {
     cache.v = String(+cache.v + 1);
 }
 writeFile(
-    filePath,
-    JSON.stringify(cacheConfig, null, 2),
-    () => {
-        console.log('Updated successfully: ' + (cacheNamesToUpdate.join(', ') || 'nothing'))
-    }
-);
+    filePath, JSON.stringify(cacheConfig, null, 2)
+).then(() => {
+    console.log('Updated successfully: ' + (cacheNamesToUpdate.join(', ') || 'nothing'))
+});

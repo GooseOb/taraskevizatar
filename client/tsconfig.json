@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "declaration": true,
+    "declaration": false,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -14,9 +14,13 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
+    "resolveJsonModule": true,
     "paths": {
       "@api": ["../core/tarask.ts"],
       "@core": ["../core"]
-    }
+    },
+    "lib": [
+      "es5", "es6", "dom", "dom.iterable", "webworker"
+    ]
   }
 }
