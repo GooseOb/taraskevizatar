@@ -1,2 +1,2 @@
-import { TaraskAsync } from '@scripts';
+import { TaraskAsync } from '@core';
 export declare const tarask: TaraskAsync;
