@@ -204,8 +204,14 @@ function replaceWithDict(text: string, dict: Dict = null): string {
 	return text;
 }
 
-const toJ = (vow: string, shortU: '' | 'ў'): string =>
-	vow + 'й ' + (shortU ? 'у' : '');
+type Vow = 'а' | 'е' | 'ё' | 'і' | 'о' | 'у' | 'ы' | 'э' | 'ю' | 'я';
+
+type ToJ = <TVow extends `${Vow} `, TU extends '' | 'ў'>(vow: TVow, shortU: TU) =>
+	`${TVow}й ${TU extends 'ў' ? 'у' : ''}`;
+
+const toJ: ToJ = (vow, shortU) =>
+	(vow + 'й ' + (shortU ? 'у' : '')) as ReturnType<ToJ>;
+
 function replaceIbyJ(text: string, always = false): string {
 	return text.replace(/([аеёіоуыэюя] )і (ў?)/g, always
 		? ($0, $1, $2) => toJ($1, $2)

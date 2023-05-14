@@ -21,7 +21,7 @@ const filePath = path.resolve(path.dirname(utp(import.meta.url)), 'cacheConfig.j
 const changeChecks = {
     html: {test: /index.html/},
     js: {
-        test: /scripts\//,
+        test: /core\//,
         exclude: /serviceWorker/
     },
     css: {test: /\/styles\//},
