@@ -1,4 +1,4 @@
-import cfg, {finalize, dictRegex, tsRegex} from './default.js';
+import cfg, {finalize, dictRegex, tsRegex, resolveLoader} from './default.js';
 import path from 'path';
 import RemovePlugin from 'remove-files-webpack-plugin';
 
@@ -18,7 +18,8 @@ rules.find(obj => obj.test === tsRegex)
 rules.push({
     test: dictRegex,
     use: [
-        path.resolve('webpack', 'loaders', 'jsonGenerator.cjs'),
+        resolveLoader('jsonGenerator'),
+        resolveLoader('buildTimeFunctions'),
         'ts-loader'
     ]
 });

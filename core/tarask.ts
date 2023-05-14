@@ -204,8 +204,8 @@ function replaceWithDict(text: string, dict: Dict = null): string {
 	return text;
 }
 
-const toJ = ($1: string, $2: string): string =>
-	$1 + 'й ' + ($2 ? 'у' : '');
+const toJ = (vow: string, shortU: '' | 'ў'): string =>
+	vow + 'й ' + (shortU ? 'у' : '');
 function replaceIbyJ(text: string, always = false): string {
 	return text.replace(/([аеёіоуыэюя] )і (ў?)/g, always
 		? ($0, $1, $2) => toJ($1, $2)

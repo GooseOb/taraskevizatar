@@ -17,6 +17,8 @@ const dotEnv = dotenv.config({path: path.resolve(paths.root, '.env')}).parsed;
 export const tsRegex = /\.ts$/;
 export const dictRegex = /dict.ts$/;
 
+export const resolveLoader = (name) => path.resolve('webpack', 'loaders', name + '.cjs');
+
 const alias = tsConfig.compilerOptions.paths;
 for (const key in alias)
     alias[key] = path.resolve(paths.context, alias[key][0]);
