@@ -26,16 +26,6 @@ const question = query =>
 
 const filePath = path.resolve(SW_DIR, 'cacheConfig.json');
 
-// const changeChecks = {
-//     html: {test: /index.html/},
-//     js: {
-//         test: /core\//,
-//         exclude: /serviceWorker/
-//     },
-//     css: {test: /\/styles\//},
-//     static: {test: /\/(fonts|icons)\//}
-// };
-
 const ALL_UNCOMMITTED_ID = 'x';
 
 const exit = msg => {
@@ -46,27 +36,27 @@ const exit = msg => {
 
 const doUpdate = /[Yy]/.test(await question('Update service worker cache? (y/n): '));
 if (!doUpdate) exit('No cache updated');
-await git.checkout('gh-pages');
 
 const diffFile = (filePath) =>
     git.diff(['--no-index', path.resolve(BUILD_PATH, filePath), filePath]);
 
 const updateSuggestions = [];
 
+await git.checkout('gh-pages');
 const safecrlfValue = (await git.getConfig('core.safecrlf')).value;
-
 await git.addConfig('core.safecrlf', 'false');
 
 try {
     if (await diffFile('index.js')) updateSuggestions.push('js');
     if (await diffFile('styles')) updateSuggestions.push('css');
     if (await diffFile('index.html')) updateSuggestions.push('html');
+    if ((await diffFile('fonts')) || (await diffFile('icons'))) updateSuggestions.push('static');
 } catch (e) {
     console.error(e);
 }
-await git.checkout('main');
 
 await git.addConfig('core.safecrlf', safecrlfValue);
+await git.checkout('main');
 
 const cacheNames = Object.keys(cacheConfig);
 const gitDiffCacheNames = cacheNames.filter(name => updateSuggestions.includes(name));
