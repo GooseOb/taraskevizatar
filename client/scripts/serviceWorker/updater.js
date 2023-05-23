@@ -1,9 +1,17 @@
 import path from 'path';
 import readline from 'readline';
-import {writeFile} from 'fs/promises';
-import {execSync} from 'child_process';
-import {fileURLToPath as utp} from 'url';
+import { writeFile } from 'fs/promises';
+import { fileURLToPath as utp } from 'url';
 import cacheConfig from './cacheConfig.json' assert { type: "json" };
+import { simpleGit } from 'simple-git';
+
+const SW_DIR = path.dirname(utp(import.meta.url));
+const ROOT_DIR = path.resolve(SW_DIR, '..', '..', '..');
+const BUILD_PATH = path.resolve(ROOT_DIR, 'client', 'build');
+
+const git = simpleGit({
+    baseDir: ROOT_DIR
+});
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -16,17 +24,17 @@ const question = query =>
         });
     });
 
-const filePath = path.resolve(path.dirname(utp(import.meta.url)), 'cacheConfig.json');
+const filePath = path.resolve(SW_DIR, 'cacheConfig.json');
 
-const changeChecks = {
-    html: {test: /index.html/},
-    js: {
-        test: /core\//,
-        exclude: /serviceWorker/
-    },
-    css: {test: /\/styles\//},
-    static: {test: /\/(fonts|icons)\//}
-};
+// const changeChecks = {
+//     html: {test: /index.html/},
+//     js: {
+//         test: /core\//,
+//         exclude: /serviceWorker/
+//     },
+//     css: {test: /\/styles\//},
+//     static: {test: /\/(fonts|icons)\//}
+// };
 
 const ALL_UNCOMMITTED_ID = 'x';
 
@@ -38,15 +46,27 @@ const exit = msg => {
 
 const doUpdate = /[Yy]/.test(await question('Update service worker cache? (y/n): '));
 if (!doUpdate) exit('No cache updated');
-const gitDiffFilePaths = execSync('git diff --name-only').toString();
+await git.checkout('gh-pages');
+
+const diffFile = (fileName) => git.diff([path.resolve(BUILD_PATH, fileName), fileName]);
+
+const updateSuggestions = [];
+
+if (await diffFile('index.js')) updateSuggestions.push('js');
+if ((await diffFile('styles/style.css')) || (await diffFile('styles/dark.css'))) updateSuggestions.push('css');
+if (await diffFile('index.html')) updateSuggestions.push('html');
+
+await git.checkout('main');
+// const gitDiffFilePaths = await git.diff(['--name-only']);
 const cacheNames = Object.keys(cacheConfig);
 const checkForChanges = name => {
-    const data = changeChecks[name];
-    for (const line of gitDiffFilePaths.split('\n')) {
-        if (data.exclude?.test(line)) continue;
-        if (data.test.test(line)) return true
-    }
-    return false;
+    return updateSuggestions.includes(name);
+//     const data = changeChecks[name];
+//     for (const line of gitDiffFilePaths.split('\n')) {
+//         if (data.exclude?.test(line)) continue;
+//         if (data.test.test(line)) return true
+//     }
+//     return false;
 };
 const gitDiffCacheNames = cacheNames.filter(checkForChanges);
 const getSuggestion = name => gitDiffCacheNames.includes(name) ? '<- uncommitted changes' : '';
