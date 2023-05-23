@@ -48,15 +48,19 @@ const doUpdate = /[Yy]/.test(await question('Update service worker cache? (y/n):
 if (!doUpdate) exit('No cache updated');
 await git.checkout('gh-pages');
 
-const diffFile = (fileName) => git.diff(['--no-index', path.resolve(BUILD_PATH, fileName), fileName]);
+const diffFile = (filePath) =>
+    git.diff(['--no-index', path.resolve(BUILD_PATH, filePath), path.resolve(filePath)]);
 
 const updateSuggestions = [];
 
-if (await diffFile('index.js')) updateSuggestions.push('js');
-if ((await diffFile('styles/style.css')) || (await diffFile('styles/dark.css'))) updateSuggestions.push('css');
-if (await diffFile('index.html')) updateSuggestions.push('html');
+try {
+    if (await diffFile('index.js')) updateSuggestions.push('js');
+    if ((await diffFile('styles/style.css')) || (await diffFile('styles/dark.css'))) updateSuggestions.push('css');
+    if (await diffFile('index.html')) updateSuggestions.push('html');
+} finally {
+    await git.checkout('main');
+}
 
-await git.checkout('main');
 // const gitDiffFilePaths = await git.diff(['--name-only']);
 const cacheNames = Object.keys(cacheConfig);
 const checkForChanges = name => {
