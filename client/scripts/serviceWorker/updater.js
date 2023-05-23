@@ -48,7 +48,7 @@ const doUpdate = /[Yy]/.test(await question('Update service worker cache? (y/n):
 if (!doUpdate) exit('No cache updated');
 await git.checkout('gh-pages');
 
-const diffFile = (fileName) => git.diff([path.resolve(BUILD_PATH, fileName), fileName]);
+const diffFile = (fileName) => git.diff(['--no-index', path.resolve(BUILD_PATH, fileName), fileName]);
 
 const updateSuggestions = [];
 
