@@ -49,7 +49,11 @@ if (!doUpdate) exit('No cache updated');
 await git.checkout('gh-pages');
 
 const diffFile = (filePath) =>
-    git.diff(['--no-index', path.resolve(BUILD_PATH, filePath), filePath]);
+    git.diff(['--no-index', path.resolve(BUILD_PATH, filePath), filePath])
+        .catch(err => {
+            if (/\n@@ /.test(err)) return err;
+            throw err;
+        });
 
 const updateSuggestions = [];
 
@@ -60,24 +64,12 @@ try {
         (await diffFile('styles/dark.css'))
     ) updateSuggestions.push('css');
     if (await diffFile('index.html')) updateSuggestions.push('html');
-} catch (e) {
-    console.log(e);
 } finally {
     await git.checkout('main');
 }
 
-// const gitDiffFilePaths = await git.diff(['--name-only']);
 const cacheNames = Object.keys(cacheConfig);
-const checkForChanges = name => {
-    return updateSuggestions.includes(name);
-//     const data = changeChecks[name];
-//     for (const line of gitDiffFilePaths.split('\n')) {
-//         if (data.exclude?.test(line)) continue;
-//         if (data.test.test(line)) return true
-//     }
-//     return false;
-};
-const gitDiffCacheNames = cacheNames.filter(checkForChanges);
+const gitDiffCacheNames = cacheNames.filter(name => updateSuggestions.includes(name));
 const getSuggestion = name => gitDiffCacheNames.includes(name) ? '<- uncommitted changes' : '';
 let options = cacheNames
     .map((name, i) => `${i}. ${name} ${getSuggestion(name)}`)
