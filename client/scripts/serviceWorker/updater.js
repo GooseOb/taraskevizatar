@@ -49,14 +49,19 @@ if (!doUpdate) exit('No cache updated');
 await git.checkout('gh-pages');
 
 const diffFile = (filePath) =>
-    git.diff(['--no-index', path.resolve(BUILD_PATH, filePath), path.resolve(filePath)]);
+    git.diff(['--no-index', path.resolve(BUILD_PATH, filePath), filePath]);
 
 const updateSuggestions = [];
 
 try {
     if (await diffFile('index.js')) updateSuggestions.push('js');
-    if ((await diffFile('styles/style.css')) || (await diffFile('styles/dark.css'))) updateSuggestions.push('css');
+    if (
+        (await diffFile('styles/style.css')) ||
+        (await diffFile('styles/dark.css'))
+    ) updateSuggestions.push('css');
     if (await diffFile('index.html')) updateSuggestions.push('html');
+} catch (e) {
+    console.log(e);
 } finally {
     await git.checkout('main');
 }
