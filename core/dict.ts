@@ -1668,7 +1668,6 @@ const latinLetters: Dict = {
 'b':/б/,
 'v':/в/,
 'h':/г/,
-'ge':/ґе/,
 'g':/ґ/,
 'd':/д/,
 'ie':/е/,
@@ -1866,10 +1865,6 @@ const gobj: ({[key: string]: string}) = {
 	'Г':'Ґ',
 	'h':'g',
 	'H':'G',
-	'Hie':'Ge',
-	'hie':'ge',
-	'HIE':'GE',
-	// 'hIE':'gE',
 	'غ':'ه'
 };
 

@@ -122,7 +122,7 @@ function toHtmlTags(text: string[], orig: string[], abc: Alphabet): string[] {
 		if (
 			word === oWord ||
 			/\(/.test(word) ||
-			(abc === Alphabet.latin && oWord === word.replace(/[Gg][Ee]?/, $0 => gobj[$0]))
+			(abc === Alphabet.latin && oWord === word.replace(/[Gg]/, $0 => gobj[$0]))
 		) continue;
 		if (word.length === oWord.length) {
 			const LettersText = word.split('');
