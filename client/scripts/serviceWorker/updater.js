@@ -42,21 +42,36 @@ const diffFile = (filePath) =>
 
 const updateSuggestions = [];
 
+const toCheck = {
+    js: ['index.js'],
+    css: ['styles'],
+    html: ['index.html'],
+    static: ['fonts', 'icons']
+};
+
+const notEmpty = arr => {
+    for (const el of arr)
+        if (el) return true;
+    return false;
+};
+
+await git.stash();
 await git.checkout('gh-pages');
 const safecrlfValue = (await git.getConfig('core.safecrlf')).value;
 await git.addConfig('core.safecrlf', 'false');
 
 try {
-    if (await diffFile('index.js')) updateSuggestions.push('js');
-    if (await diffFile('styles')) updateSuggestions.push('css');
-    if (await diffFile('index.html')) updateSuggestions.push('html');
-    if ((await diffFile('fonts')) || (await diffFile('icons'))) updateSuggestions.push('static');
+    for (const key in toCheck) {
+        const changes = await Promise.all(toCheck[key].map(diffFile));
+        if (notEmpty(changes)) updateSuggestions.push(key);
+    }
 } catch (e) {
     console.error(e);
 }
 
 await git.addConfig('core.safecrlf', safecrlfValue);
 await git.checkout('main');
+await git.stash(['apply']);
 
 const cacheNames = Object.keys(cacheConfig);
 const gitDiffCacheNames = cacheNames.filter(name => updateSuggestions.includes(name));
@@ -67,7 +82,7 @@ let options = cacheNames
 const optionsAmount = options.length;
 if (gitDiffCacheNames.length) options += `\n${ALL_UNCOMMITTED_ID}. all uncommitted`;
 const optionIdsToUpdate = (await question(`Choose caches to update (any separator)\n${options}\n> `))
-    .match(new RegExp(ALL_UNCOMMITTED_ID + '|\\d' + (optionsAmount > 10 ? '+' : ''), 'g'));
+    .match(new RegExp(`${ALL_UNCOMMITTED_ID}|\\d${optionsAmount > 10 ? '+' : ''}`, 'g'));
 if (!optionIdsToUpdate) exit('No option chosen');
 rl.close();
 const cacheNamesToUpdate = optionIdsToUpdate.includes(ALL_UNCOMMITTED_ID)
