@@ -1,4 +1,4 @@
-import cacheConfig from './cacheConfig.json'
+import cacheConfig from './cacheConfig.json';
 type CacheKey = keyof typeof cacheConfig;
 type CacheName = `${CacheKey}-v${number}`;
 type SpecificCacheConfig = {v: string, files: string[]};
