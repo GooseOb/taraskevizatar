@@ -14,7 +14,7 @@ module.exports = function(source) {
     let wordlist, softers, gobj, latinLetters, latinLettersUpperCase;
     eval(source.replace(/const|exports\.|"use strict";/g, ''));
     exists(outputPath)
-        .then(doesExist => doesExist || mkdir(outputPath))
+        .then(exists => exists || mkdir(outputPath))
         .then(() => Promise.all([
             ['wordlist', regexToStr(wordlist)],
             ['softers', regexToStr(softers)],
