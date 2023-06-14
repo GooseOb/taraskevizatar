@@ -81,12 +81,6 @@ const cfg = {
             }
         }
     },
-    devServer: {
-        static: ['fonts', 'icons', 'logo'],
-        port: dotEnv.CLIENT_PORT,
-        open: true,
-        hot: true
-    },
     module: {
         rules: [
             {

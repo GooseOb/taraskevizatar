@@ -9,5 +9,11 @@ cfg.plugins.push(
 
 export default finalize({
     mode: 'development',
-    devtool: 'source-map'
+    devtool: 'source-map',
+    devServer: {
+        static: ['fonts', 'icons', 'logo'],
+        port: process.env.CLIENT_PORT,
+        open: true,
+        hot: true
+    },
 });

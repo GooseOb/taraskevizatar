@@ -264,7 +264,7 @@ for (const id of settingIds)
 	});
 
 const describeConversionError = (err: string) => {
-	if (/toUpperCase/.test(err)) err += '<br><br>Магчыма памылка з сымбалямі прабелу ў слоўніку';
+	if (/to(?:Upper|Lower)Case/.test(err)) err += '<br><br>Магчыма памылка з сымбалямі прабелу ў слоўніку. Калі ласка, дашліце памылку <a href="https://github.com/GooseOb/taraskevizatar/issues">сюды</a>';
 	return err;
 }
 
