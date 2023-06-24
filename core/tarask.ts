@@ -18,6 +18,7 @@ const lettersUpperCase: Letters = {
 };
 const gReplacements: AlphabetDependent<[string, RegExp][]> = {
 	[Alphabet.cyrillic]: [
+		['$1У', /([АЕЁІОУЫЭЮЯ])<tarF>Ў<\/tarF>/g],
 		['<tarH>г</tarH>', /ґ/g],
 		['<tarH>Г</tarH>', /Ґ/g]
 	],

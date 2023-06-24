@@ -346,3 +346,7 @@ let activateUpload = () => {
 	uploadLabel.title = uploadLabel.dataset.title;
 	activateUpload = null;
 }
+
+document.body.onload = () => {
+	input.focus();
+};
