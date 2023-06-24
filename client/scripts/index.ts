@@ -25,7 +25,7 @@ const checkboxesByThemeId: {[key in Exclude<Theme, Theme.auto>]: HTMLInputElemen
 if (localStorage.theme) {
 	const themeId: `${Theme}` = localStorage.theme;
 	darkTheme.media = darkThemeStates[themeId];
-	if (themeId !== '1') checkboxesByThemeId[themeId].checked = true;
+	if (themeId !== `${Theme.auto}` as `${Theme.auto}`) checkboxesByThemeId[themeId].checked = true;
 }
 
 const setTheme = (themeId: Theme) => {
@@ -187,23 +187,22 @@ const actions = {
 	}
 };
 
-Array.from(document.getElementsByClassName('icon-btns')).forEach((div: HTMLDivElement, i) => {
-	const textfield = $<HTMLTextAreaElement | HTMLDivElement>(div.dataset.for);
-	const getText = i === 0
-		? () => (textfield as HTMLTextAreaElement).value
-		: () => (textfield as HTMLDivElement).innerText;
+const valueProps = ['innerText', 'value'] satisfies [right: keyof HTMLDivElement, left: keyof HTMLTextAreaElement];
+for (const btnBar of document.querySelectorAll<HTMLDivElement>('.icon-btns')) {
+	const textfield = $<HTMLTextAreaElement | HTMLDivElement>(btnBar.dataset.for);
+	const valueProp = valueProps.pop();
 
-	div.addEventListener('click', e => {
+	btnBar.addEventListener('click', e => {
 		const el = e.target as HTMLElement;
-		if (el === div) return;
+		if (el === btnBar) return;
 		if (el.classList.contains('copy')) {
-			navigator.clipboard.writeText(getText());
+			navigator.clipboard.writeText(textfield[valueProp]);
 			snackbar.show('Скапіявана');
 			return;
 		}
 		actions[el.id]();
 	});
-});
+}
 
 themeCheckboxes.forEach((el, i) => {
 	const themeId = +el.value;

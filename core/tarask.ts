@@ -22,7 +22,7 @@ const gReplacements: AlphabetDependent<[string, RegExp][]> = {
 		['<tarH>Г</tarH>', /Ґ/g]
 	],
 	[Alphabet.latin]: [
-		['$1U', /([AEIOUY])(?:<tarF>)?Ŭ(?:<\/tarF>)?/g],
+		['$1U', /([AEIOUY])<tarF>Ŭ<\/tarF>/g],
 		['<tarH>$1</tarH>', /([Gg][Ee]?)/g]
 	],
 	[Alphabet.arabic]: [
