@@ -1,3 +1,4 @@
+@use "sass:map"
 *
   margin: 0
   padding: 0
@@ -27,8 +28,9 @@ $height-actions-block: 3rem
   --scrollbar: #0004
   --scrollbar-hover: #0005
 
-@mixin mobile
-  @media screen and (max-width: 650px)
+$mobileSizes: (0: 650px, 1: 360px)
+@mixin mobile($sizeIndex: 0)
+  @media screen and (max-width: map.get($mobileSizes, $sizeIndex))
     @content
 
 body
@@ -68,6 +70,9 @@ header
   align-items: center
   padding: 0 1rem
   background-color: $clr-1
+  font-size: 1rem
+  @include mobile(1)
+    font-size: .85rem
   
 main
   height: 80%
@@ -106,19 +111,19 @@ footer
 #theme
   background-color: $clr-bg
   margin-left: auto
-  border-radius: 1rem
+  border-radius: 1em
   overflow: hidden
-  font-size: 0
   user-select: none
   height: 2rem
   .checkbox
     -webkit-appearance: none
+    font-size: 1em
     appearance: none
-    width: 2rem
+    width: 2em
     height: 100%
     background-position: center
     background-repeat: no-repeat
-    background-size: 1.5rem
+    background-size: 1.5em
     cursor: pointer
     transition: .2s
     &:hover, &:focus
@@ -130,6 +135,8 @@ footer
   transition: .2s
   display: flex
   flex-wrap: wrap
+  @include mobile(1)
+    font-size: .9em
 
 @mixin hideSettings
   height: 0
@@ -166,6 +173,7 @@ footer
   border-radius: 1rem
   overflow: hidden
   .title
+    font-size: 1rem
     padding: .5rem
     font-weight: bold
     text-align: center
@@ -204,7 +212,7 @@ footer
 
 @mixin settingOptions($isAnimated, $widths...)
   $i: 1
-  $left: 0rem
+  $left: 0em
   @each $w in $widths
     button
       &:nth-child(#{$i})
@@ -218,14 +226,14 @@ footer
     $i: $i + 1
 
 #abc
-  @include settingOptions(true, 5.5rem, 4.5rem, 9rem)
+  @include settingOptions(true, 5.5em, 4.5em, 9.25em)
   .small
     pointer-events: none
     font-size: .8rem
 #j
-  @include settingOptions(true, 4rem, 6rem, 5rem)
+  @include settingOptions(true, 4em, 6em, 5em)
 #file-convert
-  @include settingOptions(false, 8rem, 8rem)
+  @include settingOptions(false, 8em, 8em)
 
 .animation
   background-color: $clr-3
