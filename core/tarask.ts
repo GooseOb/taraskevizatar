@@ -16,14 +16,16 @@ const letters: Letters = {
 const lettersUpperCase: Letters = {
 	[Alphabet.latin]: latinLettersUpperCase
 };
-const gReplacements: AlphabetDependent<[string, RegExp][]> = {
+const additionalReplacements: AlphabetDependent<[string, RegExp][]> = {
 	[Alphabet.cyrillic]: [
 		['$1У', /([АЕЁІОУЫЭЮЯ])<tarF>Ў<\/tarF>/g],
+		['У', / <tarF>Ў<\/tarF>(?=\p{Lu})/gu],
 		['<tarH>г</tarH>', /ґ/g],
 		['<tarH>Г</tarH>', /Ґ/g]
 	],
 	[Alphabet.latin]: [
 		['$1U', /([AEIOUY])<tarF>Ŭ<\/tarF>/g],
+		['U', / <tarF>Ŭ<\/tarF>(?=\p{Lu})/gu],
 		['<tarH>$1</tarH>', /([Gg][Ee]?)/g]
 	],
 	[Alphabet.arabic]: [
@@ -46,7 +48,7 @@ export const taraskSync: Tarask = (
 			noFix[noFix.length] = $1 === '.' ? $2 : $0;
 			return NOFIX_CHAR;
 		})
-		.replace(/г'/g, 'ґ')
+		.replace(/г'(?![еёіюя])/g, 'ґ')
 		.replace(/(\n|\t)/g, ' $1 ')
 		.replace(/ - /g, ' — ')
 		.replace(/(\p{P}|\p{S}|\d)/gu, ' $1 ')
@@ -67,10 +69,10 @@ export const taraskSync: Tarask = (
 
 	text = splitted
 		.join(' ')
-		.replace(/&#160;/g, ' ')
+		.replace(/&nbsp;/g, ' ')
 		.replace(/ (\p{P}|\p{S}|\d|&#40) /gu, '$1');
 
-	if (isHtml) for (const [result, pattern] of gReplacements[abc])
+	if (isHtml) for (const [result, pattern] of additionalReplacements[abc])
 		text = text.replace(pattern, result);
 
 	if (noFix.length) text = text.replace(NOFIX_REGEX, () => noFix.shift());
@@ -187,13 +189,15 @@ function toTarask(text: string): string {
 		break;
 	} while (true);
 
+	const iaReplacer = <TStart extends ' б' | ' н', T extends string>($0: `${TStart}е${T}`, $1: TStart, $2: T) =>
+		$2.match(/[аеёіоуыэюя]/g)?.length === 1 ? $1 + 'я' + $2 : $0;
+
 	return text
-		.replace(/ сь(?=нід |мі)/g, ' с')
-		.replace(/ без(ь? \S+)/g, ($0, $1) =>
-			$1.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' бяз' + $1 : $0
-		).replace(/ не (\S+)/g, ($0, $1) =>
-			$1.match(/[аеёіоуыэюя]/g)?.length === 1 ? ' ня ' + $1 : $0
-		).replace(/( (?:б[ея]|пра|цера)?з) і(\S*)/g, ($0, $1, $2) =>
+		.replace(/ [уў]асьнігл /g, ' уаснігл ')
+		.replace(/ сь(?=нід |мі )/g, ' с')
+		.replace(/( б)е(зь? \S+)/g, iaReplacer)
+		.replace(/( н)е( \S+)/g, iaReplacer)
+		.replace(/( (?:б[ея]|пра|цера)?з) і(\S*)/g, ($0, $1, $2) =>
 			/([ая]ў|ну)$/.test($2) ? $1 + 'ь і' + $2 : $0
 		);
 }
