@@ -19,13 +19,13 @@ const lettersUpperCase: Letters = {
 const additionalReplacements: AlphabetDependent<[string, RegExp][]> = {
 	[Alphabet.cyrillic]: [
 		['$1У', /([АЕЁІОУЫЭЮЯ])<tarF>Ў<\/tarF>/g],
-		['У', / <tarF>Ў<\/tarF>(?=\p{Lu})/gu],
+		[' У', / <tarF>Ў<\/tarF>(?=\p{Lu})/gu],
 		['<tarH>г</tarH>', /ґ/g],
 		['<tarH>Г</tarH>', /Ґ/g]
 	],
 	[Alphabet.latin]: [
 		['$1U', /([AEIOUY])<tarF>Ŭ<\/tarF>/g],
-		['U', / <tarF>Ŭ<\/tarF>(?=\p{Lu})/gu],
+		[' U', / <tarF>Ŭ<\/tarF>(?=\p{Lu})/gu],
 		['<tarH>$1</tarH>', /([Gg][Ee]?)/g]
 	],
 	[Alphabet.arabic]: [
