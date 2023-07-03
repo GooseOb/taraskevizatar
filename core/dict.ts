@@ -1,5 +1,6 @@
+import {Dict} from './types';
+
 type RawDict = Record<string, RegExp | string>;
-export type Dict = Record<string, RegExp>;
 
 const els1: string[] = [];
 els1[0] = 'сканд|ванад|рубід|род|ірыд|рэзэрфорд|';

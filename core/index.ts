@@ -1,3 +1,4 @@
-export * from './taraskTypes'
-export {tarask, taraskSync} from './tarask'
+export * from './types'
+export {taraskSync} from './tarask'
+export {tarask} from '@api'
 export {gobj} from './dict'

@@ -1,5 +1,5 @@
-import {wordlist, softers, arabLetters, latinLetters, latinLettersUpperCase, gobj, Dict} from './dict';
-import {Alphabet, J, Tarask, TaraskAsync} from './taraskTypes';
+import {wordlist, softers, arabLetters, latinLetters, latinLettersUpperCase, gobj} from './dict';
+import {Alphabet, J, Tarask, TaraskAsync, Dict} from './types';
 
 const isUpperCase = (str: string): boolean =>
 	str === str.toUpperCase();
