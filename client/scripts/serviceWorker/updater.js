@@ -2,7 +2,7 @@ import path from 'path';
 import readline from 'readline';
 import { writeFile } from 'fs/promises';
 import { fileURLToPath as utp } from 'url';
-import cacheConfig from './cacheConfig.json' assert { type: "json" };
+import cacheConfig from './cachePaths.json' assert { type: "json" };
 import { simpleGit } from 'simple-git';
 
 const SW_DIR = path.dirname(utp(import.meta.url));
@@ -46,7 +46,8 @@ const toCheck = {
     js: ['index.js'],
     css: ['styles'],
     html: ['index.html'],
-    static: ['fonts', 'icons']
+    static: ['fonts', 'icons'],
+    pwa: ['manifest.json', 'logo']
 };
 
 const notEmpty = arr => {

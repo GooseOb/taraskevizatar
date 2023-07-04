@@ -2,6 +2,7 @@
   "html": {
     "v": "12",
     "files": [
+      "/",
       "index.html"
     ]
   },
@@ -29,6 +30,16 @@
       "icons/settings.svg",
       "icons/theme/light.svg",
       "icons/theme/dark.svg"
+    ]
+  },
+  "pwa": {
+    "v": "1",
+    "files": [
+      "manifest.json",
+      "logo/96.png",
+      "logo/144.png",
+      "logo/256.png",
+      "logo/512.png"
     ]
   }
 }
