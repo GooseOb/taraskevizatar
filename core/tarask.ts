@@ -7,40 +7,43 @@ const isUpperCase = (str: string): boolean =>
 const NOFIX_CHAR = ' \uffff ';
 const NOFIX_REGEX = new RegExp(NOFIX_CHAR, 'g');
 
-type AlphabetDependent<T> = {[key in Alphabet]?: T};
-type Letters = AlphabetDependent<Dict>;
-const letters: Letters = {
+type AlphabetDependentDict = {[key in Alphabet]?: Dict};
+const letters = {
 	[Alphabet.latin]: latinLetters,
 	[Alphabet.arabic]: arabLetters
-};
-const lettersUpperCase: Letters = {
+} satisfies AlphabetDependentDict;
+const lettersUpperCase = {
 	[Alphabet.latin]: latinLettersUpperCase
-};
-const additionalReplacements: AlphabetDependent<[string, RegExp][]> = {
-	[Alphabet.cyrillic]: [
-		['$1У', /([АЕЁІОУЫЭЮЯ])<tarF>Ў<\/tarF>/g],
-		[' У', / <tarF>Ў<\/tarF>(?=\p{Lu})/gu],
-		['<tarH>г</tarH>', /ґ/g],
-		['<tarH>Г</tarH>', /Ґ/g]
-	],
-	[Alphabet.latin]: [
-		['$1U', /([AEIOUY])<tarF>Ŭ<\/tarF>/g],
-		[' U', / <tarF>Ŭ<\/tarF>(?=\p{Lu})/gu],
-		['<tarH>$1</tarH>', /([Gg][Ee]?)/g]
-	],
-	[Alphabet.arabic]: [
-		['<tarH>ه</tarH>', /غ/g]
-	]
-};
+} satisfies AlphabetDependentDict;
+const gCyrillicReplacements = {
+	h: {
+		'<tarH>г</tarH>':/ґ/g,
+		'<tarH>Г</tarH>':/Ґ/g
+	},
+	g: {
+		'<tarH>ґ</tarH>':/ґ/g,
+		'<tarH>Ґ</tarH>':/Ґ/g
+	}
+} satisfies Record<'h' | 'g', Dict>;
+const additionalReplacements = {
+	[Alphabet.cyrillic]: {
+		'$1У':/([АЕЁІОУЫЭЮЯ])<tarF>Ў<\/tarF>/g,
+		' У':/ <tarF>Ў<\/tarF>(?=\p{Lu})/gu
+	},
+	[Alphabet.latin]: {
+		'$1U':/([AEIOUY])<tarF>Ŭ<\/tarF>/g,
+		' U':/ <tarF>Ŭ<\/tarF>(?=\p{Lu})/gu,
+},
+	[Alphabet.arabic]: {}
+} satisfies AlphabetDependentDict;
 
 export const taraskSync: Tarask = (
 	text,
-	isHtml,
-	{abc = 0, j = 0}
+	{abc = 0, j = 0, html}
 ) => {
 	const noFix: string[] = [];
 
-	const LEFT_ANGLE_BRACKET = isHtml ? '&lt;' : '<';
+	const LEFT_ANGLE_BRACKET = html ? '&lt;' : '<';
 
 	text = ` ${text.trim()}  `
 		.replace(/<([,.]?)((?:.|\s)*?)>/g, ($0, $1, $2) => {
@@ -65,20 +68,22 @@ export const taraskSync: Tarask = (
 
 	splitted = text.split(' ');
 	if (abc !== Alphabet.arabic) splitted = restoreCase(splitted, splittedOrig);
-	if (isHtml) splitted = toHtmlTags(splitted, splittedOrig, abc);
+	if (html) splitted = toHtmlTags(splitted, splittedOrig, abc);
 
 	text = splitted
 		.join(' ')
 		.replace(/&nbsp;/g, ' ')
 		.replace(/ (\p{P}|\p{S}|\d|&#40) /gu, '$1');
 
-	if (isHtml) for (const [result, pattern] of additionalReplacements[abc])
-		text = text.replace(pattern, result);
+	if (html) {
+		text = replaceWithDict(text, additionalReplacements[abc]);
+		if (abc === Alphabet.cyrillic) text = replaceWithDict(text, gCyrillicReplacements[html.g ? 'g' : 'h']);
+	}
 
 	if (noFix.length) text = text.replace(NOFIX_REGEX, () => noFix.shift());
 	const optionalWordsRegExp = /\(.*?\)/g;
 
-	return (isHtml
+	return (html
 		? text
 			.replace(optionalWordsRegExp, $0 => {
 				const options = $0.slice(1, -1).split('|');

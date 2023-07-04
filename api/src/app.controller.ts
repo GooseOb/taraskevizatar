@@ -12,7 +12,7 @@ export class AppController {
       dto.text,
       dto.alphabet,
       dto.alwaysJ,
-      dto?.isHtml,
+      dto?.html,
     )
   }
 }

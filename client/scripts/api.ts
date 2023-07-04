@@ -2,13 +2,12 @@ import {TaraskAsync} from '@core';
 
 export const tarask: TaraskAsync = async (
     text,
-    isHtml,
-    { abc: alphabet, j: alwaysJ },
+    { abc: alphabet, j: alwaysJ, html: htmlOptions },
 ) => {
   const res = await fetch(process.env.API_URL, {
     method: 'POST',
     mode: 'cors',
-    body: JSON.stringify({ text, alphabet, alwaysJ, isHtml }),
+    body: JSON.stringify({ text, alphabet, alwaysJ, htmlOptions }),
     headers: {
       'Content-type': 'application/json; charset=UTF-8',
     },

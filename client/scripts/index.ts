@@ -62,7 +62,7 @@ const enum EDIT {
 
 const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ'] as const;
 
-const stgs: Options = {abc: 0, j: 0};
+const stgs: Options & {html: {g: boolean}} = {abc: 0, j: 0, html: {g: false}};
 const settingIds = Object.keys(stgs);
 
 if (localStorage.settings) {
@@ -127,7 +127,7 @@ Object.assign(input, {
 	}
 });
 
-const fixConvert = () => convert(input.value);
+const forceConversion = () => convert(input.value);
 
 const snackbar = Object.assign($<HTMLDivElement>('snackbar'), {
 	_lastTimeout: 0,
@@ -141,15 +141,13 @@ const snackbar = Object.assign($<HTMLDivElement>('snackbar'), {
 	}
 });
 
-fixConvert();
+forceConversion();
 
-const inputHandler = debounce(({target}) => {
+input.addEventListener('input', debounce(({target}) => {
 	const text = target.value.trim();
 	convert(text);
 	localStorage.text = text;
-}, 200);
-
-input.addEventListener('input', inputHandler);
+}, 200));
 window.addEventListener('keyup', e => {
 	if (e.ctrlKey && e.code === 'KeyA') input.select();
 });
@@ -167,7 +165,7 @@ const actions = {
 		input.value = '';
 		input.fixHeight();
 		input.focus();
-		fixConvert();
+		forceConversion();
 	},
 	info() {
 		const prompt = promptGenerator.next().value;
@@ -240,7 +238,8 @@ output.addEventListener('click', e => {
 	}
 });
 
-const newSelect = (id, initialOption, callback) => {
+type SelectIds = 'abc' | 'j' | 'g';
+const newSelect = (id: SelectIds, initialOption: number, callback: (value: number) => void) => {
 	const select = $(id);
 	const options = select.querySelectorAll('button');
 	const activateOption = option => {
@@ -256,18 +255,25 @@ const newSelect = (id, initialOption, callback) => {
 	activateOption(options[initialOption]);
 };
 
-for (const id of settingIds)
-	newSelect(id, settings[id], value => {
-		settings[id] = value;
-		fixConvert();
-	});
+newSelect('abc', settings.abc, value => {
+	settings.abc = value;
+	forceConversion();
+});
+newSelect('j', settings.j, value => {
+	settings.j = value;
+	forceConversion();
+});
+newSelect('g', +settings.html.g, value => {
+	settings.html.g = !!value;
+	forceConversion();
+});
 
 const describeConversionError = (err: string) => {
 	if (/to(?:Upper|Lower)Case/.test(err)) err += '<br><br>Магчыма памылка з сымбалямі прабелу ў слоўніку. Калі ласка, дашліце памылку <a href="https://github.com/GooseOb/taraskevizatar/issues">сюды</a>';
 	return err;
 }
 
-async function convert(text) {
+async function convert(text: string) {
 	if (!text) {
 		output.innerHTML = OUTPUT_PLACEHOLDER[settings.abc];
 		counters.set({input: 0, output: 0});
@@ -277,7 +283,7 @@ async function convert(text) {
 
 	let result: string;
 	try {
-		result = await tarask(text, true, settings);
+		result = await tarask(text, settings);
 	} catch (e: unknown) {
 		result = describeConversionError(e.toString());
 	}
@@ -318,7 +324,7 @@ const reader = new FileReader();
 let textFileURL: string, fileName: string;
 reader.addEventListener('load', async ({target}) => {
 	const text = (target.result as string).replace(/\r/g, '');
-	const taraskText = await tarask(text, false, settings);
+	const taraskText = await tarask(text, settings);
 	Object.assign(download, {
 		href: createTextFile(taraskText.replace(/\s(\n|\t)\s/g, '$1')),
 		download: 'tarask-' + fileName

@@ -1928,10 +1928,7 @@ const rawArabLetters: RawDict = {
 
 const gobj: ({[key: string]: string}) = {
 	'г':'ґ',
-	'Г':'Ґ',
-	'h':'g',
-	'H':'G',
-	'غ':'ه'
+	'Г':'Ґ'
 };
 
 for (const key in gobj) gobj[gobj[key]] = key;
