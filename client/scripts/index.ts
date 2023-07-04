@@ -155,7 +155,6 @@ window.addEventListener('keyup', e => {
 const promptGenerator = (function*() {
 	while(true) {
 		yield '<tarL class="demo">Гэтыя часьціны</tarL> можна зьмяняць, націскаючы на іх';
-		yield 'Літары <tarH class="demo">г/ґ</tarH> таксама можна зьмяняць націскам';
 		yield 'Апошняе абнаўленьне: ' + new Date(__BUILD_DATE__).toLocaleDateString();
 	}
 })();
