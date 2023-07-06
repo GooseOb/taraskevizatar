@@ -94,7 +94,7 @@ const cfg = {
                 test: tsRegex,
                 use: 'ts-loader'
             }, {
-                test: /serviceWorker.index.ts$/,
+                test: /serviceWorker.index\.ts$/,
                 use: ['ts-loader', resolveLoader('sw')]
             }
         ]

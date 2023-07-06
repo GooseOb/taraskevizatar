@@ -1,8 +1,10 @@
 import cachePaths from './cachePaths.json';
 type CacheKey = keyof typeof cachePaths;
-type CacheName = `${CacheKey}-v${number}`;
-type SpecificCacheConfig = {v: string, files: string[]};
-type ModifiedCacheConfig = Record<CacheKey, SpecificCacheConfig & {cacheName: CacheName}>;
+type CacheName<T extends CacheKey = CacheKey> = `${T}-v${SpecificCachePaths<T>['v']}`;
+type SpecificCachePaths<T extends CacheKey = CacheKey> = typeof cachePaths[T];
+type ModifiedCachePaths = {
+    [Key in CacheKey]: SpecificCachePaths<Key> & {cacheName: CacheName<Key>}
+};
 
 for (const name in cachePaths)
     cachePaths[name].cacheName = name + '-v' + cachePaths[name].v;
@@ -17,8 +19,8 @@ const getCacheNameByUrl = (target: string): CacheName => {
     for (const name in cachePaths)
         for (const path in cachePaths[name])
             if (target.includes(path)) return name as CacheName;
-    // @ts-ignore
-    return cachePaths.pwa.cacheName;
+    // @ts-ignore (compilation error)
+    return (cachePaths as ModifiedCachePaths).pwa.cacheName;
 };
 
 const log = (...msg: any[]) => console.log('[SW]', ...msg);
@@ -29,12 +31,12 @@ const cacheFirst = async (req: Request) => {
     const cache = await caches.open(getCacheNameByUrl(req.url));
     cache.put(req, res.clone());
     return res;
-}
+};
 
 self.addEventListener('install', async () => {
     log('install');
     for (const name in cachePaths) {
-        const {cacheName, files} = (cachePaths as ModifiedCacheConfig)[name as CacheKey];
+        const {cacheName, files} = (cachePaths as ModifiedCachePaths)[name];
         const cache = await caches.open(cacheName);
         cache.addAll(files);
     }
