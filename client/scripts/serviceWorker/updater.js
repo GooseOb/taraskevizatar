@@ -9,39 +9,40 @@ const SW_DIR = path.dirname(utp(import.meta.url));
 const ROOT_DIR = path.resolve(SW_DIR, '..', '..', '..');
 const BUILD_PATH = path.resolve(ROOT_DIR, 'client', 'build');
 
+const git = simpleGit({
+    baseDir: ROOT_DIR
+});
+
 const notEmpty = arr => {
     for (const el of arr)
         if (el) return true;
     return false;
 };
-
-const git = simpleGit({
-    baseDir: ROOT_DIR
-});
-
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
 const question = query =>
     new Promise(res => {
         rl.question(query, answer => {
             res(answer.trim());
         });
     });
-
-const filePath = path.resolve(SW_DIR, 'cachePaths.json');
-
-const ALL_UNCOMMITTED_ID = 'x';
-
 const notUpdated = (...msgs) => {
     console.log(...msgs);
     return false;
 };
 
+const filePath = path.resolve(SW_DIR, 'cachePaths.json');
+const ALL_UNCOMMITTED_ID = 'x';
+
 export default async () => {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
     const doUpdate = /[Yy]/.test(await question('Update service worker cache? (y/n): '));
-    if (!doUpdate) return notUpdated('No cache updated');
+    if (!doUpdate) {
+        rl.close();
+        return notUpdated('No cache updated');
+    }
 
     const diffFile = (filePath) =>
         git.diff(['--no-index', path.resolve(BUILD_PATH, filePath), filePath]);
@@ -78,12 +79,10 @@ export default async () => {
     const gitDiffCacheNames = cacheNames.filter(name => updateSuggestions.includes(name));
     const getSuggestion = name => gitDiffCacheNames.includes(name) ? '<- uncommitted changes' : '';
     let options = cacheNames
-        .map((name, i) => `${i}. ${name} ${getSuggestion(name)}`)
-        .join('\n');
-    const optionsAmount = options.length;
-    if (gitDiffCacheNames.length) options += `\n${ALL_UNCOMMITTED_ID}. all uncommitted`;
-    const optionIdsToUpdate = (await question(`Choose caches to update (any separator)\n${options}\n> `))
-        .match(new RegExp(`${ALL_UNCOMMITTED_ID}|\\d${optionsAmount > 10 ? '+' : ''}`, 'g'));
+        .map((name, i) => `${i}. ${name} ${getSuggestion(name)}`);
+    if (gitDiffCacheNames.length) options.push(ALL_UNCOMMITTED_ID + '. all uncommitted');
+    const optionIdsToUpdate = (await question(`Choose caches to update (any separator)\n${options.join('\n')}\n> `))
+        .match(new RegExp(`${ALL_UNCOMMITTED_ID}|\\d+`, 'g'));
     rl.close();
     if (!optionIdsToUpdate) return notUpdated('No option chosen');
     const cacheNamesToUpdate = optionIdsToUpdate.includes(ALL_UNCOMMITTED_ID)
