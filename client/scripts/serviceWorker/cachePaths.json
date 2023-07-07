@@ -1,19 +1,19 @@
 {
   "html": {
-    "v": "13",
+    "v": "14",
     "files": [
       "/",
       "index.html"
     ]
   },
   "js": {
-    "v": "50",
+    "v": "51",
     "files": [
       "index.js"
     ]
   },
   "css": {
-    "v": "14",
+    "v": "15",
     "files": [
       "styles/style.css",
       "styles/dark.css"

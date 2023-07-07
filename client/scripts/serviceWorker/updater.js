@@ -18,12 +18,6 @@ const notEmpty = arr => {
         if (el) return true;
     return false;
 };
-const question = query =>
-    new Promise(res => {
-        rl.question(query, answer => {
-            res(answer.trim());
-        });
-    });
 const notUpdated = (...msgs) => {
     console.log(...msgs);
     return false;
@@ -37,6 +31,12 @@ export default async () => {
         input: process.stdin,
         output: process.stdout
     });
+    const question = query =>
+        new Promise(res => {
+            rl.question(query, answer => {
+                res(answer.trim());
+            });
+        });
 
     const doUpdate = /[Yy]/.test(await question('Update service worker cache? (y/n): '));
     if (!doUpdate) {
