@@ -28,4 +28,4 @@ const isCacheUpdated = await updateCache();
 
 if (isCacheUpdated) buildProject();
 
-publish();
+await publish();
