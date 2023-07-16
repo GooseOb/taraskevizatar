@@ -1,4 +1,6 @@
 import {Dict} from './types';
+type LogFn = (...args: any[]) => void;
+declare const console: {log: LogFn};
 
 export function replaceWithDict(text: string, dict: Dict = null, regex: RegExp): string {
 	for (const key in dict) {
@@ -7,4 +9,8 @@ export function replaceWithDict(text: string, dict: Dict = null, regex: RegExp):
 	}
 
 	return text;
-}
+};
+
+export const log: LogFn = (...msgs) => {
+	console.log(...msgs);
+};

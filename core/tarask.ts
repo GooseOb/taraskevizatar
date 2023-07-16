@@ -1,5 +1,6 @@
 import {wordlist, softers, arabLetters, latinLetters, latinLettersUpperCase, gobj} from './dict';
 import {Alphabet, J, Tarask, TaraskAsync, Dict} from './types';
+import {log} from './debugTools';
 
 const isUpperCase = (str: string): boolean =>
 	str === str.toUpperCase();
@@ -104,6 +105,7 @@ function restoreCase(text: string[], orig: string[]): string[] {
 	for (let i = 0; i < text.length; i++) {
 		const  word = text[i];
 		const oWord = orig[i];
+		log(word, oWord);
 		if (word === oWord) continue;
 		if (word === oWord.toLowerCase()) {
 			text[i] = oWord;
@@ -113,11 +115,15 @@ function restoreCase(text: string[], orig: string[]): string[] {
 			!oWord[0] ||
 			!isUpperCase(oWord[0])
 		) continue;
-		if (word === 'зь') text[i] = isUpperCase(orig[i + 1]) ? 'ЗЬ' : 'Зь'
-		else if (isUpperCase(oWord[oWord.length - 1])) text[i] = word.toUpperCase()
-		else text[i] = word[0] === '('
-			? word.replace(/[(|]./g, $0 => $0.toUpperCase())
-			: word[0].toUpperCase() + word.slice(1);
+		if (word === 'зь') {
+			text[i] = isUpperCase(orig[i + 1]) ? 'ЗЬ' : 'Зь'
+		} else if (isUpperCase(oWord[oWord.length - 1])) {
+			text[i] = word.toUpperCase()
+		} else {
+			text[i] = word[0] === '('
+				? word.replace(/[(|]./g, $0 => $0.toUpperCase())
+				: word[0].toUpperCase() + word.slice(1);
+		}
 	}
 
 	return text;
