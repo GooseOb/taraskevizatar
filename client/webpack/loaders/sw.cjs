@@ -1,5 +1,6 @@
 const { readFileSync } = require('fs');
 const path = require('path');
+const paths = require('../paths.cjs');
 
 module.exports = (source) =>
 	source.replace(

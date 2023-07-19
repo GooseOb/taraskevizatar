@@ -1,8 +1,8 @@
-import cfg, { finalize } from './default.js';
+import cfg, { addDictLoaders, finalize } from './default.js';
 import webpack from 'webpack';
 import path from 'path';
 import RemovePlugin from 'remove-files-webpack-plugin';
-import { addDictLoaders } from './utils.js';
+import paths from '../paths.cjs';
 
 cfg.plugins.push(
 	new RemovePlugin({
@@ -15,7 +15,7 @@ cfg.plugins.push(
 	})
 );
 
-addDictLoaders(cfg.module.rules, ['jsonGenerator', 'buildTimeFunctions']);
+addDictLoaders(['jsonGenerator', 'buildTimeFunctions']);
 
 export default finalize({
 	mode: 'production',

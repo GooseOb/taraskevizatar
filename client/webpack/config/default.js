@@ -1,45 +1,24 @@
-import path from 'path';
 import webpack from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
-import dotenv from 'dotenv';
 import tsConfig from '../../tsconfig.json' assert { type: 'json' };
-import { readFile } from 'fs/promises';
+import {
+	getAliasFromTsConfig,
+	getClientApiPath,
+	getDefaultText,
+	getDotEnv,
+	resolveLoader,
+	styleCacheGroups,
+} from './utils.js';
+import paths from '../paths.cjs';
 
-global.paths = {
-	root: path.resolve('..'),
+const tsRegex = /\.ts$/;
+const dictRegex = /dict.ts$/;
+
+const tsRule = {
+	test: tsRegex,
+	use: 'ts-loader',
 };
-
-paths.context = path.resolve(paths.root, 'client');
-paths.output = path.resolve(paths.context, 'build');
-
-const dotEnv = dotenv.config({ path: path.resolve(paths.root, '.env') }).parsed;
-export const tsRegex = /\.ts$/;
-export const dictRegex = /dict.ts$/;
-
-export const resolveLoader = (name) =>
-	path.resolve('webpack', 'loaders', name + '.cjs');
-
-const alias = tsConfig.compilerOptions.paths;
-for (const key in alias)
-	alias[key] = path.resolve(paths.context, alias[key][0]);
-
-const definedEnv = {};
-for (const key in dotEnv) definedEnv['process.env.' + key] = `'${dotEnv[key]}'`;
-
-const styleCacheGroups = (groups) =>
-	groups.reduce(
-		(acc, name) =>
-			Object.assign(acc, {
-				[name]: {
-					name,
-					test: RegExp(name + '\\.sass'),
-					chunks: 'all',
-					enforce: true,
-				},
-			}),
-		{}
-	);
 
 const cfg = {
 	context: paths.context,
@@ -54,13 +33,13 @@ const cfg = {
 	},
 	resolve: {
 		extensions: ['.js', '.ts'],
-		alias,
+		alias: getAliasFromTsConfig(tsConfig),
 	},
 	plugins: [
 		new webpack.DefinePlugin({
 			__BUILD_DATE__: Date.now(),
-			__DEFAULT_TEXT__: `\`${await readFile('default-text.txt', 'utf-8')}\``,
-			...definedEnv,
+			__DEFAULT_TEXT__: `\`${await getDefaultText()}\``,
+			...getDotEnv(),
 		}),
 		new MiniCssExtractPlugin({
 			filename: 'styles/[name].css',
@@ -96,10 +75,7 @@ const cfg = {
 					'sass-loader',
 				],
 			},
-			{
-				test: tsRegex,
-				use: 'ts-loader',
-			},
+			tsRule,
 			{
 				test: /serviceWorker.index\.ts$/,
 				use: ['ts-loader', resolveLoader('sw')],
@@ -113,8 +89,17 @@ const cfg = {
 	},
 };
 
+export const addDictLoaders = (loaderNames) => {
+	tsRule.exclude = dictRegex;
+
+	const use = loaderNames.map(resolveLoader);
+	use.push('ts-loader');
+
+	cfg.module.rules.push({ test: dictRegex, use });
+};
+
 export const finalize = (cfgProps) => (env) => {
-	if (env.api) alias['@api'] = path.resolve(paths.context, 'scripts', 'api.ts');
+	if (env.api) cfg.resolve.alias['@api'] = getClientApiPath();
 	return Object.assign(cfg, cfgProps);
 };
 

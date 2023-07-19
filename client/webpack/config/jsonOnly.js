@@ -1,11 +1,10 @@
-import cfg, { finalize } from './default.js';
-import { addDictLoaders } from './utils.js';
+import cfg, { addDictLoaders, finalize } from './default.js';
 
 cfg.entry = {
 	dict: '../core/index.ts',
 };
 
-addDictLoaders(cfg.module.rules, ['jsonGenerator']);
+addDictLoaders(['jsonGenerator']);
 
 export default finalize({
 	mode: 'production',

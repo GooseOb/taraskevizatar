@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const exists = require('util').promisify(fs.exists);
 const { writeFile, mkdir } = fs.promises;
+const paths = require('../paths.cjs');
 
 const outputPath = path.resolve(paths.root, 'json');
 
