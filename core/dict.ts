@@ -1,5 +1,5 @@
 import {Dict} from './types';
-
+ 
 type RawDict = Record<string, RegExp | string>;
 
 const els1: string[] = [];

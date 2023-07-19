@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { AppModule } from '../src/app.module'
-import { ConvertDto } from '../src/dto/convert.dto';
+import { ConvertDto } from '../src/dto/convert.dto'
 
 describe('Converter without HTML (e2e)', () => {
   let app: INestApplication
@@ -46,9 +46,9 @@ describe('Converter with HTML (e2e)', () => {
       .post('/')
       .send({
         text: 'Чэшскі і польскі, Джонні, асяроддзе',
-        html: {g: true},
+        html: { g: true },
         alphabet: 0,
-        alwaysJ: 2
+        alwaysJ: 2,
       } satisfies ConvertDto)
       .expect(201)
       .expect(

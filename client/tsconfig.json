@@ -1,26 +1,24 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "declaration": false,
-    "removeComments": false,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "es2017",
-    "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
-    "resolveJsonModule": true,
-    "paths": {
-      "@api": ["../core/tarask.ts"],
-      "@core": ["../core"]
-    },
-    "lib": [
-      "es5", "es6", "dom", "dom.iterable", "webworker"
-    ]
-  }
+	"compilerOptions": {
+		"module": "commonjs",
+		"declaration": false,
+		"removeComments": false,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true,
+		"target": "es2017",
+		"incremental": true,
+		"skipLibCheck": true,
+		"strictNullChecks": false,
+		"noImplicitAny": false,
+		"strictBindCallApply": false,
+		"forceConsistentCasingInFileNames": false,
+		"noFallthroughCasesInSwitch": false,
+		"resolveJsonModule": true,
+		"paths": {
+			"@core": ["../core"],
+			"@api": ["../core/tarask"]
+		},
+		"lib": ["es5", "es6", "dom", "dom.iterable", "webworker"]
+	}
 }

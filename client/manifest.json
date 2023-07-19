@@ -1,29 +1,29 @@
 {
-  "name": "taraskevizatar",
-  "theme_color": "#773399",
-  "background_color": "#2196f3",
-  "display": "standalone",
-  "start_url": ".",
-  "icons": [
-    {
-      "src": "./logo/98.png",
-      "sizes": "98x98",
-      "type": "image/png"
-    },
-    {
-      "src": "./logo/144.png",
-      "sizes": "144x144",
-      "type": "image/png"
-    },
-    {
-      "src": "./logo/256.png",
-      "sizes": "256x256",
-      "type": "image/png"
-    },
-    {
-      "src": "./logo/512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+	"name": "taraskevizatar",
+	"theme_color": "#773399",
+	"background_color": "#2196f3",
+	"display": "standalone",
+	"start_url": ".",
+	"icons": [
+		{
+			"src": "./logo/98.png",
+			"sizes": "98x98",
+			"type": "image/png"
+		},
+		{
+			"src": "./logo/144.png",
+			"sizes": "144x144",
+			"type": "image/png"
+		},
+		{
+			"src": "./logo/256.png",
+			"sizes": "256x256",
+			"type": "image/png"
+		},
+		{
+			"src": "./logo/512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	]
 }

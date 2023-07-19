@@ -1,5 +1,9 @@
 {
-  "compilerOptions": {
-    "lib": ["es6"]
-  },
+	"compilerOptions": {
+		"lib": ["es6"],
+		"paths": {
+			"@api": ["../core/tarask.ts"],
+			"@core": ["../core"]
+		}
+	}
 }
