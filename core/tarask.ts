@@ -7,6 +7,8 @@ const isUpperCase = (str: string): boolean =>
 
 const NOFIX_CHAR = ' \uffff ';
 const NOFIX_REGEX = new RegExp(NOFIX_CHAR, 'g');
+const OPTIONAL_WORDS_REGEX = /\(.*?\)/g;
+const G_REGEX = /[Ґґ]/g;
 
 type AlphabetDependentDict = {[key in Alphabet]?: Dict};
 const letters = {
@@ -16,16 +18,6 @@ const letters = {
 const lettersUpperCase = {
 	[Alphabet.latin]: latinLettersUpperCase
 } satisfies AlphabetDependentDict;
-const gCyrillicReplacements = {
-	h: {
-		'<tarH>г</tarH>':/ґ/g,
-		'<tarH>Г</tarH>':/Ґ/g
-	},
-	g: {
-		'<tarH>ґ</tarH>':/ґ/g,
-		'<tarH>Ґ</tarH>':/Ґ/g
-	}
-} satisfies Record<'h' | 'g', Dict>;
 const additionalReplacements = {
 	[Alphabet.cyrillic]: {
 		'$1У':/([АЕЁІОУЫЭЮЯ])<tarF>Ў<\/tarF>/g,
@@ -78,24 +70,16 @@ export const taraskSync: Tarask = (
 
 	if (html) {
 		text = replaceWithDict(text, additionalReplacements[abc]);
-		if (abc === Alphabet.cyrillic) text = replaceWithDict(text, gCyrillicReplacements[html.g ? 'g' : 'h']);
+		// @ts-ignore
+		if (abc === Alphabet.cyrillic) text = text.replace(G_REGEX, html.g
+			? '<tarH>$&</tarH>'
+			: $0 => `<tarH>${gobj[$0]}</tarH>`
+		);
 	}
 
 	if (noFix.length) text = text.replace(NOFIX_REGEX, () => noFix.shift());
-	const optionalWordsRegExp = /\(.*?\)/g;
 
-	return (html
-		? text
-			.replace(optionalWordsRegExp, $0 => {
-				const options = $0.slice(1, -1).split('|');
-				const main = options.shift();
-				return `<tarL data-l='${options}'>${main}</tarL>`;
-			})
-			.replace(/ \n /g, '<br>')
-		: text
-			.replace(optionalWordsRegExp, $0 => $0.slice(1, -1).split('|')[0])
-			.replace(/&#40/g, '(')
-	).trim();
+	return (html ? finalizer.html : finalizer.text)(text).trim();
 }
 
 export const tarask: TaraskAsync = (...args) =>
@@ -105,7 +89,6 @@ function restoreCase(text: string[], orig: string[]): string[] {
 	for (let i = 0; i < text.length; i++) {
 		const  word = text[i];
 		const oWord = orig[i];
-		log(word, oWord);
 		if (word === oWord) continue;
 		if (word === oWord.toLowerCase()) {
 			text[i] = oWord;
@@ -121,7 +104,11 @@ function restoreCase(text: string[], orig: string[]): string[] {
 			text[i] = word.toUpperCase()
 		} else {
 			text[i] = word[0] === '('
-				? word.replace(/[(|]./g, $0 => $0.toUpperCase())
+				? word.replace(/.*?(?=\))/,
+					$0 => $0.replace(/[(|]./g,
+						$0 => $0.toUpperCase()
+					)
+				)
 				: word[0].toUpperCase() + word.slice(1);
 		}
 	}
@@ -133,32 +120,29 @@ function toHtmlTags(text: string[], orig: string[], abc: Alphabet): string[] {
 	for (let i = 0; i < text.length; i++) {
 		const  word = text[i];
 		const oWord = orig[i];
-		if (
-			word === oWord ||
-			/\(/.test(word) ||
-			(abc === Alphabet.latin && oWord === word.replace(/[Gg]/, $0 => gobj[$0]))
-		) continue;
-		if (word.length === oWord.length) {
-			const LettersText = word.split('');
-			for (let x = 0; x < LettersText.length; x++) {
-				if (LettersText[x] !== oWord[x])
-					LettersText[x] = `<tarF>${LettersText[x]}</tarF>`;
+		if (oWord === word) continue;
+		const wordH = word.replace(G_REGEX, $0 => gobj[$0]);
+		if (oWord === wordH) continue;
+		if (!/\(/.test(word)) {
+			if (word.length === oWord.length) {
+				const LettersText = word.split('');
+				for (let x = 0; x < LettersText.length; x++) {
+					if (LettersText[x] !== oWord[x])
+						LettersText[x] = `<tarF>${LettersText[x]}</tarF>`;
+				}
+				text[i] = LettersText.join('');
+				continue;
 			}
-			text[i] = LettersText.join('');
-			continue;
-		}
-		if (abc === Alphabet.cyrillic) {
-			const word1 = word.replace(/ь/g, '');
-			switch (oWord) {
-				case word1:
-					text[i] = word.replace(/ь/g, '<tarF>ь</tarF>');
-					continue;
-				case word1 + 'ь':
-					text[i] = word.slice(0, -1).replace(/ь/g, '<tarF>ь</tarF>') + 'ь';
-					continue;
-				case word.replace(/[аую]/, 'ір$&'):
-					text[i] = word.replace(/.[аую]/, '<tarF>$&</tarF>');
-					continue;
+			if (abc === Alphabet.cyrillic) {
+				const word1 = word.replace(/ь/g, '');
+				switch (oWord) {
+					case word1:
+						text[i] = word.replace(/ь/g, '<tarF>ь</tarF>');
+						continue;
+					case word1 + 'ь':
+						text[i] = word.slice(0, -1).replace(/ь/g, '<tarF>ь</tarF>') + 'ь';
+						continue;
+				}
 			}
 		}
 
@@ -167,18 +151,16 @@ function toHtmlTags(text: string[], orig: string[], abc: Alphabet): string[] {
 		let fromWordEnd = word.length - 1;
 		let fromOWordEnd = oWordEnd;
 
-		while (word[fromStart] === oWord[fromStart])
+		while (wordH[fromStart] === oWord[fromStart])
 			++fromStart;
-		while (word[fromWordEnd] === oWord[fromOWordEnd])
+		while (wordH[fromWordEnd] === oWord[fromOWordEnd])
 			--fromWordEnd, --fromOWordEnd;
 
-		if (oWord.length > word.length) {
-			if (fromStart === 0) {
-				if (fromOWordEnd === oWordEnd) {
-					text[i] = `<tarF>${word}</tarF>`;
-					continue;
-				}
-			} else ++fromStart, ++fromWordEnd;
+		if (oWord.length < word.length) {
+			if (fromOWordEnd === oWordEnd) {
+				text[i] = `<tarF>${word}</tarF>`;
+				continue;
+			}
 			if (fromWordEnd < 0) fromWordEnd = 0;
 		}
 
@@ -235,3 +217,16 @@ function replaceIbyJ(text: string, always = false): string {
 			Math.random() >= 0.5 ? toJ($1, $2) : $0
 	);
 }
+
+const finalizer = {
+	html: text => text
+		.replace(OPTIONAL_WORDS_REGEX, $0 => {
+			const options = $0.slice(1, -1).split('|');
+			const main = options.shift();
+			return `<tarL data-l='${options}'>${main}</tarL>`;
+		})
+		.replace(/ \n /g, '<br>'),
+	text: text => text
+		.replace(OPTIONAL_WORDS_REGEX, $0 => $0.slice(1, -1).split('|')[0])
+		.replace(/&#40/g, '(')
+} satisfies Record<string, (text: string) => string>;
