@@ -5,12 +5,14 @@ import { fileURLToPath as utp } from 'url';
 import cachePaths from './cachePaths.json' assert { type: "json" };
 import { simpleGit } from 'simple-git';
 
-const SW_DIR = path.dirname(utp(import.meta.url));
-const ROOT_DIR = path.resolve(SW_DIR, '..', '..', '..');
-const BUILD_PATH = path.resolve(ROOT_DIR, 'client', 'build');
+const PATH_SW = path.dirname(utp(import.meta.url));
+const PATH_ROOT = path.resolve(PATH_SW, '..', '..', '..');
+const PATH_BUILD = path.resolve(PATH_ROOT, 'client', 'build');
+const PATH_FILE = path.resolve(PATH_SW, 'cachePaths.json');
+const ALL_UNCOMMITTED_ID = 'x';
 
 const git = simpleGit({
-    baseDir: ROOT_DIR
+    baseDir: PATH_ROOT
 });
 
 const notEmpty = arr => {
@@ -22,9 +24,6 @@ const notUpdated = (...msgs) => {
     console.log(...msgs);
     return false;
 };
-
-const filePath = path.resolve(SW_DIR, 'cachePaths.json');
-const ALL_UNCOMMITTED_ID = 'x';
 
 export default async () => {
     const rl = readline.createInterface({
@@ -45,7 +44,7 @@ export default async () => {
     }
 
     const diffFile = (filePath) =>
-        git.diff(['--no-index', path.resolve(BUILD_PATH, filePath), filePath]);
+        git.diff(['--no-index', path.resolve(PATH_BUILD, filePath), filePath]);
 
     const updateSuggestions = [];
 
@@ -59,6 +58,7 @@ export default async () => {
 
     await git.stash();
     await git.checkout('gh-pages');
+    await git.pull();
     const safecrlfValue = (await git.getConfig('core.safecrlf')).value;
     await git.addConfig('core.safecrlf', 'false');
 
@@ -94,7 +94,7 @@ export default async () => {
         const cache = cachePaths[cacheName];
         cache.v = String(+cache.v + 1);
     }
-    await writeFile(filePath, JSON.stringify(cachePaths, null, 2));
+    await writeFile(PATH_FILE, JSON.stringify(cachePaths, null, 2));
     console.log('Updated successfully: ' + cacheNamesToUpdate.join(', '));
     return true;
 }
