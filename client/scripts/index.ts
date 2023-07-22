@@ -55,7 +55,8 @@ $('delete-cache').addEventListener('click', async () => {
 			return;
 		}
 		await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
-		snackbar.show('Кэш выдалены');
+		snackbar.show('Кэш выдалены, абнаўленьне старонкі');
+		location.reload();
 	} catch (e) {
 		snackbar.show('Памылка выдаленьня кэшу: ' + e);
 	}
