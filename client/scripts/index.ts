@@ -72,31 +72,20 @@ const enum EDIT {
 
 const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ'] as const;
 
-const stgs: Options & { html: { g: boolean } } = {
+const settings: Options & { html: { g: boolean } } = {
 	abc: 0,
 	j: 0,
 	html: { g: false },
 };
-const settingIds = Object.keys(stgs);
+const saveSettings = () => {
+	localStorage.settings = JSON.stringify(settings);
+};
 
 if (localStorage.settings) {
-	Object.assign(stgs, JSON.parse(localStorage.settings));
+	Object.assign(settings, JSON.parse(localStorage.settings));
 } else {
-	for (const id of settingIds)
-		if (localStorage[id]) {
-			stgs[id] = +localStorage[id];
-			delete localStorage[id];
-		}
-	localStorage.settings = JSON.stringify(stgs);
+	saveSettings();
 }
-
-const settings = new Proxy(stgs, {
-	set(target, name, value: string) {
-		target[name] = value;
-		localStorage.settings = JSON.stringify(target);
-		return true;
-	},
-});
 
 const input = $<HTMLTextAreaElement & { fixHeight: () => void }>('input');
 const settingsElement = $<HTMLDivElement>('settings');
@@ -261,37 +250,45 @@ output.addEventListener('click', (e) => {
 	}
 });
 
-type SelectIds = 'abc' | 'j' | 'g';
-const newSelect = (
-	id: SelectIds,
+type SelectId = 'abc' | 'j' | 'g';
+type Select = (
+	id: SelectId,
 	initialOption: number,
 	callback: (value: number) => void
-) => {
-	const select = $(id);
-	const options = select.querySelectorAll('button');
-	const activateOption = (option) => {
+) => void;
+const getOptionActivator =
+	<TElem extends HTMLElement = HTMLElement>(
+		options: TElem[] | NodeListOf<TElem>
+	) =>
+	(option: TElem) => {
 		for (const el of options) el.classList.remove('active');
 		option.classList.add('active');
 	};
+const newSelect: Select = (id, initialOption, callback) => {
+	const select = $(id);
+	const options = select.querySelectorAll('button');
+	const activateOption = getOptionActivator(options);
 	select.addEventListener('click', (e) => {
-		const el = e.target as HTMLSelectElement;
+		const el = e.target as HTMLButtonElement;
 		activateOption(el);
 		callback(+el.value);
 	});
 	activateOption(options[initialOption]);
 };
-
-newSelect('abc', settings.abc, (value) => {
+const newSettingsSelect: Select = (id, initialOption, settingSetter) =>
+	newSelect(id, initialOption, (value) => {
+		settingSetter(value);
+		saveSettings();
+		forceConversion();
+	});
+newSettingsSelect('abc', settings.abc, (value) => {
 	settings.abc = value;
-	forceConversion();
 });
-newSelect('j', settings.j, (value) => {
+newSettingsSelect('j', settings.j, (value) => {
 	settings.j = value;
-	forceConversion();
 });
-newSelect('g', +settings.html.g, (value) => {
+newSettingsSelect('g', +settings.html.g, (value) => {
 	settings.html.g = !!value;
-	forceConversion();
 });
 
 const describeConversionError = (err: string) => {
