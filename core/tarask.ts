@@ -7,7 +7,7 @@ import {
 	gobj,
 } from './dict';
 import { Alphabet, J, Tarask, TaraskAsync, Dict } from './types';
-import { log } from './debugTools';
+import * as debug from './tools.debug';
 
 const isUpperCase = (str: string): boolean => str === str.toUpperCase();
 
