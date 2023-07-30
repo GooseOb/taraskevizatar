@@ -19,8 +19,8 @@ $height-actions-block: 3rem
   color: #000
   --bg: #ddf
   --1: #b9f
-  --2: #ff6
-  --3: #fd6
+  --2: #ff8
+  --3: #fd8
   --4: #b5f
   --link: #28f
   --link-hover: #26f
@@ -32,6 +32,13 @@ $mobileSizes: (0: 650px, 1: 360px)
 @mixin mobile($sizeIndex: 0)
   @media screen and (max-width: map.get($mobileSizes, $sizeIndex))
     @content
+
+::selection
+  color: inherit
+  background: $clr-1
+::-moz-selection
+  color: inherit
+  background: yellow
 
 body
   font-family: sans-serif
@@ -257,9 +264,9 @@ footer
   @include mobile
     width: 100%
   &:first-child
-    background-color: $clr-2
-  &:last-child
     background-color: $clr-3
+  &:last-child
+    background-color: $clr-2
   .header
     font-size: 1.5rem
     padding: .8rem
