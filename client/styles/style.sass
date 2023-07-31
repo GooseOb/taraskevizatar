@@ -163,7 +163,7 @@ footer
       @include hideSettings
 
 @mixin select-btn-padding
-  padding: .5rem 0
+  padding: .5rem
 .select
   white-space: nowrap
   margin: 1rem
@@ -176,6 +176,8 @@ footer
   align-items: center
   border-radius: 1rem
   overflow: hidden
+  a
+    width: 100%
   .title
     font-size: 1rem
     padding: .5rem
@@ -189,6 +191,8 @@ footer
     list-style-type: none
     position: relative
     display: flex
+    &.not-animated
+      width: 100%
     button
       @include select-btn-padding
       color: inherit
@@ -197,49 +201,39 @@ footer
       z-index: 1
       transition: .2s
       width: 100%
-      font-size: inherit
+      font: inherit
       border: none
       background: none
       cursor: pointer
       &:hover, &:focus, &:focus-within
         background-color: #00000008
 
-.select .one-option
-  width: 100%
-  a
-    width: 100%
-  button
-    width: 100%
-    font: inherit
-    color: inherit
-    text-align: center
-
-@mixin settingOptions($isAnimated, $widths...)
+@mixin animatedOptions($widths...)
   $i: 1
   $left: 0em
   @each $w in $widths
     button
       &:nth-child(#{$i})
         width: $w
-    @if $isAnimated
-      .active
-        &:nth-child(#{$i}) ~ .animation
-          left: $left
-          width: $w
+    .active
+      &:nth-child(#{$i}) ~ .animation
+        left: $left
+        width: $w
       $left: $left + $w
     $i: $i + 1
 
 #abc
-  @include settingOptions(true, 5.5em, 4.5em, 9.25em)
+  @include animatedOptions(5.5em, 4.5em, 9.25em)
   .small
     pointer-events: none
     font-size: .8rem
 #j
-  @include settingOptions(true, 4em, 6em, 5em)
+  @include animatedOptions(4em, 6em, 5em)
 #g
-  @include settingOptions(true, 4em, 4em)
+  @include animatedOptions(4em, 4em)
 #file-convert
-  @include settingOptions(false, 8em, 8em)
+  .active
+    background-color: $clr-3
 
 .animation
   background-color: $clr-3
@@ -368,16 +362,11 @@ button:has(#upload)
 label[for=upload]
   @include select-btn-padding
   display: block
-  width: 100%
   cursor: pointer
 
 #download
   font: inherit
   color: inherit
-
-#file-convert
-  .active
-    background-color: $clr-3
 
 input[type=file],
 input[type=file]::-webkit-file-upload-button
