@@ -1,14 +1,14 @@
 {
 	"html": {
-		"v": "14",
-		"files": ["/", "index.html"]
+		"v": "15",
+		"files": ["/taraskevizatar/", "index.html"]
 	},
 	"js": {
-		"v": "55",
+		"v": "56",
 		"files": ["index.js"]
 	},
 	"css": {
-		"v": "15",
+		"v": "16",
 		"files": ["styles/style.css", "styles/dark.css"]
 	},
 	"static": {
