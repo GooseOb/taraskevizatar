@@ -6,7 +6,13 @@ import {
 	latinLettersUpperCase,
 	gobj,
 } from './dict';
-import { Alphabet, J, Tarask, TaraskAsync, Dict } from './types';
+import {
+	Tarask,
+	TaraskAsync,
+	Dict,
+	AlphabetDependentDict,
+	TaraskOptions,
+} from './types';
 import * as debug from './tools.debug';
 
 const isUpperCase = (str: string): boolean => str === str.toUpperCase();
@@ -16,24 +22,30 @@ const NOFIX_REGEX = new RegExp(NOFIX_CHAR, 'g');
 const OPTIONAL_WORDS_REGEX = /\(.*?\)/g;
 const G_REGEX = /[Ґґ]/g;
 
-type AlphabetDependentDict = { [key in Alphabet]?: Dict };
+const CYRILLIC = 0,
+	LATIN = 1,
+	ARABIC = 2;
+const NEVER_J = 0,
+	RANDOM_J = 1,
+	ALWAYS_J = 2;
+
 const letters = {
-	[Alphabet.latin]: latinLetters,
-	[Alphabet.arabic]: arabLetters,
+	[LATIN]: latinLetters,
+	[ARABIC]: arabLetters,
 } satisfies AlphabetDependentDict;
 const lettersUpperCase = {
-	[Alphabet.latin]: latinLettersUpperCase,
+	[LATIN]: latinLettersUpperCase,
 } satisfies AlphabetDependentDict;
 const additionalReplacements = {
-	[Alphabet.cyrillic]: {
+	[CYRILLIC]: {
 		$1У: /([АЕЁІОУЫЭЮЯ])<tarF>Ў<\/tarF>/g,
 		' У': / <tarF>Ў<\/tarF>(?=\p{Lu})/gu,
 	},
-	[Alphabet.latin]: {
+	[LATIN]: {
 		$1U: /([AEIOUY])<tarF>Ŭ<\/tarF>/g,
 		' U': / <tarF>Ŭ<\/tarF>(?=\p{Lu})/gu,
 	},
-	[Alphabet.arabic]: {},
+	[ARABIC]: {},
 } satisfies AlphabetDependentDict;
 
 export const taraskSync: Tarask = (text, { abc = 0, j = 0, html }) => {
@@ -61,11 +73,11 @@ export const taraskSync: Tarask = (text, { abc = 0, j = 0, html }) => {
 	).split(' ');
 
 	text = toTarask(text.toLowerCase());
-	if (j) text = replaceIbyJ(text, j === J.always);
+	if (j) text = replaceIbyJ(text, j === ALWAYS_J);
 	text = replaceWithDict(text, letters[abc]);
 
 	splitted = text.split(' ');
-	if (abc !== Alphabet.arabic) splitted = restoreCase(splitted, splittedOrig);
+	if (abc !== ARABIC) splitted = restoreCase(splitted, splittedOrig);
 	if (html) splitted = toHtmlTags(splitted, splittedOrig, abc);
 
 	text = splitted
@@ -75,7 +87,7 @@ export const taraskSync: Tarask = (text, { abc = 0, j = 0, html }) => {
 
 	if (html) {
 		text = replaceWithDict(text, additionalReplacements[abc]);
-		if (abc === Alphabet.cyrillic)
+		if (abc === CYRILLIC)
 			text = text.replace(
 				G_REGEX,
 				// @ts-ignore
@@ -118,7 +130,11 @@ function restoreCase(text: string[], orig: string[]): string[] {
 	return text;
 }
 
-function toHtmlTags(text: string[], orig: string[], abc: Alphabet): string[] {
+function toHtmlTags(
+	text: string[],
+	orig: string[],
+	abc: TaraskOptions['abc']
+): string[] {
 	for (let i = 0; i < text.length; i++) {
 		const word = text[i];
 		const oWord = orig[i];
@@ -135,7 +151,7 @@ function toHtmlTags(text: string[], orig: string[], abc: Alphabet): string[] {
 				text[i] = LettersText.join('');
 				continue;
 			}
-			if (abc === Alphabet.cyrillic) {
+			if (abc === CYRILLIC) {
 				const word1 = word.replace(/ь/g, '');
 				switch (oWord) {
 					case word1:

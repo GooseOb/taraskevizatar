@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import { HtmlOptions, taraskSync } from '@core'
+import { TaraskOptions, taraskSync } from '@core'
 
 @Injectable()
 export class AppService {
   convert(
     text: string,
-    abc: number,
-    j: number,
-    html: false | HtmlOptions = false,
+    abc: TaraskOptions['abc'],
+    j: TaraskOptions['j'],
+    html: TaraskOptions['html'] = false,
   ): string {
     return taraskSync(text, { abc, j, html })
   }

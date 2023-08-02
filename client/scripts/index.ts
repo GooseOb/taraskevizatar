@@ -1,4 +1,4 @@
-import { gobj, Options } from '@core';
+import { gobj, TaraskOptions } from '@core';
 import { tarask } from '@api';
 import { $, debounce } from './utils';
 declare const __BUILD_DATE__: number;
@@ -74,7 +74,7 @@ const enum EDIT {
 
 const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ'] as const;
 
-const settings: Options & { html: { g: boolean } } = {
+const settings: TaraskOptions & { html: { g: boolean } } = {
 	abc: 0,
 	j: 0,
 	html: { g: false },
@@ -284,10 +284,10 @@ const newSettingsSelect: Select = (id, initialOption, settingSetter) =>
 		forceConversion();
 	});
 newSettingsSelect('abc', settings.abc, (value) => {
-	settings.abc = value;
+	settings.abc = value as TaraskOptions['abc'];
 });
 newSettingsSelect('j', settings.j, (value) => {
-	settings.j = value;
+	settings.j = value as TaraskOptions['j'];
 });
 newSettingsSelect('g', +settings.html.g, (value) => {
 	settings.html.g = !!value;
