@@ -1,4 +1,4 @@
-import { TaraskAsync } from '@core';
+import { TaraskAsync } from 'taraskevizer';
 
 export const tarask: TaraskAsync = async (
 	text,

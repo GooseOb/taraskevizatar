@@ -13,12 +13,6 @@ import {
 import paths from '../paths.cjs';
 
 const tsRegex = /\.ts$/;
-const dictRegex = /dict.ts$/;
-
-const tsRule = {
-	test: tsRegex,
-	use: 'ts-loader',
-};
 
 const cfg = {
 	context: paths.context,
@@ -75,7 +69,10 @@ const cfg = {
 					'sass-loader',
 				],
 			},
-			tsRule,
+			{
+				test: tsRegex,
+				use: 'ts-loader',
+			},
 			{
 				test: /serviceWorker.index\.ts$/,
 				use: ['ts-loader', resolveLoader('sw')],
@@ -87,15 +84,6 @@ const cfg = {
 		filename: '[name].js',
 		clean: true,
 	},
-};
-
-export const addDictLoaders = (loaderNames) => {
-	tsRule.exclude = dictRegex;
-
-	const use = loaderNames.map(resolveLoader);
-	use.push('ts-loader');
-
-	cfg.module.rules.push({ test: dictRegex, use });
 };
 
 export const finalize = (cfgProps) => (env) => {

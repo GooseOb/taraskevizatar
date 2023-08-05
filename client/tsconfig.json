@@ -16,8 +16,7 @@
 		"noFallthroughCasesInSwitch": false,
 		"resolveJsonModule": true,
 		"paths": {
-			"@core": ["../core"],
-			"@api": ["../core/tarask"]
+			"@api": ["../node_modules/taraskevizer"]
 		},
 		"lib": ["es5", "es6", "dom", "dom.iterable", "webworker"]
 	}

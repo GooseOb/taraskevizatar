@@ -16,5 +16,8 @@
 		"concurrently": "^8.0.1",
 		"husky": "^8.0.3",
 		"prettier": "3.0.0"
+	},
+	"dependencies": {
+		"taraskevizer": "^1.1.1"
 	}
 }

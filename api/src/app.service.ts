@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { TaraskOptions, taraskSync } from '@core'
+import { TaraskOptions, taraskSync } from 'taraskevizer'
 
 @Injectable()
 export class AppService {

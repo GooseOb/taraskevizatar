@@ -1,4 +1,4 @@
-import { gobj, TaraskOptions } from '@core';
+import { gobj, TaraskOptions } from 'taraskevizer';
 import { tarask } from '@api';
 import { $, debounce } from './utils';
 declare const __BUILD_DATE__: number;

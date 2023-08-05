@@ -1,4 +1,4 @@
-import { HtmlOptions } from '@core'
+import { HtmlOptions } from 'taraskevizer'
 
 export class ConvertDto {
   text: string
