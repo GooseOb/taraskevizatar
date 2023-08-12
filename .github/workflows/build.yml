@@ -18,12 +18,17 @@ jobs:
         with:
           node-version: '16'
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-      - run: npm i
+      - name: Install deps
+        run: npm i
+      - name: Install client deps
+        run: |
+          cd client
+          npm ci
       - run: npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./out
+          path: ./build
   deploy:
     environment:
       name: github-pages
