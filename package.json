@@ -18,6 +18,6 @@
 		"prettier": "3.0.0"
 	},
 	"dependencies": {
-		"taraskevizer": "^1.1.1"
+		"taraskevizer": "^1.1.2"
 	}
 }

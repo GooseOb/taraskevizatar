@@ -1,26 +1,12 @@
 import cachePaths from './cachePaths.json';
-type CacheKey = keyof typeof cachePaths;
-type CacheName<T extends CacheKey = CacheKey> =
-	`${T}-v${SpecificCachePaths<T>['v']}`;
-type SpecificCachePaths<T extends CacheKey = CacheKey> = (typeof cachePaths)[T];
-type ModifiedCachePaths = {
-	[Key in CacheKey]: SpecificCachePaths<Key> & { cacheName: CacheName<Key> };
-};
 
-for (const name in cachePaths)
-	cachePaths[name].cacheName = name + '-v' + cachePaths[name].v;
-
-const isCacheConfigActual = (cacheName: CacheName) => {
-	const [name, v = null] = cacheName.split('-v');
-	return v === cachePaths[name]?.v;
-};
-
-const getCacheNameByUrl = (target: string): CacheName => {
-	for (const name in cachePaths)
-		for (const path in cachePaths[name])
-			if (target.includes(path)) return name as CacheName;
-	// @ts-ignore (compilation error)
-	return (cachePaths as ModifiedCachePaths).pwa.cacheName;
+const getCacheNameByUrl = (target: string): string => {
+	let pwaName: string;
+	for (const name in cachePaths) {
+		for (const path in cachePaths[name]) if (target.includes(path)) return name;
+		if (/pwa/.test(name)) pwaName = name;
+	}
+	return pwaName;
 };
 
 const log = (...msg: any[]) => console.log('[SW]', ...msg);
@@ -36,7 +22,7 @@ const cacheFirst = async (req: Request) => {
 self.addEventListener('install', async () => {
 	log('install');
 	for (const name in cachePaths) {
-		const { cacheName, files } = (cachePaths as ModifiedCachePaths)[name];
+		const { cacheName, files } = cachePaths[name];
 		const cache = await caches.open(cacheName);
 		cache.addAll(files);
 	}
@@ -44,12 +30,14 @@ self.addEventListener('install', async () => {
 
 self.addEventListener('activate', async () => {
 	log('activate');
-	const cacheNames = (await caches.keys()) as CacheName[];
-	await Promise.all(
-		cacheNames
-			.filter((name) => !isCacheConfigActual(name))
-			.map((name) => caches.delete(name))
-	);
+	const cacheNames = Object.keys(cachePaths);
+
+	const cachesToDelete: string[] = [];
+
+	for (const name of await caches.keys())
+		if (!cacheNames.includes(name)) cachesToDelete.push(name);
+
+	await Promise.all(cachesToDelete.map((name) => caches.delete(name)));
 });
 
 self.addEventListener('fetch', (e: FetchEvent) => {
