@@ -17,8 +17,8 @@ jobs:
         with:
           node-version: '16'
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-      - name: Install deps
-        run: npm i
+      - name: Install taraskevizer
+        run: npm i taraskevizer
       - name: Install client deps
         run: |
           cd client
