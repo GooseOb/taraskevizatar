@@ -12,15 +12,12 @@
 		"dev:api": "webpack serve --config webpack/config/dev.js --env api",
 		"build": "webpack --config webpack/config/prod.js",
 		"build:api": "webpack --config webpack/config/prod.js --env api",
-		"update-json": "webpack --config webpack/config/jsonOnly.js",
-		"deploy": "node --no-warnings deploy.js",
-		"publish": "node --no-warnings deploy.js --publishonly"
+		"predeploy": "node --no-warnings predeploy.js"
 	},
 	"devDependencies": {
 		"copy-webpack-plugin": "^11.0.0",
 		"css-loader": "^6.7.3",
 		"dotenv": "^16.0.3",
-		"gh-pages": "^5.0.0",
 		"mini-css-extract-plugin": "^2.7.5",
 		"remove-files-webpack-plugin": "^1.5.0",
 		"sass": "^1.59.3",
