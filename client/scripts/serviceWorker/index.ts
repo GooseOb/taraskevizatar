@@ -3,7 +3,9 @@ import cachePaths from './cachePaths.json';
 const getCacheNameByUrl = (target: string): string => {
 	let pwaName: string;
 	for (const name in cachePaths) {
-		for (const path in cachePaths[name]) if (target.includes(path)) return name;
+		for (const path of cachePaths[name]) {
+			if (target.includes(path)) return name;
+		}
 		if (/pwa/.test(name)) pwaName = name;
 	}
 	return pwaName;
@@ -14,6 +16,7 @@ const cacheFirst = async (req: Request) => {
 	let res = await caches.match(req);
 	if (res) return res;
 	res = await fetch(req);
+	log(req.url, getCacheNameByUrl(req.url));
 	const cache = await caches.open(getCacheNameByUrl(req.url));
 	cache.put(req, res.clone());
 	return res;
