@@ -1,37 +1,22 @@
 {
-	"html": {
-		"v": "15",
-		"files": ["/taraskevizatar/", "index.html"]
-	},
-	"js": {
-		"v": "56",
-		"files": ["index.js"]
-	},
-	"css": {
-		"v": "16",
-		"files": ["styles/style.css", "styles/dark.css"]
-	},
-	"static": {
-		"v": "1",
-		"files": [
-			"fonts/NotoSansArabic-SemiBold.ttf",
-			"icons/close.svg",
-			"icons/copy.svg",
-			"icons/edit.svg",
-			"icons/info.svg",
-			"icons/settings.svg",
-			"icons/theme/light.svg",
-			"icons/theme/dark.svg"
-		]
-	},
-	"pwa": {
-		"v": "1",
-		"files": [
-			"manifest.json",
-			"logo/96.png",
-			"logo/144.png",
-			"logo/256.png",
-			"logo/512.png"
-		]
-	}
+	"html": ["/taraskevizatar/", "index.html"],
+	"js": ["index.js"],
+	"css": ["styles/style.css", "styles/dark.css"],
+	"static": [
+		"fonts/NotoSansArabic-SemiBold.ttf",
+		"icons/close.svg",
+		"icons/copy.svg",
+		"icons/edit.svg",
+		"icons/info.svg",
+		"icons/settings.svg",
+		"icons/theme/light.svg",
+		"icons/theme/dark.svg"
+	],
+	"pwa": [
+		"manifest.json",
+		"logo/96.png",
+		"logo/144.png",
+		"logo/256.png",
+		"logo/512.png"
+	]
 }

@@ -16,7 +16,6 @@ const isCacheConfigActual = (cacheName: CacheName) => {
 };
 
 const getCacheNameByUrl = (target: string): CacheName => {
-	log(target);
 	for (const name in cachePaths)
 		for (const path in cachePaths[name])
 			if (target.includes(path)) return name as CacheName;
