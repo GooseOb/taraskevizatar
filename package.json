@@ -10,6 +10,7 @@
 	"scripts": {
 		"dev": "concurrently --kill-others \"npm run --prefix api start:dev\" \"npm run --prefix client dev:api\"",
 		"deploy": "npm run --prefix client deploy",
+		"build:client": "npm run --prefix client build",
 		"prepare": "husky install"
 	},
 	"devDependencies": {

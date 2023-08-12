@@ -24,11 +24,12 @@ jobs:
         run: |
           cd client
           npm ci
-      - run: npm run build
+          cd ..
+      - run: npm run build:client
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./build
+          path: ./client/build
   deploy:
     environment:
       name: github-pages
