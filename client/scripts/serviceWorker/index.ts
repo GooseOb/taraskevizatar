@@ -4,8 +4,7 @@ const getCacheNameByUrl = (target: string): string => {
 	let pwaName: string;
 	for (const name in cachePaths) {
 		for (const path of cachePaths[name]) {
-			log(target, path, target.includes(path));
-			if (target.includes(path)) return name;
+			if (target.endsWith(path)) return name;
 		}
 		if (/pwa/.test(name)) pwaName = name;
 	}
