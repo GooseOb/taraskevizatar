@@ -75,7 +75,7 @@ const cfg = {
 			},
 			{
 				test: /serviceWorker.index\.ts$/,
-				use: ['ts-loader', resolveLoader('sw')],
+				use: ['ts-loader'],
 			},
 		],
 	},

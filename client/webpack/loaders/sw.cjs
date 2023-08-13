@@ -2,6 +2,11 @@ const path = require('path');
 const paths = require('../paths.cjs');
 const versions = require('../../scripts/serviceWorker/cacheVersions.json');
 
+const logAndContinue = (arg) => {
+	console.log(arg);
+	return arg;
+};
+
 module.exports = (source) =>
 	source.replace(/import (\S+) from ['"](\S+\.json)['"]/, ($0, $1, $2) => {
 		const json = require(path.resolve(
