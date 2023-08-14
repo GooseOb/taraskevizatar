@@ -22,18 +22,12 @@
 		/>
 		<meta property="og:image" content="og.jpg" />
 		<title>Тарашкевізатар</title>
-		<link rel="manifest" href="manifest.json" />
-		<link rel="icon" type="image/x-icon" href="./logo/144.png" />
-		<link rel="stylesheet" href="./styles/style.css" />
-		<link
-			rel="stylesheet"
-			href="./styles/dark.css"
-			id="dark-css"
-			media="(prefers-color-scheme: dark)"
-		/>
-		<script defer src="./index.js"></script>
+		<link rel="manifest" href="/manifest.json" />
+		<link rel="icon" type="image/x-icon" href="/logo/144.png" />
+		<link rel="stylesheet" href="/src/style.sass" />
+		<script defer type="module" src="/src/main.ts"></script>
 	</head>
-	<body>
+	<body class="dark">
 		<header>
 			<div>
 				<h1>Тарашкевізатар</h1>
@@ -176,4 +170,11 @@
 
 		<div class="hidden" id="snackbar"></div>
 	</body>
+	<script>
+		if (
+			window.matchMedia &&
+			window.matchMedia('(prefers-color-scheme: light)').matches
+		)
+			document.body.classList.remove('dark');
+	</script>
 </html>

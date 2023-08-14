@@ -9,6 +9,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -17,17 +20,15 @@ jobs:
         with:
           node-version: '16'
           cache: ${{ steps.detect-package-manager.outputs.manager }}
+      - name: Install client deps
+        run: npm ci
       - name: Install taraskevizer
         run: npm i taraskevizer
-      - name: Install client deps
-        run: |
-          cd client
-          npm ci
-      - run: npm run build:client
+      - run: npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./client/build
+          path: ./client/dist
   deploy:
     environment:
       name: github-pages

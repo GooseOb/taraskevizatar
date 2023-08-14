@@ -1,7 +1,6 @@
 import cachePaths from './cachePaths.json';
 type CachePathsKey = keyof typeof cachePaths;
 
-//@ts-ignore
 const getCacheNameByUrl = (target: string): string => {
 	let pwaName: string;
 	for (const name in cachePaths) {
@@ -13,14 +12,11 @@ const getCacheNameByUrl = (target: string): string => {
 	return pwaName!;
 };
 
-//@ts-ignore
 const log = (...msg: any[]) => console.log('[SW]', ...msg);
-//@ts-ignore
 const cacheFirst = async (req: Request) => {
 	let res = await caches.match(req);
 	if (res) return res;
 	res = await fetch(req);
-	//@ts-ignore
 	const cache = await caches.open(getCacheNameByUrl(req.url));
 	cache.put(req, res.clone());
 	return res;
@@ -47,6 +43,5 @@ self.addEventListener('activate', async () => {
 });
 
 self.addEventListener('fetch', (e) => {
-	//@ts-ignore
 	(e as FetchEvent).respondWith(cacheFirst((e as FetchEvent).request));
 });

@@ -1,4 +1,5 @@
 @use "sass:map"
+@use "sass:color"
 *
   margin: 0
   padding: 0
@@ -15,7 +16,7 @@ $clr-scrollbar: var(--scrollbar)
 $clr-scrollbar-hover: var(--scrollbar-hover)
 $height-actions-block: 3rem
 
-:root
+body
   color: #000
   --bg: #ddf
   --1: #b9f
@@ -91,7 +92,7 @@ footer
   margin-top: auto
 
 @mixin icon($fileName)
-  background-image: url('../icons/#{$fileName}.svg')
+  background-image: url('/icons/#{$fileName}.svg')
 @mixin themeIcon($fileName)
   @include icon('theme/#{$fileName}')
 
@@ -371,3 +372,25 @@ label[for=upload]
 input[type=file],
 input[type=file]::-webkit-file-upload-button
   cursor: pointer
+
+body.dark
+  color: #eee
+  --bg: #113
+  --1: #338
+  --2: #222
+  --3: #111
+  --4: #739
+  --link: #28f
+  --link-hover: #26f
+  --scrollbar-bg: #444
+  --scrollbar: #666
+  --scrollbar-hover: #777
+
+  .select .options button:hover
+    background-color: #ffffff08
+
+  #theme .checkbox:checked
+    background-color: color.invert(#739)
+
+  .icon-btns > button, .checkbox
+    filter: invert(1)

@@ -1,7 +1,7 @@
 import { TaraskAsync } from 'taraskevizer';
 
 export const tarask: TaraskAsync = async (text, options) => {
-	const res = await fetch(process.env.API_URL!, {
+	const res = await fetch(import.meta.env.API_URL, {
 		method: 'POST',
 		mode: 'cors',
 		body: JSON.stringify({

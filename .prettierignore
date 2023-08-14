@@ -1,4 +1,4 @@
 core/dict.ts
 json
 api/dist
-client/build
+client/dist

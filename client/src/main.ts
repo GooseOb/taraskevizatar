@@ -8,7 +8,7 @@ type ChangeableElement = HTMLSpanElement & { seqNum: number };
 
 window.addEventListener('load', () => {
 	navigator.serviceWorker
-		?.register(__SW_SCOPE__ + 'sw.js', { scope: __SW_SCOPE__ })
+		?.register(__SW_SCOPE__ + '/sw.js', { scope: __SW_SCOPE__ })
 		.catch((err) => {
 			console.warn('Service worker register fail', err);
 		});
@@ -19,11 +19,27 @@ const enum Theme {
 	auto,
 	dark,
 }
-const darkTheme = $<HTMLLinkElement>('dark-css');
 const themeCheckboxes = $('theme').querySelectorAll(
 	'.checkbox'
 ) as NodeListOf<HTMLInputElement>;
-const darkThemeStates = ['not all', '(prefers-color-scheme: dark)', 'all'];
+const themeSetters = [
+	() => {
+		document.body.classList.remove('dark');
+	},
+	() => {
+		if (window.matchMedia) {
+			const { classList } = document.body;
+			if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+				classList.remove('dark');
+			} else {
+				classList.add('dark');
+			}
+		}
+	},
+	() => {
+		document.body.classList.add('dark');
+	},
+];
 
 const checkboxesByThemeId: {
 	[key in Exclude<Theme, Theme.auto>]: HTMLInputElement;
@@ -34,14 +50,14 @@ const checkboxesByThemeId: {
 
 if (localStorage.theme) {
 	const themeId: `${Theme}` = localStorage.theme;
-	darkTheme.media = darkThemeStates[themeId];
+	themeSetters[themeId]();
 	if (themeId !== (`${Theme.auto}` as `${Theme.auto}`))
 		checkboxesByThemeId[themeId].checked = true;
 }
 
 const setTheme = (themeId: Theme) => {
 	localStorage.theme = themeId;
-	darkTheme.media = darkThemeStates[themeId];
+	themeSetters[themeId]();
 };
 
 $('delete-cache').addEventListener('click', async () => {

@@ -1,23 +1,24 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
-		"declaration": false,
-		"removeComments": false,
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true,
-		"allowSyntheticDefaultImports": true,
-		"target": "es2017",
-		"strict": true,
-		"incremental": true,
+		"target": "ES2020",
+		"useDefineForClassFields": true,
+		"module": "ESNext",
+		"lib": ["ES2020", "DOM", "DOM.Iterable", "webworker"],
 		"skipLibCheck": true,
-		"strictNullChecks": true,
-		"noImplicitAny": true,
-		"forceConsistentCasingInFileNames": false,
-		"noFallthroughCasesInSwitch": false,
+
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
 		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmit": true,
+
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
 		"paths": {
 			"@api": ["../node_modules/taraskevizer"]
-		},
-		"lib": ["es5", "es6", "dom", "dom.iterable", "webworker"]
-	}
+		}
+	},
+	"include": ["src"]
 }
