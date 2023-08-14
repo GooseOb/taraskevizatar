@@ -4,8 +4,6 @@ import path from 'path';
 import cacheVersioner from './plugins/cache-versioner';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
-process.exit(1488);
-
 export const getDefaultText = () => readFile('default-text.txt', 'utf-8');
 
 const __DEFAULT_TEXT__ = `\`${await getDefaultText()}\``;
@@ -35,10 +33,7 @@ export default defineConfig(({ command, mode }) => {
 		},
 		build: {
 			lib: {
-				entry: [
-					path.resolve('index.html'),
-					path.resolve('src/serviceWorker/sw.ts'),
-				],
+				entry: [path.resolve('src/serviceWorker/sw.ts')],
 				name: 'name',
 				formats: ['es'],
 			},
