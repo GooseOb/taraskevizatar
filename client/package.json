@@ -11,12 +11,9 @@
 	"scripts": {
 		"dev": "vite --config vite-config",
 		"build": "vite --config vite-config build",
-		"dev:api": "cross-env API=true npm run dev",
-		"build:api": "cross-env API=true npm run build",
-		"preview": "vite preview"
+		"preview": "vite preview --config vite-config"
 	},
 	"devDependencies": {
-		"cross-env": "^7.0.3",
 		"sass": "^1.65.1",
 		"typescript": "^5.0.2",
 		"vite": "^4.4.5",

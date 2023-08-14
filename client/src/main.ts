@@ -1,9 +1,6 @@
 import { gobj, TaraskOptionsStrict } from 'taraskevizer';
 import { tarask } from '@api';
 import { $, debounce } from './utils';
-declare const __BUILD_DATE__: number;
-declare const __DEFAULT_TEXT__: string;
-declare const __SW_SCOPE__: string;
 type ChangeableElement = HTMLSpanElement & { seqNum: number };
 
 window.addEventListener('load', () => {

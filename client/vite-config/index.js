@@ -10,10 +10,14 @@ const __DEFAULT_TEXT__ = `\`${await getDefaultText()}\``;
 
 export default defineConfig(({ command, mode }) => {
 	const env = loadEnv(mode, path.resolve('..'), '');
+	console.log(env);
 	const isProd = command === 'build';
 	const base = isProd ? '/taraskevizatar/' : '/';
+	const port = env.CLIENT_SERVER_MODE ? env.CLIENT_PORT : undefined;
 	return {
 		base,
+		preview: { port },
+		server: { port },
 		plugins: [
 			cacheVersioner(),
 			isProd &&
@@ -25,10 +29,11 @@ export default defineConfig(({ command, mode }) => {
 			__BUILD_DATE__: Date.now(),
 			__DEFAULT_TEXT__,
 			__SW_SCOPE__: `"${base}"`,
+			'process.env': JSON.stringify(env),
 		},
 		resolve: {
 			alias: {
-				'@api': env.API ? './api' : 'taraskevizer',
+				'@api': env.CLIENT_SERVER_MODE ? './api' : 'taraskevizer',
 			},
 		},
 		build: {

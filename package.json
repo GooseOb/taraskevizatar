@@ -8,17 +8,14 @@
 		"url": "git+https://github.com/GooseOb/taraskevizatar.git"
 	},
 	"scripts": {
-		"dev": "concurrently --kill-others \"npm run --prefix api start:dev\" \"npm run --prefix client dev:api\"",
-		"deploy": "npm run --prefix client deploy",
-		"build:client": "npm run --prefix client build",
-		"prepare": "husky install"
+		"dev": "cross-env CLIENT_SERVER_MODE=true concurrently --kill-others \"npm run --prefix api start:dev\" \"npm run --prefix client dev\"",
+		"prepare": "husky install",
+		"postinstall": "(cd api && npm i) && (cd client && npm i);"
 	},
 	"devDependencies": {
 		"concurrently": "^8.0.1",
+		"cross-env": "^7.0.3",
 		"husky": "^8.0.3",
 		"prettier": "3.0.0"
-	},
-	"dependencies": {
-		"taraskevizer": "^1.3.4"
 	}
 }

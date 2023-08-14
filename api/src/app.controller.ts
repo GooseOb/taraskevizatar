@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { AppService } from './app.service'
 import { ConvertDto } from './dto/convert.dto'
-import { TaraskOptions } from '@core'
+import { TaraskOptions } from 'taraskevizer'
 
 @Controller()
 export class AppController {
@@ -14,6 +14,7 @@ export class AppController {
       dto.alphabet as TaraskOptions['abc'],
       dto.alwaysJ as TaraskOptions['j'],
       dto?.html,
+      dto?.nonHtml,
     )
   }
 }
