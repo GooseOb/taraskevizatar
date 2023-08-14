@@ -33,7 +33,10 @@ export default defineConfig(({ command, mode }) => {
 		},
 		build: {
 			lib: {
-				entry: [path.resolve('src/serviceWorker/sw.ts')],
+				entry: [
+					path.resolve('index.html'),
+					path.resolve('src/serviceWorker/sw.ts'),
+				],
 				name: 'name',
 				formats: ['es'],
 			},
