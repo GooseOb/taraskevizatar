@@ -10,7 +10,7 @@
 	"homepage": "https://gooseob.github.io/taraskevizatar/",
 	"scripts": {
 		"dev": "vite --config vite-config",
-		"build": "tsc --project tsconfig.json && vite --config vite-config build",
+		"build": "vite --config vite-config build",
 		"dev:api": "cross-env API=true npm run dev",
 		"build:api": "cross-env API=true npm run build",
 		"preview": "vite preview"
