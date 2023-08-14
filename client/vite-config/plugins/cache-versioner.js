@@ -11,7 +11,7 @@ export default function () {
 		name: 'cache-versioner',
 		async transform(src, id) {
 			const { version: pkgVersion } = await getJson(
-				'../node_modules/taraskevizer/package.json'
+				'./node_modules/taraskevizer/package.json'
 			);
 			const json = await getSWJson('cachePaths');
 			const versions = await getSWJson('cacheVersions');
