@@ -9,6 +9,7 @@ export const getDefaultText = () => readFile('default-text.txt', 'utf-8');
 const __DEFAULT_TEXT__ = `\`${await getDefaultText()}\``;
 
 export default defineConfig(({ command, mode }) => {
+	console.log('using vite-config');
 	const env = loadEnv(mode, path.resolve('..'), '');
 	const isProd = command === 'build';
 	const base = isProd ? '/taraskevizatar/' : '/';
