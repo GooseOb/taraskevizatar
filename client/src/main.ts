@@ -85,7 +85,7 @@ const enum EDIT {
 	DISABLE = 'Рэдагаваньне выключана',
 }
 
-const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ', 'τεκστ'] as const;
+const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ', 'Τεκστ'] as const;
 
 const settings: TaraskOptionsStrict = {
 	abc: 0,
