@@ -17,7 +17,7 @@
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
 		"paths": {
-			"@api": ["../node_modules/taraskevizer"]
+			"@api": ["./node_modules/taraskevizer"]
 		}
 	},
 	"include": ["src"]
