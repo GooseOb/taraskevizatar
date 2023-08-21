@@ -87,7 +87,12 @@ const enum EDIT {
 
 const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ', 'Τεκστ'] as const;
 
-const settings: TaraskOptionsStrict = {
+interface Settings extends TaraskOptionsStrict {
+	html: Exclude<TaraskOptionsStrict['html'], boolean>;
+	nonHtml: false;
+}
+
+const settings: Settings = {
 	abc: 0,
 	j: 0,
 	html: { g: false },
@@ -329,13 +334,6 @@ newSettingsSelect('g', +settings.html.g, (value) => {
 	settings.html.g = !!value;
 });
 
-const describeConversionError = (err: string) => {
-	if (/to(?:Upper|Lower)Case/.test(err))
-		err +=
-			'<br><br>Магчыма памылка з сымбалямі прабелу ў слоўніку. Калі ласка, дашліце памылку <a href="https://github.com/GooseOb/taraskevizer/issues">сюды</a>';
-	return err;
-};
-
 async function convert(text: string) {
 	if (!text) {
 		output.innerHTML = OUTPUT_PLACEHOLDER[settings.abc];
@@ -348,7 +346,9 @@ async function convert(text: string) {
 	try {
 		result = await tarask(text, settings);
 	} catch (e: any) {
-		result = describeConversionError(e.toString());
+		result =
+			e.toString() +
+			'<br><br>Калі ласка, дашліце памылку адзін з кантактаў "Для памылак і прапановаў"';
 	}
 
 	output.innerHTML = result;

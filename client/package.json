@@ -20,6 +20,6 @@
 		"vite-plugin-html": "^3.2.0"
 	},
 	"dependencies": {
-		"taraskevizer": "^1.4.1"
+		"taraskevizer": "^1.4.5"
 	}
 }

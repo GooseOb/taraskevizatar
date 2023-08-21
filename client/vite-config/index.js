@@ -10,10 +10,9 @@ const __DEFAULT_TEXT__ = `\`${await getDefaultText()}\``;
 
 export default defineConfig(({ command, mode }) => {
 	const env = loadEnv(mode, path.resolve('..'), '');
-	console.log(env);
 	const isProd = command === 'build';
 	const base = isProd ? '/taraskevizatar/' : '/';
-	const port = env.CLIENT_SERVER_MODE ? env.CLIENT_PORT : undefined;
+	const port = env.CLIENT_SERVER_MODE ? +env.CLIENT_PORT : undefined;
 	return {
 		base,
 		preview: { port },

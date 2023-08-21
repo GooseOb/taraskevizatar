@@ -10,8 +10,6 @@ export class AppService {
     html: TaraskOptions['html'],
     nonHtml: TaraskOptions['nonHtml'],
   ): string {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
     return taraskSync(text, { abc, j, html, nonHtml })
   }
 }

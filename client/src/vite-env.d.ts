@@ -1,6 +1,8 @@
 /// <reference types="vite/client" />
-type EnvVariable = 'API_URL';
-declare const __BUILD_DATE__: number;
-declare const __DEFAULT_TEXT__: string;
-declare const __SW_SCOPE__: string;
-declare const process: { env: Record<EnvVariable | string, string> };
+namespace process {
+	type EnvVariable = 'API_URL';
+	export const env: Record<EnvVariable | string, string>;
+}
+declare const __BUILD_DATE__: number,
+	__DEFAULT_TEXT__: string,
+	__SW_SCOPE__: string;
