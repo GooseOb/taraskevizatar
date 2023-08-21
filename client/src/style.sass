@@ -9,6 +9,7 @@ $clr-1: var(--1)
 $clr-2: var(--2)
 $clr-3: var(--3)
 $clr-4: var(--4)
+$clr-btn-hover: var(--btn-hover)
 $clr-link: var(--link)
 $clr-link-hover: var(--link-hover)
 $clr-scrollbar-bg: var(--scrollbar-bg)
@@ -23,6 +24,7 @@ body
   --2: #ff8
   --3: #fd8
   --4: #b5f
+  --btn-hover: #00000008
   --link: #28f
   --link-hover: #26f
   --scrollbar-bg: #0002
@@ -166,38 +168,34 @@ footer
 @mixin select-btn-padding
   padding: .5rem
 .select
-  white-space: nowrap
   margin: 1rem
   height: fit-content
-  width: min-content
-  display: flex
-  flex-wrap: wrap
   justify-content: center
   background-color: $clr-1
   align-items: center
   border-radius: 1rem
   overflow: hidden
-  a
-    width: 100%
   .title
+    white-space: nowrap
     font-size: 1rem
     padding: .5rem
     font-weight: bold
     text-align: center
   .options
+    width: 100%
     user-select: none
-    overflow: hidden
+    justify-content: center
     background-color: $clr-2
     border-radius: 0 1rem 0 0
-    list-style-type: none
     position: relative
     display: flex
-    &.not-animated
-      width: 100%
+    flex-wrap: wrap
+    a
+      flex: 1
     button
       @include select-btn-padding
       color: inherit
-      position: relative
+      flex: 1
       text-align: center
       z-index: 1
       transition: .2s
@@ -207,31 +205,13 @@ footer
       background: none
       cursor: pointer
       &:hover, &:focus, &:focus-within
-        background-color: #00000008
-
-@mixin animatedOptions($widths...)
-  $i: 1
-  $left: 0em
-  @each $w in $widths
-    button
-      &:nth-child(#{$i})
-        width: $w
-    .active
-      &:nth-child(#{$i}) ~ .animation
-        left: $left
-        width: $w
-      $left: $left + $w
-    $i: $i + 1
+        background-color: $clr-btn-hover
 
 #abc
-  @include animatedOptions(5.5em, 4.5em, 9.25em, 4em)
   .small
     pointer-events: none
     font-size: .8rem
-#j
-  @include animatedOptions(4em, 6em, 5em)
-#g
-  @include animatedOptions(4em, 4em)
+
 #file-convert
   .active
     background-color: $clr-3
@@ -380,14 +360,15 @@ body.dark
   --2: #222
   --3: #111
   --4: #739
+  --btn-hover: #ffffff08
   --link: #28f
   --link-hover: #26f
   --scrollbar-bg: #444
   --scrollbar: #666
   --scrollbar-hover: #777
 
-  .select .options button:hover
-    background-color: #ffffff08
+  //.select .options button:hover
+  //  background-color: #ffffff08
 
   #theme .checkbox:checked
     background-color: color.invert(#739)

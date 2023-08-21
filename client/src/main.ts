@@ -293,34 +293,59 @@ output.addEventListener('click', (e) => {
 	}
 });
 
+const getShifts = (parent: HTMLElement, children: HTMLElement[]) => {
+	const { left, top } = parent.getBoundingClientRect();
+	return children.map((item) => {
+		const itemRect = item.getBoundingClientRect();
+		return {
+			top: itemRect.top - top + 'px',
+			left: itemRect.left - left + 'px',
+			width: itemRect.width + 'px',
+			height: itemRect.height + 'px',
+		} satisfies { [key in keyof HTMLElement['style']]?: string };
+	});
+};
+
 type SelectId = 'abc' | 'j' | 'g';
 type Select = <T extends number>(
 	id: SelectId,
 	initialOption: T,
 	callback: (value: T) => void
 ) => void;
-const getOptionActivator =
-	<TElem extends HTMLElement = HTMLElement>(
-		options: TElem[] | NodeListOf<TElem>
-	) =>
-	(option: TElem) => {
-		for (const el of options) el.classList.remove('active');
-		option.classList.add('active');
-	};
 const newSelect: Select = (id, initialOption, callback) => {
 	const select = $(id);
-	const options = select.querySelectorAll('button');
-	const activateOption = getOptionActivator(options);
+	const options = Array.from(select.querySelectorAll('button'));
+	const animation = Object.assign(document.createElement('div'), {
+		className: 'animation',
+	});
+	select.append(animation);
+	let currActive = options[initialOption];
+	currActive.classList.add('active');
+	let optionShifts = getShifts(select, options);
+	const updateAnimationPosition = () => {
+		Object.assign(animation.style, optionShifts[+currActive.value]);
+	};
+	updateAnimationPosition();
+	window.addEventListener(
+		'resize',
+		debounce(() => {
+			optionShifts = getShifts(select, options);
+			updateAnimationPosition();
+		}, 100)
+	);
 	select.addEventListener('click', (e) => {
 		const el = e.target as HTMLButtonElement;
-		activateOption(el);
+		currActive.classList.remove('active');
+		el.classList.add('active');
+		currActive = el;
+		updateAnimationPosition();
 		callback(+el.value as typeof initialOption);
 	});
-	activateOption(options[initialOption]);
 };
-const newSettingsSelect: Select = (id, initialOption, settingSetter) =>
+
+const newSettingsSelect: Select = (id, initialOption, setValue) =>
 	newSelect(id, initialOption, (value) => {
-		settingSetter(value);
+		setValue(value);
 		saveSettings();
 		forceConversion();
 	});
