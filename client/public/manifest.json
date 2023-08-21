@@ -4,10 +4,26 @@
 	"background_color": "#2196f3",
 	"display": "standalone",
 	"start_url": ".",
-	"icons": {
-		"96": "./logo/96.png",
-		"144": "./logo/144.png",
-		"256": "./logo/256.png",
-		"512": "./logo/512.png"
-	}
+	"icons": [
+		{
+			"src": "./logo/96.png",
+			"sizes": "96x96",
+			"type": "image/png"
+		},
+		{
+			"src": "./logo/144.png",
+			"sizes": "144x144",
+			"type": "image/png"
+		},
+		{
+			"src": "./logo/256.png",
+			"sizes": "256x256",
+			"type": "image/png"
+		},
+		{
+			"src": "./logo/512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	]
 }
