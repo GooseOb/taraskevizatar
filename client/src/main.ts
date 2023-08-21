@@ -5,7 +5,7 @@ type ChangeableElement = HTMLSpanElement & { seqNum: number };
 
 window.addEventListener('load', () => {
 	navigator.serviceWorker
-		?.register(__SW_SCOPE__ + '/sw.js', { scope: __SW_SCOPE__ })
+		?.register(__SW_SCOPE__ + 'sw.js', { scope: __SW_SCOPE__ })
 		.catch((err) => {
 			console.warn('Service worker register fail', err);
 		});
