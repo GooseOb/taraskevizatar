@@ -20,10 +20,8 @@ jobs:
         with:
           node-version: '16'
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-      - name: Install client deps
-        run: npm ci
-      - name: Install taraskevizer
-        run: npm i taraskevizer
+      - run: npm ci
+      - run: npm update taraskevizer
       - run: npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
