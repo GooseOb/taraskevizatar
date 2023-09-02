@@ -93,3 +93,4 @@ for (const name of cacheNamesToUpdate)
 await writeFile(PATH_FILE, JSON.stringify(versions, null, '\t') + '\n');
 
 print('Cache versions have been updated: ' + cacheNamesToUpdate.join(' '));
+process.exit(0);

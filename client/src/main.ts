@@ -97,16 +97,13 @@ const settings: Settings = {
 	j: 0,
 	html: { g: false },
 	nonHtml: false,
+	...(localStorage.settings && JSON.parse(localStorage.settings)),
 };
 const saveSettings = () => {
 	localStorage.settings = JSON.stringify(settings);
 };
 
-if (localStorage.settings) {
-	Object.assign(settings, JSON.parse(localStorage.settings));
-} else {
-	saveSettings();
-}
+saveSettings();
 
 type AppInputElement = HTMLTextAreaElement & { fixHeight: () => void };
 type AppOutputContainer = HTMLDivElement;
