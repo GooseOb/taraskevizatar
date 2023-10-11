@@ -1,7 +1,11 @@
-import { TaraskAsync } from 'taraskevizer';
+import { Tarask } from 'taraskevizer';
 
-export const tarask: TaraskAsync = async (text, options) => {
-	const res = await fetch(process.env.API_URL, {
+type TaraskAsync = Tarask extends (...args: infer TParams) => infer TReturn
+	? (...args: TParams) => Promise<TReturn>
+	: never;
+
+export const tarask: TaraskAsync = (text, options) =>
+	fetch(process.env.API_URL, {
 		method: 'POST',
 		mode: 'cors',
 		body: JSON.stringify({
@@ -13,7 +17,7 @@ export const tarask: TaraskAsync = async (text, options) => {
 		headers: {
 			'Content-type': 'application/json; charset=UTF-8',
 		},
+	}).then((res) => {
+		if (res.ok) return res.text();
+		throw new Error(res.statusText);
 	});
-	if (res.ok) return res.text();
-	throw new Error(res.statusText);
-};

@@ -11,8 +11,8 @@ export class AppController {
   Convert(@Body() dto: ConvertDto): string {
     return this.appService.convert(
       dto.text,
-      dto.alphabet as TaraskOptions['abc'],
-      dto.alwaysJ as TaraskOptions['j'],
+      dto.alphabet,
+      dto.alwaysJ,
       dto?.html,
       dto?.nonHtml,
     )

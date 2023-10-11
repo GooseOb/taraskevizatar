@@ -370,7 +370,7 @@ async function convert(text: string) {
 	} catch (e: any) {
 		result =
 			e.toString() +
-			'<br><br>Калі ласка, дашліце памылку адзін з кантактаў "Для памылак і прапановаў"';
+			'<br><br>Калі ласка, дашліце памылку на адзін з кантактаў "Для памылак і прапановаў"';
 	}
 
 	output.innerHTML = result;
