@@ -337,8 +337,8 @@ footer
 
 #upload
   position: absolute
-  visibility: hidden
-button:has(#upload)
+  opacity: 0
+#upload-btn
   padding: 0
 label[for=upload]
   @include select-btn-padding
@@ -348,10 +348,6 @@ label[for=upload]
 #download
   font: inherit
   color: inherit
-
-input[type=file],
-input[type=file]::-webkit-file-upload-button
-  cursor: pointer
 
 body.dark
   color: #eee
