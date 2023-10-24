@@ -159,21 +159,20 @@ Object.assign(
 
 const forceConversion = () => convert(input.value);
 
-const snackbar = Object.assign($<HTMLDivElement>('snackbar'), {
-	_lastTimeout: 0,
-	show(
-		this: HTMLDivElement & { _lastTimeout: number },
-		msg: string,
-		visibilityTime = 1000
-	) {
-		this.innerHTML = msg;
-		this.classList.remove('hidden');
-		clearTimeout(this._lastTimeout);
-		this._lastTimeout = window.setTimeout(() => {
-			this.classList.add('hidden');
+const snackbar = {
+	element: $<HTMLDivElement>('snackbar'),
+	_lastInterval: 0,
+	show(msg: string, visibilityTime = 1000) {
+		this.element.innerHTML = msg;
+		this.element.classList.remove('hidden');
+		clearInterval(this._lastInterval);
+		this._lastInterval = window.setInterval(() => {
+			if (this.element.parentElement!.querySelector('#snackbar:hover')) return;
+			this.element.classList.add('hidden');
+			clearInterval(this._lastInterval);
 		}, visibilityTime);
 	},
-});
+};
 
 forceConversion();
 
@@ -312,15 +311,14 @@ type Select = <T extends number>(
 const newSelect: Select = (id, initialOption, callback) => {
 	const select = $(id);
 	const options = Array.from(select.querySelectorAll('button'));
-	const animation = Object.assign(document.createElement('div'), {
-		className: 'animation',
-	});
-	select.append(animation);
+	const animationElement = document.createElement('div');
+	animationElement.className = 'animation';
+	select.append(animationElement);
 	let currActive = options[initialOption];
 	currActive.classList.add('active');
 	let optionShifts = getShifts(select, options);
 	const updateAnimationPosition = () => {
-		Object.assign(animation.style, optionShifts[+currActive.value]);
+		Object.assign(animationElement.style, optionShifts[+currActive.value]);
 	};
 	updateAnimationPosition();
 	window.addEventListener(
