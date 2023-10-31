@@ -1,4 +1,10 @@
-import { gobj, TaraskOptionsStrict } from 'taraskevizer';
+import {
+	gobj,
+	TaraskOptions,
+	HtmlOptions,
+	taraskToHtml,
+	VARIATION,
+} from 'taraskevizer';
 import { tarask } from '@api';
 import { $, debounce } from './utils';
 type ChangeableElement = HTMLSpanElement & { seqNum: number };
@@ -87,20 +93,32 @@ const enum EDIT {
 
 const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ', 'Τεκστ'] as const;
 
-interface Settings extends TaraskOptionsStrict {
-	html: Exclude<TaraskOptionsStrict['html'], boolean>;
-	nonHtml: false;
+// const settings = {
+// 	abc: 0,
+// 	j: 0,
+// 	html: { g: false },
+// 	nonHtml: false,
+// 	...(localStorage.settings && JSON.parse(localStorage.settings)),
+// };
+const settings: { general: TaraskOptions; html: HtmlOptions } = {
+	general: {
+		abc: 0,
+		j: 0,
+	},
+	html: { g: false },
+	...(localStorage.tarask_settings && JSON.parse(localStorage.tarask_settings)),
+};
+
+if (localStorage.settings) {
+	const legacy = JSON.parse(localStorage.settings);
+	if (legacy.j) settings.general.j = legacy.j;
+	if (legacy.abc) settings.general.abc = legacy.abc;
+	if (legacy.html) settings.html = legacy.html;
+	delete localStorage.settings;
 }
 
-const settings: Settings = {
-	abc: 0,
-	j: 0,
-	html: { g: false },
-	nonHtml: false,
-	...(localStorage.settings && JSON.parse(localStorage.settings)),
-};
 const saveSettings = () => {
-	localStorage.settings = JSON.stringify(settings);
+	localStorage.tarask_settings = JSON.stringify(settings);
 };
 
 saveSettings();
@@ -161,18 +179,29 @@ const forceConversion = () => convert(input.value);
 
 const snackbar = {
 	element: $<HTMLDivElement>('snackbar'),
-	_lastInterval: 0,
+	_timeout: 0,
+	_visibilityTime: 1000,
 	show(msg: string, visibilityTime = 1000) {
+		this._visibilityTime = visibilityTime;
 		this.element.innerHTML = msg;
 		this.element.classList.remove('hidden');
-		clearInterval(this._lastInterval);
-		this._lastInterval = window.setInterval(() => {
-			if (this.element.parentElement!.querySelector('#snackbar:hover')) return;
+		this.hideWithTimeout();
+	},
+	hideWithTimeout() {
+		this._timeout = window.setTimeout(() => {
 			this.element.classList.add('hidden');
-			clearInterval(this._lastInterval);
-		}, visibilityTime);
+		}, this._visibilityTime);
+	},
+	cancelHiding() {
+		clearTimeout(this._timeout);
 	},
 };
+snackbar.element.addEventListener('mouseover', () => {
+	snackbar.cancelHiding();
+});
+snackbar.element.addEventListener('mouseleave', () => {
+	snackbar.hideWithTimeout();
+});
 
 forceConversion();
 
@@ -344,11 +373,11 @@ const newSettingsSelect: Select = (id, initialOption, setValue) =>
 		saveSettings();
 		forceConversion();
 	});
-newSettingsSelect('abc', settings.abc, (value) => {
-	settings.abc = value;
+newSettingsSelect('abc', settings.general.abc, (value) => {
+	settings.general.abc = value;
 });
-newSettingsSelect('j', settings.j, (value) => {
-	settings.j = value;
+newSettingsSelect('j', settings.general.j, (value) => {
+	settings.general.j = value;
 });
 newSettingsSelect('g', +settings.html.g, (value) => {
 	settings.html.g = !!value;
@@ -356,7 +385,7 @@ newSettingsSelect('g', +settings.html.g, (value) => {
 
 async function convert(text: string) {
 	if (!text) {
-		output.innerHTML = OUTPUT_PLACEHOLDER[settings.abc];
+		output.innerHTML = OUTPUT_PLACEHOLDER[settings.general.abc];
 		counters.set({ input: 0, output: 0 });
 		localStorage.text = '';
 		return;
@@ -364,7 +393,7 @@ async function convert(text: string) {
 
 	let result: string;
 	try {
-		result = await tarask(text, settings);
+		result = await taraskToHtml(text, settings.general, settings.html);
 	} catch (e: any) {
 		result =
 			e.toString() +
@@ -414,7 +443,10 @@ const reader = new FileReader();
 let textFileURL: string, fileName: string;
 reader.addEventListener('load', async ({ target }) => {
 	const text = (target!.result as string).replace(/\r/g, '');
-	const taraskText = await tarask(text, settings);
+	const taraskText = await tarask(text, settings.general, {
+		nodeColors: false,
+		variations: VARIATION.ALL,
+	});
 	Object.assign(download, {
 		href: createTextFile(taraskText.replace(/\s([\n\t])\s/g, '$1')),
 		download: 'tarask-' + fileName,
