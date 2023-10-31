@@ -116,6 +116,10 @@ if (localStorage.settings) {
 	if (legacy.html) settings.html = legacy.html;
 	delete localStorage.settings;
 }
+if (localStorage.text) {
+	localStorage.tarask_text = localStorage.text;
+	delete localStorage.text;
+}
 
 const saveSettings = () => {
 	localStorage.tarask_settings = JSON.stringify(settings);
@@ -159,9 +163,9 @@ Object.assign(
 			this.style.height = newHeight + 'px';
 		},
 	},
-	localStorage.text
+	localStorage.tarask_text
 		? {
-				value: localStorage.text,
+				value: localStorage.tarask_text,
 		  }
 		: {
 				value: __DEFAULT_TEXT__,
@@ -214,7 +218,7 @@ input.addEventListener('input', function () {
 	} else {
 		convert(text);
 	}
-	localStorage.text = text;
+	localStorage.tarask_text = text;
 });
 window.addEventListener('keyup', (e) => {
 	if (e.ctrlKey && e.code === 'KeyA') input.select();
@@ -387,7 +391,7 @@ async function convert(text: string) {
 	if (!text) {
 		output.innerHTML = OUTPUT_PLACEHOLDER[settings.general.abc];
 		counters.set({ input: 0, output: 0 });
-		localStorage.text = '';
+		localStorage.tarask_text = '';
 		return;
 	}
 
