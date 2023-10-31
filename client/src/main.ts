@@ -93,13 +93,6 @@ const enum EDIT {
 
 const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ', 'Τεκστ'] as const;
 
-// const settings = {
-// 	abc: 0,
-// 	j: 0,
-// 	html: { g: false },
-// 	nonHtml: false,
-// 	...(localStorage.settings && JSON.parse(localStorage.settings)),
-// };
 const settings: { general: TaraskOptions; html: HtmlOptions } = {
 	general: {
 		abc: 0,
