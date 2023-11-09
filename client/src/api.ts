@@ -28,7 +28,7 @@ export const taraskToHtml: TaraskAsync<HtmlOptions> = (
 		throw new Error(res.statusText);
 	});
 
-export const taraskToHtml: TaraskAsync<NonHtmlOptions> = (
+export const tarask: TaraskAsync<NonHtmlOptions> = (
 	text,
 	taraskOptions,
 	nonHtmlOptions

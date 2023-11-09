@@ -1,11 +1,5 @@
-import {
-	gobj,
-	TaraskOptions,
-	HtmlOptions,
-	taraskToHtml,
-	VARIATION,
-} from 'taraskevizer';
-import { tarask } from '@api';
+import { gobj, VARIATION, TaraskOptions, HtmlOptions } from 'taraskevizer';
+import { tarask, taraskToHtml } from '@api';
 import { $, debounce } from './utils';
 type ChangeableElement = HTMLSpanElement & { seqNum: number };
 
@@ -376,8 +370,13 @@ newSettingsSelect('abc', settings.general.abc, (value) => {
 newSettingsSelect('j', settings.general.j, (value) => {
 	settings.general.j = value;
 });
-newSettingsSelect('g', +settings.html.g, (value) => {
+newSelect('g', +settings.html.g, (value) => {
 	settings.html.g = !!value;
+	saveSettings();
+	output.innerHTML = output.innerHTML.replace(
+		/<tarh>(.)<\/tarh>/g,
+		($0, $1: keyof typeof gobj) => `<tarh>${gobj[$1]}</tarh>`
+	);
 });
 
 async function convert(text: string) {
