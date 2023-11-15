@@ -1,9 +1,9 @@
-export const debounce = <TCallback extends (...args: any[]) => void>(
-	callback: TCallback,
+export const debounce = <TArgs extends any[]>(
+	callback: (...args: TArgs) => void,
 	cooldown: number
 ) => {
 	let timeout: number;
-	return (...args: Parameters<TCallback>) => {
+	return (...args: TArgs) => {
 		clearTimeout(timeout);
 		timeout = window.setTimeout(() => {
 			callback(...args);

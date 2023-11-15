@@ -12,7 +12,8 @@ export default defineConfig(({ command, mode }) => {
 	const env = loadEnv(mode, path.resolve('..'), '');
 	const isProd = command === 'build';
 	const base = isProd ? '/taraskevizatar/' : '/';
-	const port = env.CLIENT_SERVER_MODE ? +env.CLIENT_PORT : undefined;
+	const isClientServerMode = !!env.CLIENT_SERVER_MODE;
+	const port = isClientServerMode ? +env.CLIENT_PORT : undefined;
 	return {
 		base,
 		preview: { port },
@@ -32,7 +33,7 @@ export default defineConfig(({ command, mode }) => {
 		},
 		resolve: {
 			alias: {
-				'@api': env.CLIENT_SERVER_MODE ? './api' : 'taraskevizer',
+				'@api': isClientServerMode ? './api' : 'taraskevizer',
 			},
 		},
 		build: {
