@@ -57,24 +57,11 @@ const setTheme = (themeId: Theme) => {
 	themeSetters[themeId]();
 };
 
-$('delete-cache').addEventListener('click', async () => {
-	if (!navigator.onLine) {
-		snackbar.show('Нельга выдаліць кэш пакуль вы афлайн');
-		return;
-	}
-	try {
-		const cacheNames = await caches.keys();
-		if (!cacheNames.length) {
-			snackbar.show('Кэш ужо пусты');
-			return;
-		}
-		await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
-		snackbar.show('Кэш выдалены, абнаўленьне старонкі');
-		location.reload();
-	} catch (e) {
-		snackbar.show('Памылка выдаленьня кэшу: ' + e);
-	}
-});
+const deleteCache = async () => {
+	const cacheNames = await caches.keys();
+	if (!cacheNames.length) throw 'Кэш ужо пусты';
+	await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+};
 
 const enum CARD {
 	INPUT = 'official',
@@ -476,3 +463,34 @@ let activateUpload = () => {
 document.body.onload = () => {
 	input.focus();
 };
+
+$('delete-cache').addEventListener('click', () => {
+	if (!navigator.onLine) {
+		snackbar.show('Нельга выдаліць кэш пакуль вы афлайн');
+		return;
+	}
+	deleteCache()
+		.then(() => {
+			snackbar.show('Кэш выдалены, абнаўленьне старонкі');
+			location.reload();
+		})
+		.catch((e) => {
+			snackbar.show('Памылка выдаленьня кэшу: ' + e);
+		});
+});
+
+$('delete-all-data').addEventListener('click', () => {
+	delete localStorage.tarask_text;
+	delete localStorage.tarask_settings;
+	delete localStorage.theme;
+	deleteCache()
+		.then(() => {
+			snackbar.show('Кэш, тэкст і налады выдалены');
+		})
+		.catch((e) => {
+			snackbar.show(
+				'Тэкст і налады выдалены. Памылка выдаленьня кэшу: ' + e,
+				2500
+			);
+		});
+});
