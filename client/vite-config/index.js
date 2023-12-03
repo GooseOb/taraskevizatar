@@ -45,6 +45,8 @@ export default defineConfig(({ command, mode }) => {
 				name: 'name',
 				formats: ['es'],
 			},
+			minify: isProd,
+			modulePreload: false,
 		},
 	};
 });

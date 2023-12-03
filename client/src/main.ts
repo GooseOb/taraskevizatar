@@ -48,8 +48,7 @@ const checkboxesByThemeId: {
 if (localStorage.theme) {
 	const themeId: `${Theme}` = localStorage.theme;
 	themeSetters[themeId]();
-	if (themeId !== (`${Theme.auto}` as `${Theme.auto}`))
-		checkboxesByThemeId[themeId].checked = true;
+	if (themeId !== `${Theme.auto}`) checkboxesByThemeId[themeId].checked = true;
 }
 
 const setTheme = (themeId: Theme) => {
