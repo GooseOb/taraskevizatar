@@ -4,9 +4,7 @@ import path from 'path';
 import cacheVersioner from './plugins/cache-versioner';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
-export const getDefaultText = () => readFile('default-text.txt', 'utf-8');
-
-const __DEFAULT_TEXT__ = `\`${await getDefaultText()}\``;
+const __DEFAULT_TEXT__ = `\`${await readFile('default-text.txt', 'utf-8')}\``;
 
 export default defineConfig(({ command, mode }) => {
 	const env = loadEnv(mode, path.resolve('..'), '');
