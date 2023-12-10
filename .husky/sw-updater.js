@@ -1,15 +1,14 @@
-import path from 'path';
-import readline from 'readline/promises';
-import { writeFile } from 'fs/promises';
+import path from 'node:path';
+import readline from 'node:readline/promises';
+import { writeFile, readFile } from 'node:fs/promises';
 import { simpleGit } from 'simple-git';
-import { readFile } from 'node:fs/promises';
 
-const prefix = '\x1b[35m[sw-updater]\x1b[0m';
-const print = (...msgs) => {
-	console.log(prefix, ...msgs);
+const prefix = '\x1b[35m[sw-updater]\x1b[0m ';
+const print = (msg) => {
+	process.stdout.write(prefix + msg + '\n');
 };
 const question = (query) =>
-	rl.question(prefix + ' ' + query).then((answer) => answer.trim());
+	rl.question(prefix + query).then((answer) => answer.trim());
 const updateNothingAndExit = () => {
 	print('Nothing updated');
 	process.exit(0);
@@ -22,9 +21,8 @@ const rl = readline.createInterface({
 
 if (
 	!/^[Yy]$/.test(await question('Update service worker cache version? (y/n): '))
-) {
+)
 	updateNothingAndExit();
-}
 
 const PATH_ROOT = process.cwd();
 const PATH_FILE = path.resolve(
