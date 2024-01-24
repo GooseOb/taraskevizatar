@@ -426,7 +426,7 @@ let textFileURL: string, fileName: string;
 reader.addEventListener('load', async ({ target }) => {
 	const text = (target!.result as string).replace(/\r/g, '');
 	const taraskText = await tarask(text, settings.general, {
-		nodeColors: false,
+		ansiColors: false,
 		variations: VARIATION.ALL,
 	});
 	Object.assign(download, {
