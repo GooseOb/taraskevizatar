@@ -242,37 +242,37 @@ footer
     background-color: $clr-3
   &:last-child
     background-color: $clr-2
-  .header
-    font-size: 1.5rem
-    padding: .8rem
-    background-color: $clr-1
-    display: flex
-    flex-direction: row
-    .name
-      margin-left: 1rem
-      font-weight: bold
-  .textfield-cont
-    max-height: 60vh
-    overflow-x: hidden
-    display: flex
-    flex-direction: column
-    font-size: 1.2rem
-    min-height: 4rem
-    word-break: break-word
-    margin-bottom: $height-actions-block
-    .textfield
-      padding: 1rem
-  textarea
-    background: transparent
-    color: inherit
-    border: none
-    font: inherit
-    resize: none
-    outline: none
   [contenteditable]
     outline: none
+.textfield-cont
+  max-height: 60vh
+  overflow-x: hidden
+  display: flex
+  flex-direction: column
+  font-size: 1.2rem
+  min-height: 4rem
+  word-break: break-word
+  margin-bottom: $height-actions-block
+  .textfield
+    padding: 1rem
+textarea
+  background: transparent
+  color: inherit
+  border: none
+  font: inherit
+  resize: none
+  outline: none
 
-.subcard-bottom
+.subcard_header
+  font-size: 1.5rem
+  padding: .8rem
+  background-color: $clr-1
+  display: flex
+  flex-direction: row
+  .name
+    margin-left: 1rem
+    font-weight: bold
+.subcard_footer
   display: flex
   bottom: 0
   width: 100%
