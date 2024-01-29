@@ -1,13 +1,13 @@
 export const debounce = <TArgs extends any[]>(
 	callback: (...args: TArgs) => void,
-	cooldown: number
+	delay: number
 ) => {
 	let timeout: number;
 	return (...args: TArgs) => {
 		clearTimeout(timeout);
 		timeout = window.setTimeout(() => {
 			callback(...args);
-		}, cooldown);
+		}, delay);
 	};
 };
 
