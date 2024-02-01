@@ -1,5 +1,5 @@
-import { gobj, VARIATION, TaraskOptions, HtmlOptions } from 'taraskevizer';
-import { tarask, taraskToHtml } from '@api';
+import { gobj, VARIATION, ALPHABET, REPLACE_J } from 'taraskevizer';
+import { Taraskevizer } from '@api';
 import { $, debounce } from './utils';
 type ChangeableElement = HTMLSpanElement & { seqNum: number };
 
@@ -73,20 +73,24 @@ const enum EDIT {
 
 const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ', 'Τεκστ'] as const;
 
-const settings: { general: TaraskOptions; html: HtmlOptions } = {
+const taraskevizer = new Taraskevizer({
 	general: {
-		abc: 0,
-		j: 0,
+		abc: ALPHABET.CYRILLIC,
+		j: REPLACE_J.NEVER,
 	},
 	html: { g: false },
+	nonHtml: {
+		ansiColors: false,
+		variations: VARIATION.ALL,
+	},
 	...(localStorage.tarask_settings && JSON.parse(localStorage.tarask_settings)),
-};
+});
 
 if (localStorage.settings) {
 	const legacy = JSON.parse(localStorage.settings);
-	if (legacy.j) settings.general.j = legacy.j;
-	if (legacy.abc) settings.general.abc = legacy.abc;
-	if (legacy.html) settings.html = legacy.html;
+	if (legacy.j) taraskevizer.j = legacy.j;
+	if (legacy.abc) taraskevizer.abc = legacy.abc;
+	if (legacy.html) taraskevizer.html = legacy.html;
 	delete localStorage.settings;
 }
 if (localStorage.text) {
@@ -95,7 +99,11 @@ if (localStorage.text) {
 }
 
 const saveSettings = () => {
-	localStorage.tarask_settings = JSON.stringify(settings);
+	localStorage.tarask_settings = JSON.stringify({
+		general: { abc: taraskevizer.abc, j: taraskevizer.j },
+		html: taraskevizer.html,
+		nonHtml: taraskevizer.nonHtml,
+	});
 };
 
 saveSettings();
@@ -350,14 +358,14 @@ const newSettingsSelect: Select = (id, initialOption, setValue) =>
 		saveSettings();
 		forceConversion();
 	});
-newSettingsSelect('abc', settings.general.abc, (value) => {
-	settings.general.abc = value;
+newSettingsSelect('abc', taraskevizer.abc, (value) => {
+	taraskevizer.abc = value;
 });
-newSettingsSelect('j', settings.general.j, (value) => {
-	settings.general.j = value;
+newSettingsSelect('j', taraskevizer.j, (value) => {
+	taraskevizer.j = value;
 });
-newSelect('g', +settings.html.g, (value) => {
-	settings.html.g = !!value;
+newSelect('g', +taraskevizer.html.g, (value) => {
+	taraskevizer.html.g = !!value;
 	saveSettings();
 	output.innerHTML = output.innerHTML.replace(
 		/<tarh>(.)<\/tarh>/g,
@@ -367,7 +375,7 @@ newSelect('g', +settings.html.g, (value) => {
 
 async function convert(text: string) {
 	if (!text) {
-		output.innerHTML = OUTPUT_PLACEHOLDER[settings.general.abc];
+		output.innerHTML = OUTPUT_PLACEHOLDER[taraskevizer.abc];
 		counters.set({ input: 0, output: 0 });
 		localStorage.tarask_text = '';
 		return;
@@ -375,7 +383,7 @@ async function convert(text: string) {
 
 	let result: string;
 	try {
-		result = await taraskToHtml(text, settings.general, settings.html);
+		result = await taraskevizer.convertToHtml(text);
 	} catch (e: any) {
 		result =
 			e.toString() +
@@ -425,10 +433,7 @@ const reader = new FileReader();
 let textFileURL: string, fileName: string;
 reader.addEventListener('load', async ({ target }) => {
 	const text = (target!.result as string).replace(/\r/g, '');
-	const taraskText = await tarask(text, settings.general, {
-		ansiColors: false,
-		variations: VARIATION.ALL,
-	});
+	const taraskText = await taraskevizer.convert(text);
 	Object.assign(download, {
 		href: createTextFile(taraskText.replace(/\s([\n\t])\s/g, '$1')),
 		download: 'tarask-' + fileName,

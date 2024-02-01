@@ -1,4 +1,5 @@
-import { HtmlOptions, NonHtmlOptions, Tarask } from 'taraskevizer';
+import type { HtmlOptions, NonHtmlOptions } from 'taraskevizer';
+// TODO: make it working again
 
 type TaraskAsync<TOption extends object> = Tarask<TOption> extends (
 	...args: infer TParams
