@@ -11,6 +11,8 @@ window.addEventListener('load', () => {
 		});
 });
 
+$('current-year').textContent = new Date().getFullYear().toString();
+
 const enum Theme {
 	light,
 	auto,
