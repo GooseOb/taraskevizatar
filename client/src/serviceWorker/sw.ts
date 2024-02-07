@@ -1,10 +1,11 @@
 import cachePaths from './cachePaths.json';
 type CachePathsKey = keyof typeof cachePaths;
+const cacheNames = Object.keys(cachePaths) as CachePathsKey[];
 
-const getCacheNameByUrl = (target: string): string => {
-	let pwaName: string;
-	for (const name in cachePaths) {
-		for (const path of cachePaths[name as CachePathsKey]) {
+const getCacheNameByUrl = (target: string): CachePathsKey => {
+	let pwaName: CachePathsKey;
+	for (const name of cacheNames) {
+		for (const path of cachePaths[name]) {
 			if (target.endsWith(path)) return name;
 		}
 		if (/pwa/.test(name)) pwaName = name;
@@ -13,33 +14,34 @@ const getCacheNameByUrl = (target: string): string => {
 };
 
 const log = (...msg: any[]) => console.log('[SW]', ...msg);
-const cacheFirst = async (req: Request) => {
-	let res = await caches.match(req);
-	if (res) return res;
-	res = await fetch(req);
-	const cache = await caches.open(getCacheNameByUrl(req.url));
-	cache.put(req, res.clone());
-	return res;
-};
+const cacheFirst = (req: Request) =>
+	caches
+		.match(req)
+		.then(
+			(res) =>
+				res ||
+				Promise.all([fetch(req), caches.open(getCacheNameByUrl(req.url))]).then(
+					([res, cache]) => cache.put(req, res.clone()).then(() => res)
+				)
+		);
 
 self.addEventListener('install', async () => {
 	log('install');
-	for (const name in cachePaths) {
-		const cache = await caches.open(name);
-		cache.addAll(cachePaths[name as CachePathsKey]);
-	}
+	await Promise.all(
+		cacheNames.map((name) =>
+			caches.open(name).then((cache) => cache.addAll(cachePaths[name]))
+		)
+	);
 });
 
 self.addEventListener('activate', async () => {
 	log('activate');
-	const cacheNames = Object.keys(cachePaths);
 
-	const cachesToDelete: string[] = [];
-
-	for (const name of await caches.keys())
-		if (!cacheNames.includes(name)) cachesToDelete.push(name);
-
-	await Promise.all(cachesToDelete.map((name) => caches.delete(name)));
+	await Promise.all(
+		(await caches.keys())
+			.filter((name) => !cacheNames.includes(name))
+			.map((name) => caches.delete(name))
+	);
 });
 
 self.addEventListener('fetch', (e) => {
