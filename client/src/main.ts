@@ -6,6 +6,24 @@ type ChangeableElement = HTMLSpanElement & { seqNum: number };
 window.addEventListener('load', () => {
 	navigator.serviceWorker
 		?.register(__SW_SCOPE__ + 'sw.js', { scope: __SW_SCOPE__ })
+		.then((sw) => {
+			$('update-app').addEventListener('click', () => {
+				if (navigator.onLine) {
+					sw.update().then(() => {
+						snackbar.show('Абноўлена. Перазагрузка старонкі');
+						location.reload();
+					});
+				} else {
+					snackbar.show('Нельга абнавіцца пакуль вы афлайн');
+				}
+			});
+			sw.onupdatefound = () => {
+				snackbar.show(
+					'Тарашкевізатар абнавіўся, перазагрузіце старонку',
+					10_000
+				);
+			};
+		})
 		.catch((err) => {
 			console.warn('Service worker register fail', err);
 		});
@@ -470,20 +488,20 @@ document.body.onload = () => {
 	input.focus();
 };
 
-$('delete-cache').addEventListener('click', () => {
-	if (!navigator.onLine) {
-		snackbar.show('Нельга выдаліць кэш пакуль вы афлайн');
-		return;
-	}
-	deleteCache()
-		.then(() => {
-			snackbar.show('Кэш выдалены, абнаўленьне старонкі');
-			location.reload();
-		})
-		.catch((e) => {
-			snackbar.show('Памылка выдаленьня кэшу: ' + e);
-		});
-});
+// $('delete-cache').addEventListener('click', () => {
+// 	if (!navigator.onLine) {
+// 		snackbar.show('Нельга выдаліць кэш пакуль вы афлайн');
+// 		return;
+// 	}
+// 	deleteCache()
+// 		.then(() => {
+// 			snackbar.show('Кэш выдалены, абнаўленьне старонкі');
+// 			location.reload();
+// 		})
+// 		.catch((e) => {
+// 			snackbar.show('Памылка выдаленьня кэшу: ' + e);
+// 		});
+// });
 
 $('delete-all-data').addEventListener('click', () => {
 	delete localStorage.tarask_text;
