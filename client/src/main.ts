@@ -91,7 +91,7 @@ const enum EDIT {
 	DISABLE = 'Рэдагаваньне выключана',
 }
 
-const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ', 'Τεκστ'] as const;
+const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ'] as const;
 
 const taraskevizer = new Taraskevizer({
 	general: {
@@ -286,9 +286,10 @@ for (const btnBar of document.querySelectorAll<HTMLDivElement>('.icon-btns')) {
 	});
 }
 
-themeCheckboxes.forEach((el, i) => {
-	const themeId = +el.value;
-	const oppositeButton = themeCheckboxes[+!i];
+for (const el of themeCheckboxes) {
+	const themeId = +el.value as Theme;
+	const oppositeButton =
+		checkboxesByThemeId[themeId === Theme.dark ? Theme.light : Theme.dark];
 	el.addEventListener('click', () => {
 		if (el.checked) {
 			oppositeButton.checked = false;
@@ -297,7 +298,7 @@ themeCheckboxes.forEach((el, i) => {
 			setTheme(Theme.auto);
 		}
 	});
-});
+}
 
 const isChangeableElement = (el: HTMLElement): el is ChangeableElement =>
 	'seqNum' in el;
