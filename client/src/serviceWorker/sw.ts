@@ -1,6 +1,10 @@
+/// <reference no-default-lib="true" />
+/// <reference lib="WebWorker" />
 import cachePaths from './cachePaths.json';
 type CachePathsKey = keyof typeof cachePaths;
 const cacheNames = Object.keys(cachePaths) as CachePathsKey[];
+
+declare var self: ServiceWorkerGlobalScope;
 
 const getCacheNameByUrl = (target: string): CachePathsKey => {
 	let pwaName: CachePathsKey;
@@ -25,25 +29,36 @@ const cacheFirst = (req: Request) =>
 				)
 		);
 
-self.addEventListener('install', async () => {
+self.addEventListener('install', (e) => {
 	log('install');
-	await Promise.all(
-		cacheNames.map((name) =>
-			caches.open(name).then((cache) => cache.addAll(cachePaths[name]))
+
+	self.skipWaiting();
+
+	e.waitUntil(
+		Promise.all(
+			cacheNames.map((name) =>
+				caches.open(name).then((cache) => cache.addAll(cachePaths[name]))
+			)
 		)
 	);
 });
 
-self.addEventListener('activate', async () => {
+self.addEventListener('activate', (e) => {
 	log('activate');
 
-	await Promise.all(
-		(await caches.keys())
-			.filter((name) => !cacheNames.includes(name))
-			.map((name) => caches.delete(name))
+	e.waitUntil(
+		caches
+			.keys()
+			.then((keys) =>
+				Promise.all(
+					keys
+						.filter((name) => !cacheNames.includes(name))
+						.map((name) => caches.delete(name))
+				)
+			)
 	);
 });
 
 self.addEventListener('fetch', (e) => {
-	(e as FetchEvent).respondWith(cacheFirst((e as FetchEvent).request));
+	e.respondWith(cacheFirst(e.request));
 });
