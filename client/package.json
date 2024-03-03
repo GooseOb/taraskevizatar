@@ -14,10 +14,10 @@
 		"preview": "vite preview --config vite-config"
 	},
 	"devDependencies": {
-		"sass": "^1.65.1",
-		"taraskevizer": "5.0.1",
-		"typescript": "^5.0.2",
-		"vite": "^5.0.12",
+		"sass": "^1.71.1",
+		"taraskevizer": "5.x",
+		"typescript": "^5.3.3",
+		"vite": "^5.1.4",
 		"vite-plugin-html": "^3.2.2"
 	}
 }
