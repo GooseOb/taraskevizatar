@@ -17,8 +17,8 @@ export const taraskToHtml: TaraskAsync<HtmlOptions> = (
 		mode: 'cors',
 		body: JSON.stringify({
 			text,
-			alphabet: taraskOptions!.abc,
-			alwaysJ: taraskOptions!.j,
+			alphabet: taraskOptions.abc,
+			alwaysJ: taraskOptions.j,
 			htmlOptions,
 		}),
 		headers: {

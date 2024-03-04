@@ -1,10 +1,8 @@
-/// <reference no-default-lib="true" />
-/// <reference lib="WebWorker" />
 import cachePaths from './cachePaths.json';
 type CachePathsKey = keyof typeof cachePaths;
 const cacheNames = Object.keys(cachePaths) as CachePathsKey[];
 
-declare var self: ServiceWorkerGlobalScope;
+declare const self: ServiceWorkerGlobalScope;
 
 const getCacheNameByUrl = (target: string): CachePathsKey => {
 	let pwaName: CachePathsKey;

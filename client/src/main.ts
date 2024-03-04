@@ -78,7 +78,7 @@ const setTheme = (themeId: Theme) => {
 
 const deleteCache = async () => {
 	const cacheNames = await caches.keys();
-	if (!cacheNames.length) throw 'Кэш ужо пусты';
+	if (!cacheNames.length) throw new Error('Кэш ужо пусты');
 	await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
 };
 
@@ -307,7 +307,7 @@ output.addEventListener('click', (e) => {
 	const el = e.target as HTMLElement;
 	if (isChangeableElement(el)) changeList[el.seqNum] = !changeList[el.seqNum];
 	switch (el.tagName) {
-		case 'TARL':
+		case 'TARL': {
 			let data = el.dataset.l!;
 			if (/,/.test(data)) {
 				const [first, ...dataArr] = data.split(',');
@@ -319,8 +319,10 @@ output.addEventListener('click', (e) => {
 			el.dataset.l = el.innerHTML;
 			el.innerHTML = data;
 			return;
-		case 'TARH':
+		}
+		case 'TARH': {
 			el.textContent = gobj[el.textContent as keyof typeof gobj];
+		}
 	}
 });
 
@@ -456,7 +458,7 @@ reader.addEventListener('load', async ({ target }) => {
 	const text = (target!.result as string).replace(/\r/g, '');
 	const taraskText = await taraskevizer.convert(text);
 	Object.assign(download, {
-		href: createTextFile(taraskText.replace(/\s([\n\t])\s/g, '$1')),
+		href: createTextFileURL(taraskText.replace(/\s([\n\t])\s/g, '$1')),
 		download: 'tarask-' + fileName,
 	});
 	download.parentElement!.classList.add('active');
@@ -471,11 +473,10 @@ upload.addEventListener('change', function () {
 	this.value = '';
 });
 
-const createTextFile = (text: string) => {
+const createTextFileURL = (text: string) => {
 	if (textFileURL) URL.revokeObjectURL(textFileURL);
-	return (textFileURL = URL.createObjectURL(
-		new Blob([text], { type: 'text/plain' })
-	));
+	textFileURL = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+	return textFileURL;
 };
 
 let isUploadActive = false;
@@ -489,21 +490,6 @@ document.body.onload = () => {
 	input.focus();
 };
 
-// $('delete-cache').addEventListener('click', () => {
-// 	if (!navigator.onLine) {
-// 		snackbar.show('Нельга выдаліць кэш пакуль вы афлайн');
-// 		return;
-// 	}
-// 	deleteCache()
-// 		.then(() => {
-// 			snackbar.show('Кэш выдалены, абнаўленьне старонкі');
-// 			location.reload();
-// 		})
-// 		.catch((e) => {
-// 			snackbar.show('Памылка выдаленьня кэшу: ' + e);
-// 		});
-// });
-
 $('delete-all-data').addEventListener('click', () => {
 	delete localStorage.tarask_text;
 	delete localStorage.tarask_settings;
@@ -512,9 +498,9 @@ $('delete-all-data').addEventListener('click', () => {
 		.then(() => {
 			snackbar.show('Кэш, тэкст і налады выдалены');
 		})
-		.catch((e) => {
+		.catch((e: Error) => {
 			snackbar.show(
-				'Тэкст і налады выдалены. Памылка выдаленьня кэшу: ' + e,
+				'Тэкст і налады выдалены. Памылка выдаленьня кэшу: ' + e.message,
 				2500
 			);
 		});
