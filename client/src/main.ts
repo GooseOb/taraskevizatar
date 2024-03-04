@@ -36,9 +36,8 @@ const enum Theme {
 	auto,
 	dark,
 }
-const themeCheckboxes = $('theme').querySelectorAll(
-	'.checkbox'
-) as NodeListOf<HTMLInputElement>;
+const themeCheckboxes =
+	$('theme').querySelectorAll<HTMLInputElement>('.checkbox');
 const themeSetters = [
 	() => {
 		document.body.classList.remove('dark');
@@ -419,9 +418,7 @@ async function convert(text: string) {
 		output: output.textContent!.length,
 	});
 
-	const spans = output.querySelectorAll(
-		'tarH, tarL'
-	) as NodeListOf<ChangeableElement>;
+	const spans = output.querySelectorAll<ChangeableElement>('tarH, tarL');
 	while (changeList.length < spans.length)
 		changeList[changeList.length] = false;
 	while (changeList.length > spans.length) changeList.pop();
