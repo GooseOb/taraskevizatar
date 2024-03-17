@@ -166,7 +166,7 @@ Object.assign(
 	localStorage.tarask_text
 		? {
 				value: localStorage.tarask_text,
-		  }
+			}
 		: {
 				value: __DEFAULT_TEXT__,
 				onclick(this: AppInputElement) {
@@ -176,7 +176,7 @@ Object.assign(
 					this.fixHeight();
 					convert('');
 				},
-		  }
+			}
 );
 
 const forceConversion = () => convert(input.value);
@@ -262,7 +262,7 @@ const actions: Record<Action, () => void> = {
 
 const valueProps = ['innerText', 'value'] satisfies [
 	right: keyof HTMLDivElement,
-	left: keyof HTMLTextAreaElement
+	left: keyof HTMLTextAreaElement,
 ];
 for (const btnBar of document.querySelectorAll<HTMLDivElement>('.icon-btns')) {
 	const textfield = $<HTMLTextAreaElement | HTMLDivElement>(
@@ -338,7 +338,7 @@ const getShifts = (parent: HTMLElement, children: HTMLElement[]) => {
 	});
 };
 
-type SelectId = 'abc' | 'j' | 'g';
+type SelectId = 'abc' | 'j' | 'g' | 'esc-caps';
 type Select = <T extends number>(
 	id: SelectId,
 	initialOption: T,
@@ -385,6 +385,9 @@ newSettingsSelect('abc', taraskevizer.abc, (value) => {
 });
 newSettingsSelect('j', taraskevizer.j, (value) => {
 	taraskevizer.j = value;
+});
+newSettingsSelect('esc-caps', +taraskevizer.doEscapeCapitalized, (value) => {
+	taraskevizer.doEscapeCapitalized = !!value;
 });
 newSelect('g', +taraskevizer.html.g, (value) => {
 	taraskevizer.html.g = !!value;
