@@ -19,7 +19,7 @@ window.addEventListener('load', () => {
 			});
 			sw.onupdatefound = () => {
 				snackbar.show(
-					'Тарашкевізатар абнавіўся, перазагрузіце старонку',
+					'Каб бачыць апошнюю вэрсію старонкі, перазагрузіце старонку',
 					10_000
 				);
 			};
@@ -90,7 +90,13 @@ const enum EDIT {
 	DISABLE = 'Рэдагаваньне выключана',
 }
 
-const OUTPUT_PLACEHOLDER = ['Тэкст', 'Tekst', 'طَقْصْطْ'] as const;
+const OUTPUT_PLACEHOLDER = [
+	// @ force wrap
+	'Тэкст',
+	'Tekst',
+	'طَقْصْطْ',
+	'Tekst',
+] as const;
 
 const taraskevizer = new Taraskevizer({
 	general: {
