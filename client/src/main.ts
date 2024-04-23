@@ -113,8 +113,8 @@ const taraskevizer = new Taraskevizer({
 
 if (localStorage.settings) {
 	const legacy = JSON.parse(localStorage.settings);
-	if (legacy.j) taraskevizer.j = legacy.j;
-	if (legacy.abc) taraskevizer.abc = legacy.abc;
+	if (legacy.j) taraskevizer.general.j = legacy.j;
+	if (legacy.abc) taraskevizer.general.abc = legacy.abc;
 	if (legacy.html) taraskevizer.html = legacy.html;
 	delete localStorage.settings;
 }
@@ -125,7 +125,7 @@ if (localStorage.text) {
 
 const saveSettings = () => {
 	localStorage.tarask_settings = JSON.stringify({
-		general: { abc: taraskevizer.abc, j: taraskevizer.j },
+		general: taraskevizer.general,
 		html: taraskevizer.html,
 		nonHtml: taraskevizer.nonHtml,
 	});
@@ -386,15 +386,19 @@ const newSettingsSelect: Select = (id, initialOption, setValue) =>
 		saveSettings();
 		forceConversion();
 	});
-newSettingsSelect('abc', taraskevizer.abc, (value) => {
-	taraskevizer.abc = value;
+newSettingsSelect('abc', taraskevizer.general.abc, (value) => {
+	taraskevizer.general.abc = value;
 });
-newSettingsSelect('j', taraskevizer.j, (value) => {
-	taraskevizer.j = value;
+newSettingsSelect('j', taraskevizer.general.j, (value) => {
+	taraskevizer.general.j = value;
 });
-newSettingsSelect('esc-caps', +taraskevizer.doEscapeCapitalized, (value) => {
-	taraskevizer.doEscapeCapitalized = !!value;
-});
+newSettingsSelect(
+	'esc-caps',
+	+taraskevizer.general.doEscapeCapitalized,
+	(value) => {
+		taraskevizer.general.doEscapeCapitalized = !!value;
+	}
+);
 newSelect('g', +taraskevizer.html.g, (value) => {
 	taraskevizer.html.g = !!value;
 	saveSettings();
@@ -406,7 +410,7 @@ newSelect('g', +taraskevizer.html.g, (value) => {
 
 async function convert(text: string) {
 	if (!text) {
-		output.innerHTML = OUTPUT_PLACEHOLDER[taraskevizer.abc];
+		output.innerHTML = OUTPUT_PLACEHOLDER[taraskevizer.general.abc];
 		counters.set({ input: 0, output: 0 });
 		localStorage.tarask_text = '';
 		return;
