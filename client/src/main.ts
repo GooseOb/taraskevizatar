@@ -198,6 +198,7 @@ const snackbar = {
 		this.hideWithTimeout();
 	},
 	hideWithTimeout() {
+		this.cancelHiding();
 		this._timeout = window.setTimeout(() => {
 			this.element.classList.add('hidden');
 		}, this._visibilityTime);
