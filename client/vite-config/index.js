@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'path';
 import cacheVersioner from './plugins/cache-versioner';
 import { createHtmlPlugin } from 'vite-plugin-html';
-import { version } from '../node_modules/taraskevizer/package.json';
+import { version as pkgVersion } from '../node_modules/taraskevizer/package.json';
 
 const __DEFAULT_TEXT__ = `"${(
 	await readFile('default-text.txt', 'utf-8')
@@ -20,7 +20,7 @@ export default defineConfig(({ command, mode }) => {
 		preview: { port },
 		server: { port },
 		plugins: [
-			cacheVersioner(),
+			cacheVersioner(pkgVersion),
 			isProd &&
 				createHtmlPlugin({
 					minify: true,
@@ -29,7 +29,7 @@ export default defineConfig(({ command, mode }) => {
 		define: {
 			__BUILD_DATE__: Date.now(),
 			__DEFAULT_TEXT__,
-			__VERSION__: `"${version}"`,
+			__VERSION__: `"${pkgVersion}"`,
 			__SW_SCOPE__: `"${base}"`,
 			'process.env': JSON.stringify(env),
 		},

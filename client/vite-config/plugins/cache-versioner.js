@@ -1,20 +1,20 @@
 import { readFile } from 'node:fs/promises';
 import path from 'path';
 
-const fileRegex = /serviceWorker.sw\.ts$/;
-const getJson = (filePath) =>
-	readFile(path.resolve(filePath), 'utf-8').then(JSON.parse);
-const getSWJson = (name) => getJson(`src/serviceWorker/${name}.json`);
+const FILE_REGEX = /serviceWorker.sw\.ts$/;
 
-export default function () {
+export default function (pkgVersion) {
 	return {
 		name: 'cache-versioner',
 		async transform(src, id) {
-			const { version: pkgVersion } = await getJson(
-				'./node_modules/taraskevizer/package.json'
+			const [json, versions] = await Promise.all(
+				['cachePaths', 'cacheVersions'].map((name) =>
+					readFile(
+						path.resolve(`src/serviceWorker/${name}.json`),
+						'utf-8'
+					).then(JSON.parse)
+				)
 			);
-			const json = await getSWJson('cachePaths');
-			const versions = await getSWJson('cacheVersions');
 
 			const newJson = {
 				[`js-v${versions.js}+${pkgVersion}`]: json.js,
@@ -22,7 +22,7 @@ export default function () {
 			delete json.js;
 
 			for (const key in json) newJson[key + '-v' + versions[key]] = json[key];
-			if (fileRegex.test(id))
+			if (FILE_REGEX.test(id))
 				return {
 					code: src.replace(
 						/import (cachePaths) from ['"]\.\/cachePaths.json['"]/,
