@@ -234,7 +234,9 @@ window.addEventListener('keyup', (e) => {
 const prompts = {
 	list: [
 		'<tarL class="demo">Гэтыя часьціны</tarL> можна зьмяняць, націскаючы на іх',
-		'Апошняе абнаўленьне: ' + new Date(__BUILD_DATE__).toLocaleDateString(),
+		`Апошняе абнаўленьне: ${new Date(
+			__BUILD_DATE__
+		).toLocaleDateString()}. Вэрсія тарашкевізатара: ${__VERSION__}`,
 	] as const,
 	_i: 0,
 	getNext(): string {
