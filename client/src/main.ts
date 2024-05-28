@@ -1,6 +1,7 @@
 import { gobj, VARIATION, ALPHABET, REPLACE_J } from 'taraskevizer';
 import { Taraskevizer } from '@api';
-import { $, debounce } from './utils';
+import { $, debounce, getShifts } from './utils';
+import { prompts } from './prompts';
 type ChangeableElement = HTMLSpanElement & { seqNum: number };
 
 window.addEventListener('load', () => {
@@ -73,12 +74,6 @@ if (localStorage.theme) {
 const setTheme = (themeId: Theme) => {
 	localStorage.theme = themeId;
 	themeSetters[themeId]();
-};
-
-const deleteCache = async () => {
-	const cacheNames = await caches.keys();
-	if (!cacheNames.length) throw new Error('Кэш ужо пусты');
-	await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
 };
 
 const enum CARD {
@@ -158,7 +153,7 @@ const counters = {
 	set(nums: Record<CounterKeys, string | number>): void;
 };
 
-let changeList: boolean[] = [];
+let changeList: number[] = [];
 
 Object.assign(
 	input,
@@ -172,7 +167,7 @@ Object.assign(
 	localStorage.tarask_text
 		? {
 				value: localStorage.tarask_text,
-		  }
+			}
 		: {
 				value: __DEFAULT_TEXT__,
 				onclick(this: AppInputElement) {
@@ -182,7 +177,7 @@ Object.assign(
 					this.fixHeight();
 					convert('');
 				},
-		  }
+			}
 );
 
 const forceConversion = () => convert(input.value);
@@ -220,31 +215,12 @@ const debouncedConvert = debounce(convert, 200);
 
 input.addEventListener('input', function () {
 	const text = this.value.trim();
-	if (text.length > 10_000) {
-		debouncedConvert(text);
-	} else {
-		convert(text);
-	}
+	(text.length > 10_000 ? debouncedConvert : convert)(text);
 	localStorage.tarask_text = text;
 });
 window.addEventListener('keyup', (e) => {
 	if (e.ctrlKey && e.code === 'KeyA') input.select();
 });
-
-const prompts = {
-	list: [
-		'<tarL class="demo">Гэтыя часьціны</tarL> можна зьмяняць, націскаючы на іх',
-		`Апошняе абнаўленьне: ${new Date(
-			__BUILD_DATE__
-		).toLocaleDateString()}. Вэрсія тарашкевізатара: ${__VERSION__}`,
-	] as const,
-	_i: 0,
-	getNext(): string {
-		const result = this.list[this._i];
-		this._i = (this._i + 1) % this.list.length;
-		return result;
-	},
-};
 
 type Action = 'clear' | 'info' | 'showSettings' | 'edit';
 
@@ -264,35 +240,30 @@ const actions: Record<Action, () => void> = {
 	edit() {
 		const isContentEditable = !output.isContentEditable;
 		output.contentEditable = isContentEditable.toString();
-		snackbar.show(isContentEditable ? EDIT.ENABLE : EDIT.DISABLE);
-		if (isContentEditable) output.focus();
+		if (isContentEditable) {
+			snackbar.show(EDIT.ENABLE);
+			output.focus();
+		} else {
+			snackbar.show(EDIT.DISABLE);
+		}
 	},
 };
 
-const valueProps = ['innerText', 'value'] satisfies [
-	right: keyof HTMLDivElement,
-	left: keyof HTMLTextAreaElement
-];
-for (const btnBar of document.querySelectorAll<HTMLDivElement>('.icon-btns')) {
-	const textfield = $<HTMLTextAreaElement | HTMLDivElement>(
-		btnBar.dataset.for!
-	);
-	const valueProp = valueProps.pop();
-
+const newBtnBar = (btnBar: HTMLElement, getText: () => string) => {
 	btnBar.addEventListener('click', (e) => {
 		const el = e.target as HTMLElement;
 		if (el === btnBar) return;
 		if (el.classList.contains('copy')) {
-			navigator.clipboard.writeText(
-				//@ts-ignore
-				textfield[valueProp]
-			);
+			navigator.clipboard.writeText(getText());
 			snackbar.show('Скапіявана');
 			return;
 		}
 		actions[el.id as Action]();
 	});
-}
+};
+
+newBtnBar($('input-btns'), () => input.value);
+newBtnBar($('output-btns'), () => output.textContent!);
 
 for (const el of themeCheckboxes) {
 	const themeId = +el.value as Theme;
@@ -308,44 +279,35 @@ for (const el of themeCheckboxes) {
 	});
 }
 
-const isChangeableElement = (el: HTMLElement): el is ChangeableElement =>
-	'seqNum' in el;
+const applyG = (el: ChangeableElement) => {
+	el.textContent = gobj[el.textContent as keyof typeof gobj];
+};
 
 output.addEventListener('click', (e) => {
-	const el = e.target as HTMLElement;
-	if (isChangeableElement(el)) changeList[el.seqNum] = !changeList[el.seqNum];
+	const el = e.target as ChangeableElement;
 	switch (el.tagName) {
 		case 'TARL': {
 			let data = el.dataset.l!;
-			if (/,/.test(data)) {
-				const [first, ...dataArr] = data.split(',');
-				dataArr[dataArr.length] = el.innerHTML;
-				el.innerHTML = first;
-				el.dataset.l = dataArr.toString();
-				return;
+			if (data.includes(',')) {
+				const dataArr = data.split(',');
+				dataArr.push(el.innerHTML);
+				data = dataArr.shift()!;
+				changeList[el.seqNum] =
+					(changeList[el.seqNum] + 1) % (dataArr.length + 1);
+				el.dataset.l = dataArr.join(',');
+			} else {
+				changeList[el.seqNum] = changeList[el.seqNum] ? 0 : 1;
+				el.dataset.l = el.innerHTML;
 			}
-			el.dataset.l = el.innerHTML;
 			el.innerHTML = data;
 			return;
 		}
 		case 'TARH': {
-			el.textContent = gobj[el.textContent as keyof typeof gobj];
+			changeList[el.seqNum] = changeList[el.seqNum] ? 0 : 1;
+			applyG(el);
 		}
 	}
 });
-
-const getShifts = (parent: HTMLElement, children: HTMLElement[]) => {
-	const { left, top } = parent.getBoundingClientRect();
-	return children.map((item) => {
-		const itemRect = item.getBoundingClientRect();
-		return {
-			top: itemRect.top - top + 'px',
-			left: itemRect.left - left + 'px',
-			width: itemRect.width + 'px',
-			height: itemRect.height + 'px',
-		} satisfies { [key in keyof HTMLElement['style']]?: string };
-	});
-};
 
 type SelectId = 'abc' | 'j' | 'g' | 'esc-caps';
 type Select = <T extends number>(
@@ -435,12 +397,32 @@ async function convert(text: string) {
 	});
 
 	const spans = output.querySelectorAll<ChangeableElement>('tarH, tarL');
-	while (changeList.length < spans.length)
-		changeList[changeList.length] = false;
-	while (changeList.length > spans.length) changeList.pop();
+	if (changeList.length > spans.length) {
+		changeList.length = spans.length;
+	} else while (changeList.length < spans.length) changeList.push(0);
 	for (let i = 0; i < changeList.length; i++) {
-		if (changeList[i]) spans[i].click();
-		spans[i].seqNum = i;
+		const el = spans[i];
+		el.seqNum = i;
+		if (changeList[i])
+			switch (el.tagName) {
+				case 'TARH':
+					applyG(el);
+					continue;
+				case 'TARL':
+					let data = el.dataset.l!;
+					if (data.includes(',')) {
+						const dataArr = data.split(',');
+						data = el.innerHTML;
+						for (let j = 0; j < changeList[i]; ++j) {
+							dataArr.push(data);
+							data = dataArr.shift()!;
+						}
+						el.dataset.l = dataArr.join(',');
+					} else {
+						el.dataset.l = el.innerHTML;
+					}
+					el.innerHTML = data;
+			}
 	}
 }
 
@@ -464,6 +446,13 @@ const syncScroll = <TElem extends AppInputElement | AppOutputContainer>(
 
 input.addEventListener('scroll', syncScroll(outputContainer));
 outputContainer.addEventListener('scroll', syncScroll(input));
+
+let isUploadActive = false;
+let activateUpload = () => {
+	if (isUploadActive) return;
+	uploadLabel.title = uploadLabel.dataset.title!;
+	isUploadActive = true;
+};
 
 const reader = new FileReader();
 let textFileURL: string, fileName: string;
@@ -492,29 +481,19 @@ const createTextFileURL = (text: string) => {
 	return textFileURL;
 };
 
-let isUploadActive = false;
-let activateUpload = () => {
-	if (isUploadActive) return;
-	uploadLabel.title = uploadLabel.dataset.title!;
-	isUploadActive = true;
-};
-
 document.body.onload = () => {
 	input.focus();
 };
 
-$('delete-all-data').addEventListener('click', () => {
+$('delete-all-data').addEventListener('click', async () => {
 	delete localStorage.tarask_text;
 	delete localStorage.tarask_settings;
 	delete localStorage.theme;
-	deleteCache()
-		.then(() => {
-			snackbar.show('Кэш, тэкст і налады выдалены');
-		})
-		.catch((e: Error) => {
-			snackbar.show(
-				'Тэкст і налады выдалены. Памылка выдаленьня кэшу: ' + e.message,
-				2500
-			);
-		});
+	const cacheNames = await caches.keys();
+	if (cacheNames.length) {
+		await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+		snackbar.show('Кэш, тэкст і налады выдалены');
+	} else {
+		snackbar.show('Кэш ужо пусты', 2500);
+	}
 });
