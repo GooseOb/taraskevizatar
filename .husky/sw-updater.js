@@ -1,7 +1,7 @@
 import { join } from 'node:path';
 import readline from 'node:readline/promises';
 import { writeFile, readFile } from 'node:fs/promises';
-import { simpleGit } from 'simple-git';
+import { exec } from 'node:child_process';
 
 const PREFIX = '\x1b[35m[sw-updater]\x1b[0m ';
 const print = (msg) => {
@@ -34,12 +34,20 @@ const PATH_FILE = join(
 );
 const ALL_SUGGESTED_ID = 'x';
 
-const git = simpleGit({ baseDir: PATH_ROOT });
+const diffResult = await new Promise((resolve, reject) => {
+	exec('git diff --name-only HEAD client', (err, stdout, stderr) => {
+		if (err) {
+			reject(err);
+		} else {
+			resolve(stdout);
+		}
+	});
+});
 
-const diffResult = await git.diffSummary(['--name-only', 'HEAD', 'client']);
-const changedFiles = diffResult.files.map((obj) =>
-	obj.file.replace(/^client./, '')
-);
+const changedFiles = diffResult
+	.split('\n')
+	.filter(Boolean)
+	.map((filePath) => filePath.replace(/^client./, ''));
 const patterns = [
 	['js', /^src.(?!service-worker.*)(?=\S+\.[jt]s$)/],
 	['css', /^src.style\.sass$/],

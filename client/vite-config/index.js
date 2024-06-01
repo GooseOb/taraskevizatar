@@ -27,6 +27,7 @@ export default defineConfig(({ command, mode }) => {
 				}),
 			{
 				apply: 'build',
+
 				enforce: 'post',
 				transformIndexHtml() {
 					build({
