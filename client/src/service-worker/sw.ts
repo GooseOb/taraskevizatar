@@ -1,4 +1,4 @@
-import cachePaths from './cachePaths.json';
+import cachePaths from './cache-paths.bundle.json';
 type CachePathsKey = keyof typeof cachePaths;
 const cacheNames = Object.keys(cachePaths) as CachePathsKey[];
 

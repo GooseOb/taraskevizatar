@@ -1,14 +1,14 @@
-import path from 'node:path';
+import { join } from 'node:path';
 import readline from 'node:readline/promises';
 import { writeFile, readFile } from 'node:fs/promises';
 import { simpleGit } from 'simple-git';
 
-const prefix = '\x1b[35m[sw-updater]\x1b[0m ';
+const PREFIX = '\x1b[35m[sw-updater]\x1b[0m ';
 const print = (msg) => {
-	process.stdout.write(prefix + msg + '\n');
+	process.stdout.write(PREFIX + msg + '\n');
 };
 const question = (query) =>
-	rl.question(prefix + query).then((answer) => answer.trim());
+	rl.question(PREFIX + query).then((answer) => answer.trim());
 const updateNothingAndExit = () => {
 	print('Nothing updated');
 	process.exit(0);
@@ -25,12 +25,12 @@ if (
 	updateNothingAndExit();
 
 const PATH_ROOT = process.cwd();
-const PATH_FILE = path.resolve(
+const PATH_FILE = join(
 	PATH_ROOT,
 	'client',
 	'src',
-	'serviceWorker',
-	'cacheVersions.json'
+	'service-worker',
+	'cache-versions.json'
 );
 const ALL_SUGGESTED_ID = 'x';
 
@@ -41,7 +41,7 @@ const changedFiles = diffResult.files.map((obj) =>
 	obj.file.replace(/^client./, '')
 );
 const patterns = [
-	['js', /^src.(?!serviceWorker.*)(?=\S+\.[jt]s$)/],
+	['js', /^src.(?!service-worker.*)(?=\S+\.[jt]s$)/],
 	['css', /^src.style\.sass$/],
 	['html', /^index\.html$/],
 	['static', /^public.(fonts|icons)'/],

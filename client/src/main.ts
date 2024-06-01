@@ -1,5 +1,13 @@
-import { gobj, VARIATION, ALPHABET, REPLACE_J } from 'taraskevizer';
-import { Taraskevizer } from '@api';
+import {
+	tarask,
+	htmlPipeline,
+	plainTextPipeline,
+	dicts,
+	VARIATION,
+	ALPHABET,
+	REPLACE_J,
+	TaraskConfig,
+} from 'taraskevizer';
 import { $, debounce, getShifts } from './utils';
 import { prompts } from './prompts';
 type ChangeableElement = HTMLSpanElement & { seqNum: number };
@@ -85,15 +93,27 @@ const enum EDIT {
 	DISABLE = 'Рэдагаваньне выключана',
 }
 
+const alphabets = [
+	ALPHABET.CYRILLIC,
+	ALPHABET.LATIN,
+	ALPHABET.ARABIC,
+	ALPHABET.LATIN_JI,
+];
 const OUTPUT_PLACEHOLDER = [
-	// @ force wrap
+	// force wrap
 	'Тэкст',
 	'Tekst',
 	'طَقْصْطْ',
 	'Tekst',
 ] as const;
 
-const taraskevizer = new Taraskevizer({
+const getSettingsLS = (): TaraskConfig => {
+	const result = JSON.parse(localStorage.tarask_settings);
+	result.general.abc = alphabets[result.general.abc];
+	return result;
+};
+
+const taraskConfig = new TaraskConfig({
 	general: {
 		abc: ALPHABET.CYRILLIC,
 		j: REPLACE_J.NEVER,
@@ -103,14 +123,14 @@ const taraskevizer = new Taraskevizer({
 		ansiColors: false,
 		variations: VARIATION.ALL,
 	},
-	...(localStorage.tarask_settings && JSON.parse(localStorage.tarask_settings)),
+	...(localStorage.tarask_settings && getSettingsLS()),
 });
 
 if (localStorage.settings) {
 	const legacy = JSON.parse(localStorage.settings);
-	if (legacy.j) taraskevizer.general.j = legacy.j;
-	if (legacy.abc) taraskevizer.general.abc = legacy.abc;
-	if (legacy.html) taraskevizer.html = legacy.html;
+	if (legacy.j) taraskConfig.general.j = legacy.j;
+	if (legacy.abc) taraskConfig.general.abc = alphabets[legacy.abc];
+	if (legacy.html) taraskConfig.html = legacy.html;
 	delete localStorage.settings;
 }
 if (localStorage.text) {
@@ -120,9 +140,11 @@ if (localStorage.text) {
 
 const saveSettings = () => {
 	localStorage.tarask_settings = JSON.stringify({
-		general: taraskevizer.general,
-		html: taraskevizer.html,
-		nonHtml: taraskevizer.nonHtml,
+		...taraskConfig,
+		general: {
+			...taraskConfig.general,
+			abc: alphabets.indexOf(taraskConfig.general.abc) as any,
+		},
 	});
 };
 
@@ -280,7 +302,7 @@ for (const el of themeCheckboxes) {
 }
 
 const applyG = (el: ChangeableElement) => {
-	el.textContent = gobj[el.textContent as keyof typeof gobj];
+	el.textContent = dicts.gobj[el.textContent as keyof typeof dicts.gobj];
 };
 
 output.addEventListener('click', (e) => {
@@ -351,31 +373,36 @@ const newSettingsSelect: Select = (id, initialOption, setValue) =>
 		saveSettings();
 		forceConversion();
 	});
-newSettingsSelect('abc', taraskevizer.general.abc, (value) => {
-	taraskevizer.general.abc = value;
-});
-newSettingsSelect('j', taraskevizer.general.j, (value) => {
-	taraskevizer.general.j = value;
+newSettingsSelect(
+	'abc',
+	alphabets.indexOf(taraskConfig.general.abc),
+	(value) => {
+		taraskConfig.general.abc = alphabets[value];
+	}
+);
+newSettingsSelect('j', taraskConfig.general.j, (value) => {
+	taraskConfig.general.j = value;
 });
 newSettingsSelect(
 	'esc-caps',
-	+taraskevizer.general.doEscapeCapitalized,
+	+taraskConfig.general.doEscapeCapitalized,
 	(value) => {
-		taraskevizer.general.doEscapeCapitalized = !!value;
+		taraskConfig.general.doEscapeCapitalized = !!value;
 	}
 );
-newSelect('g', +taraskevizer.html.g, (value) => {
-	taraskevizer.html.g = !!value;
+newSelect('g', +taraskConfig.html.g, (value) => {
+	taraskConfig.html.g = !!value;
 	saveSettings();
 	output.innerHTML = output.innerHTML.replace(
 		/<tarh>(.)<\/tarh>/g,
-		($0, $1: keyof typeof gobj) => `<tarh>${gobj[$1]}</tarh>`
+		($0, $1: keyof typeof dicts.gobj) => `<tarh>${dicts.gobj[$1]}</tarh>`
 	);
 });
 
 async function convert(text: string) {
 	if (!text) {
-		output.innerHTML = OUTPUT_PLACEHOLDER[taraskevizer.general.abc];
+		output.innerHTML =
+			OUTPUT_PLACEHOLDER[alphabets.indexOf(taraskConfig.general.abc)];
 		counters.set({ input: 0, output: 0 });
 		localStorage.tarask_text = '';
 		return;
@@ -383,7 +410,7 @@ async function convert(text: string) {
 
 	let result: string;
 	try {
-		result = await taraskevizer.convertToHtml(text);
+		result = tarask(text, htmlPipeline, taraskConfig);
 	} catch (e: any) {
 		result =
 			e.toString() +
@@ -458,7 +485,7 @@ const reader = new FileReader();
 let textFileURL: string, fileName: string;
 reader.addEventListener('load', async ({ target }) => {
 	const text = (target!.result as string).replace(/\r/g, '');
-	const taraskText = await taraskevizer.convert(text);
+	const taraskText = tarask(text, plainTextPipeline, taraskConfig);
 	Object.assign(download, {
 		href: createTextFileURL(taraskText.replace(/\s([\n\t])\s/g, '$1')),
 		download: 'tarask-' + fileName,

@@ -4,6 +4,7 @@ import path from 'path';
 import cacheVersioner from './plugins/cache-versioner';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { version as pkgVersion } from '../node_modules/taraskevizer/package.json';
+import { build } from 'esbuild';
 
 const __DEFAULT_TEXT__ = `"${(
 	await readFile('default-text.txt', 'utf-8')
@@ -20,11 +21,25 @@ export default defineConfig(({ command, mode }) => {
 		preview: { port },
 		server: { port },
 		plugins: [
-			cacheVersioner(pkgVersion),
 			isProd &&
 				createHtmlPlugin({
 					minify: true,
 				}),
+			{
+				apply: 'build',
+				enforce: 'post',
+				transformIndexHtml() {
+					build({
+						minify: true,
+						bundle: true,
+						entryPoints: [
+							path.join(process.cwd(), 'src', 'service-worker', 'sw.ts'),
+						],
+						outfile: path.join(process.cwd(), 'dist', 'sw.js'),
+						plugins: [cacheVersioner(pkgVersion)],
+					});
+				},
+			},
 		],
 		define: {
 			__BUILD_DATE__: Date.now(),
@@ -33,22 +48,21 @@ export default defineConfig(({ command, mode }) => {
 			__SW_SCOPE__: `"${base}"`,
 			'process.env': JSON.stringify(env),
 		},
-		resolve: {
-			alias: {
-				'@api': isClientServerMode ? './api' : 'taraskevizer',
-			},
-		},
+		// resolve: {
+		// 	alias: {
+		// 		'@api': isClientServerMode ? './api' : 'taraskevizer',
+		// 	},
+		// },
 		build: {
-			lib: {
-				entry: [
-					path.resolve('index.html'),
-					path.resolve('src/serviceWorker/sw.ts'),
-				],
-				name: 'name',
-				formats: ['es'],
-			},
 			minify: isProd,
 			modulePreload: false,
+			rollupOptions: {
+				output: {
+					entryFileNames: '[name].js',
+					chunkFileNames: '[name].js',
+					assetFileNames: '[name].[ext]',
+				},
+			},
 		},
 	};
 });
