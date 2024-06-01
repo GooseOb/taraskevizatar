@@ -1,7 +1,7 @@
 {
 	"html": ["/taraskevizatar/", "index.html"],
 	"js": ["index.js"],
-	"css": ["style.css"],
+	"css": ["index.css"],
 	"static": [
 		"fonts/NotoSansArabic-SemiBold.ttf",
 		"icons/close.svg",
