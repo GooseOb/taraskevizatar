@@ -15,7 +15,7 @@
 	},
 	"devDependencies": {
 		"sass": "^1.71.1",
-		"taraskevizer": "^7.0.2",
+		"taraskevizer": "^7.1.0",
 		"typescript": "^5.3.3",
 		"vite": "^5.1.4",
 		"vite-plugin-html": "^3.2.2"

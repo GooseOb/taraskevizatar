@@ -4,7 +4,6 @@ import {
 	plainTextPipeline,
 	dicts,
 	VARIATION,
-	ALPHABET,
 	REPLACE_J,
 	TaraskConfig,
 } from 'taraskevizer';
@@ -94,10 +93,10 @@ const enum EDIT {
 }
 
 const alphabets = [
-	ALPHABET.CYRILLIC,
-	ALPHABET.LATIN,
-	ALPHABET.ARABIC,
-	ALPHABET.LATIN_JI,
+	dicts.alphabets.cyrillic,
+	dicts.alphabets.latin,
+	dicts.alphabets.arabic,
+	dicts.alphabets.latinJi,
 ];
 const OUTPUT_PLACEHOLDER = [
 	// force wrap
@@ -115,7 +114,7 @@ const getSettingsLS = (): TaraskConfig => {
 
 const taraskConfig = new TaraskConfig({
 	general: {
-		abc: ALPHABET.CYRILLIC,
+		abc: dicts.alphabets.cyrillic,
 		j: REPLACE_J.NEVER,
 	},
 	html: { g: false },
