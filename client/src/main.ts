@@ -1,7 +1,6 @@
 import {
 	tarask,
-	htmlPipeline,
-	plainTextPipeline,
+	pipelines,
 	dicts,
 	VARIATION,
 	REPLACE_J,
@@ -188,7 +187,7 @@ Object.assign(
 	localStorage.tarask_text
 		? {
 				value: localStorage.tarask_text,
-			}
+		  }
 		: {
 				value: __DEFAULT_TEXT__,
 				onclick(this: AppInputElement) {
@@ -198,7 +197,7 @@ Object.assign(
 					this.fixHeight();
 					convert('');
 				},
-			}
+		  }
 );
 
 const forceConversion = () => convert(input.value);
@@ -409,7 +408,7 @@ async function convert(text: string) {
 
 	let result: string;
 	try {
-		result = tarask(text, htmlPipeline, taraskConfig);
+		result = tarask(text, pipelines.html, taraskConfig);
 	} catch (e: any) {
 		result =
 			e.toString() +
@@ -484,7 +483,7 @@ const reader = new FileReader();
 let textFileURL: string, fileName: string;
 reader.addEventListener('load', async ({ target }) => {
 	const text = (target!.result as string).replace(/\r/g, '');
-	const taraskText = tarask(text, plainTextPipeline, taraskConfig);
+	const taraskText = tarask(text, pipelines.plainText, taraskConfig);
 	Object.assign(download, {
 		href: createTextFileURL(taraskText.replace(/\s([\n\t])\s/g, '$1')),
 		download: 'tarask-' + fileName,
