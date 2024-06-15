@@ -114,7 +114,6 @@ footer
   margin-left: auto
   border-radius: 1em
   overflow: hidden
-  user-select: none
   height: 2rem
   .checkbox
     font-size: 1em
@@ -131,32 +130,27 @@ footer
     &:checked
       background-color: $clr-4
 
-#settings
-  transition: .2s
-  display: flex
-  flex-wrap: wrap
-  @include mobile(1)
-    font-size: .9em
-
 @mixin hideSettings
-  height: 0
   animation-name: hide
   animation-duration: 1s
 
 @keyframes hide
   from
-    height: auto
+    max-height: 200px
   to
-    height: 0
+    max-height: 0
 
-.hidden
-  visibility: hidden
-  position: absolute
-  opacity: 0
-  &#settings
-    @include hideSettings
-    div
-      @include hideSettings
+#settings
+  overflow: hidden
+  transition: max-height 0.3s ease
+  max-height: 50rem
+  display: flex
+  flex-wrap: wrap
+  @include mobile(1)
+    font-size: .9em
+  &.hidden
+    max-height: 0
+    border: none
 
 @mixin select-btn-padding
   padding: .5rem
@@ -319,7 +313,6 @@ textarea
   padding: .5rem 1rem
   border-radius: 1rem
   transition: .6s
-  user-select: none
   text-align: center
   z-index: 2
   @include mobile
@@ -327,6 +320,9 @@ textarea
     transform: translateX(-50%)
     padding: .5rem 10%
     width: 60vw
+  &.hidden
+    visibility: hidden
+    position: absolute
 
 #upload
   position: absolute

@@ -187,7 +187,7 @@ Object.assign(
 	localStorage.tarask_text
 		? {
 				value: localStorage.tarask_text,
-		  }
+			}
 		: {
 				value: __DEFAULT_TEXT__,
 				onclick(this: AppInputElement) {
@@ -197,7 +197,7 @@ Object.assign(
 					this.fixHeight();
 					convert('');
 				},
-		  }
+			}
 );
 
 const forceConversion = () => convert(input.value);
