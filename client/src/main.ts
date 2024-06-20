@@ -8,6 +8,8 @@ import {
 } from 'taraskevizer';
 import { $, debounce, getShifts } from './utils';
 import { prompts } from './prompts';
+import { SnackBar, registerSnackBar } from './snackbar';
+import { syncScroll } from './sync-scroll';
 type ChangeableElement = HTMLSpanElement & { seqNum: number };
 
 window.addEventListener('load', () => {
@@ -17,15 +19,15 @@ window.addEventListener('load', () => {
 			$('update-app').addEventListener('click', () => {
 				if (navigator.onLine) {
 					sw.update().then(() => {
-						snackbar.show('Абноўлена. Перазагрузка старонкі');
+						showSnackbar('Абноўлена. Перазагрузка старонкі');
 						location.reload();
 					});
 				} else {
-					snackbar.show('Нельга абнавіцца пакуль вы афлайн');
+					showSnackbar('Нельга абнавіцца пакуль вы афлайн');
 				}
 			});
 			sw.onupdatefound = () => {
-				snackbar.show(
+				showSnackbar(
 					'Каб бачыць апошнюю вэрсію старонкі, перазагрузіце старонку',
 					10_000
 				);
@@ -187,7 +189,7 @@ Object.assign(
 	localStorage.tarask_text
 		? {
 				value: localStorage.tarask_text,
-			}
+		  }
 		: {
 				value: __DEFAULT_TEXT__,
 				onclick(this: AppInputElement) {
@@ -197,37 +199,12 @@ Object.assign(
 					this.fixHeight();
 					convert('');
 				},
-			}
+		  }
 );
 
 const forceConversion = () => convert(input.value);
 
-const snackbar = {
-	element: $<HTMLDivElement>('snackbar'),
-	_timeout: 0,
-	_visibilityTime: 1000,
-	show(msg: string, visibilityTime = 1000) {
-		this._visibilityTime = visibilityTime;
-		this.element.innerHTML = msg;
-		this.element.classList.remove('hidden');
-		this.hideWithTimeout();
-	},
-	hideWithTimeout() {
-		this.cancelHiding();
-		this._timeout = window.setTimeout(() => {
-			this.element.classList.add('hidden');
-		}, this._visibilityTime);
-	},
-	cancelHiding() {
-		clearTimeout(this._timeout);
-	},
-};
-snackbar.element.addEventListener('mouseover', () => {
-	snackbar.cancelHiding();
-});
-snackbar.element.addEventListener('mouseleave', () => {
-	snackbar.hideWithTimeout();
-});
+const showSnackbar = registerSnackBar($('snackbar'));
 
 forceConversion();
 
@@ -252,7 +229,7 @@ const actions: Record<Action, () => void> = {
 		forceConversion();
 	},
 	info() {
-		snackbar.show(prompts.getNext(), 2500);
+		showSnackbar(prompts.getNext(), 2500);
 	},
 	showSettings() {
 		settingsElement.classList.toggle('hidden');
@@ -261,10 +238,10 @@ const actions: Record<Action, () => void> = {
 		const isContentEditable = !output.isContentEditable;
 		output.contentEditable = isContentEditable.toString();
 		if (isContentEditable) {
-			snackbar.show(EDIT.ENABLE);
+			showSnackbar(EDIT.ENABLE);
 			output.focus();
 		} else {
-			snackbar.show(EDIT.DISABLE);
+			showSnackbar(EDIT.DISABLE);
 		}
 	},
 };
@@ -275,7 +252,7 @@ const newBtnBar = (btnBar: HTMLElement, getText: () => string) => {
 		if (el === btnBar) return;
 		if (el.classList.contains('copy')) {
 			navigator.clipboard.writeText(getText());
-			snackbar.show('Скапіявана');
+			showSnackbar('Скапіявана');
 			return;
 		}
 		actions[el.id as Action]();
@@ -454,23 +431,7 @@ async function convert(text: string) {
 input.fixHeight();
 input.addEventListener('input', input.fixHeight);
 
-let currScroll: null | AppInputElement | AppOutputContainer;
-const stopScroll = debounce(() => {
-	currScroll = null;
-}, 200);
-
-const syncScroll = <TElem extends AppInputElement | AppOutputContainer>(
-	el: TElem
-) =>
-	function (this: TElem) {
-		currScroll ||= this;
-		if (currScroll === this)
-			el.scrollTop = this.scrollTop * (el.scrollHeight / this.scrollHeight);
-		stopScroll();
-	};
-
-input.addEventListener('scroll', syncScroll(outputContainer));
-outputContainer.addEventListener('scroll', syncScroll(input));
+syncScroll([input, outputContainer]);
 
 let isUploadActive = false;
 let activateUpload = () => {
@@ -490,7 +451,7 @@ reader.addEventListener('load', async ({ target }) => {
 	});
 	download.parentElement!.classList.add('active');
 	activateUpload();
-	snackbar.show('Файл сканвэртаваны, можна спампоўваць', 1500);
+	showSnackbar('Файл сканвэртаваны, можна спампоўваць', 1500);
 });
 
 upload.addEventListener('change', function () {
@@ -517,8 +478,8 @@ $('delete-all-data').addEventListener('click', async () => {
 	const cacheNames = await caches.keys();
 	if (cacheNames.length) {
 		await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
-		snackbar.show('Кэш, тэкст і налады выдалены');
+		showSnackbar('Кэш, тэкст і налады выдалены');
 	} else {
-		snackbar.show('Кэш ужо пусты', 2500);
+		showSnackbar('Кэш ужо пусты', 2500);
 	}
 });
