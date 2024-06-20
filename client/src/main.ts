@@ -8,7 +8,7 @@ import {
 } from 'taraskevizer';
 import { $, debounce, getShifts } from './utils';
 import { prompts } from './prompts';
-import { SnackBar, registerSnackBar } from './snackbar';
+import { registerSnackBar } from './snackbar';
 import { syncScroll } from './sync-scroll';
 type ChangeableElement = HTMLSpanElement & { seqNum: number };
 
@@ -189,7 +189,7 @@ Object.assign(
 	localStorage.tarask_text
 		? {
 				value: localStorage.tarask_text,
-		  }
+			}
 		: {
 				value: __DEFAULT_TEXT__,
 				onclick(this: AppInputElement) {
@@ -199,7 +199,7 @@ Object.assign(
 					this.fixHeight();
 					convert('');
 				},
-		  }
+			}
 );
 
 const forceConversion = () => convert(input.value);
