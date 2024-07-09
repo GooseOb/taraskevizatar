@@ -2,9 +2,9 @@ import {
 	tarask,
 	pipelines,
 	dicts,
-	VARIATION,
-	REPLACE_J,
+	wrappers,
 	TaraskConfig,
+	OptionJ,
 } from 'taraskevizer';
 import { $, debounce, getShifts } from './utils';
 import { prompts } from './prompts';
@@ -108,43 +108,33 @@ const OUTPUT_PLACEHOLDER = [
 ] as const;
 
 const getSettingsLS = (): TaraskConfig => {
-	const result = JSON.parse(localStorage.tarask_settings);
-	result.general.abc = alphabets[result.general.abc];
+	const parsed = JSON.parse(localStorage.tarask_settings);
+	let result: TaraskConfig;
+	if ('general' in parsed) {
+		result = Object.assign(parsed.general, parsed.html, parsed.nonHtml);
+	} else {
+		result = parsed;
+	}
+	// @ts-ignore
+	result.abc = alphabets[result.abc];
 	return result;
 };
 
 const taraskConfig = new TaraskConfig({
-	general: {
-		abc: dicts.alphabets.cyrillic,
-		j: REPLACE_J.NEVER,
-	},
-	html: { g: false },
-	nonHtml: {
-		ansiColors: false,
-		variations: VARIATION.ALL,
-	},
+	abc: dicts.alphabets.cyrillic,
+	j: 'never',
+	g: false,
+	ansiColors: false,
+	variations: 'all',
 	...(localStorage.tarask_settings && getSettingsLS()),
+	wrapperDict: wrappers.html,
 });
-
-if (localStorage.settings) {
-	const legacy = JSON.parse(localStorage.settings);
-	if (legacy.j) taraskConfig.general.j = legacy.j;
-	if (legacy.abc) taraskConfig.general.abc = alphabets[legacy.abc];
-	if (legacy.html) taraskConfig.html = legacy.html;
-	delete localStorage.settings;
-}
-if (localStorage.text) {
-	localStorage.tarask_text = localStorage.text;
-	delete localStorage.text;
-}
 
 const saveSettings = () => {
 	localStorage.tarask_settings = JSON.stringify({
 		...taraskConfig,
-		general: {
-			...taraskConfig.general,
-			abc: alphabets.indexOf(taraskConfig.general.abc) as any,
-		},
+		abc: alphabets.indexOf(taraskConfig.abc) as any,
+		wrapperDict: null,
 	});
 };
 
@@ -348,36 +338,28 @@ const newSettingsSelect: Select = (id, initialOption, setValue) =>
 		saveSettings();
 		forceConversion();
 	});
-newSettingsSelect(
-	'abc',
-	alphabets.indexOf(taraskConfig.general.abc),
-	(value) => {
-		taraskConfig.general.abc = alphabets[value];
-	}
-);
-newSettingsSelect('j', taraskConfig.general.j, (value) => {
-	taraskConfig.general.j = value;
+newSettingsSelect('abc', alphabets.indexOf(taraskConfig.abc), (value) => {
+	taraskConfig.abc = alphabets[value];
 });
-newSettingsSelect(
-	'esc-caps',
-	+taraskConfig.general.doEscapeCapitalized,
-	(value) => {
-		taraskConfig.general.doEscapeCapitalized = !!value;
-	}
-);
-newSelect('g', +taraskConfig.html.g, (value) => {
-	taraskConfig.html.g = !!value;
+const jOptions = ['never', 'random', 'always'] satisfies OptionJ[];
+newSettingsSelect('j', jOptions.indexOf(taraskConfig.j), (value) => {
+	taraskConfig.j = jOptions[value];
+});
+newSettingsSelect('esc-caps', +taraskConfig.doEscapeCapitalized, (value) => {
+	taraskConfig.doEscapeCapitalized = !!value;
+});
+newSelect('g', +taraskConfig.g, (value) => {
+	taraskConfig.g = !!value;
 	saveSettings();
 	output.innerHTML = output.innerHTML.replace(
 		/<tarh>(.)<\/tarh>/g,
-		($0, $1: keyof typeof dicts.gobj) => `<tarh>${dicts.gobj[$1]}</tarh>`
+		(_$0, $1: keyof typeof dicts.gobj) => `<tarh>${dicts.gobj[$1]}</tarh>`
 	);
 });
 
 async function convert(text: string) {
 	if (!text) {
-		output.innerHTML =
-			OUTPUT_PLACEHOLDER[alphabets.indexOf(taraskConfig.general.abc)];
+		output.innerHTML = OUTPUT_PLACEHOLDER[alphabets.indexOf(taraskConfig.abc)];
 		counters.set({ input: 0, output: 0 });
 		localStorage.tarask_text = '';
 		return;
@@ -385,7 +367,7 @@ async function convert(text: string) {
 
 	let result: string;
 	try {
-		result = tarask(text, pipelines.html, taraskConfig);
+		result = tarask(text, pipelines.tar, taraskConfig);
 	} catch (e: any) {
 		result =
 			e.toString() +
@@ -444,7 +426,10 @@ const reader = new FileReader();
 let textFileURL: string, fileName: string;
 reader.addEventListener('load', async ({ target }) => {
 	const text = (target!.result as string).replace(/\r/g, '');
-	const taraskText = tarask(text, pipelines.plainText, taraskConfig);
+	const taraskText = tarask(text, pipelines.tar, {
+		...taraskConfig,
+		wrapperDict: null,
+	});
 	Object.assign(download, {
 		href: createTextFileURL(taraskText.replace(/\s([\n\t])\s/g, '$1')),
 		download: 'tarask-' + fileName,
