@@ -2,9 +2,9 @@ import {
 	tarask,
 	pipelines,
 	dicts,
-	wrappers,
 	TaraskConfig,
 	OptionJ,
+	htmlConfigOptions,
 } from 'taraskevizer';
 import { $, debounce, getShifts } from './utils';
 import { prompts } from './prompts';
@@ -107,11 +107,14 @@ const OUTPUT_PLACEHOLDER = [
 	'Tekst',
 ] as const;
 
+const jOptions = ['never', 'random', 'always'] satisfies OptionJ[];
 const getSettingsLS = (): TaraskConfig => {
 	const parsed = JSON.parse(localStorage.tarask_settings);
 	let result: TaraskConfig;
 	if ('general' in parsed) {
 		result = Object.assign(parsed.general, parsed.html, parsed.nonHtml);
+		result.j = jOptions[parsed.j];
+		result.variations = 'all';
 	} else {
 		result = parsed;
 	}
@@ -121,13 +124,13 @@ const getSettingsLS = (): TaraskConfig => {
 };
 
 const taraskConfig = new TaraskConfig({
+	...htmlConfigOptions,
 	abc: dicts.alphabets.cyrillic,
 	j: 'never',
 	g: false,
-	ansiColors: false,
 	variations: 'all',
 	...(localStorage.tarask_settings && getSettingsLS()),
-	wrapperDict: wrappers.html,
+	wrapperDict: htmlConfigOptions.wrapperDict,
 });
 
 const saveSettings = () => {
@@ -341,7 +344,6 @@ const newSettingsSelect: Select = (id, initialOption, setValue) =>
 newSettingsSelect('abc', alphabets.indexOf(taraskConfig.abc), (value) => {
 	taraskConfig.abc = alphabets[value];
 });
-const jOptions = ['never', 'random', 'always'] satisfies OptionJ[];
 newSettingsSelect('j', jOptions.indexOf(taraskConfig.j), (value) => {
 	taraskConfig.j = jOptions[value];
 });
