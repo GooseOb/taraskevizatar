@@ -1,4 +1,4 @@
-export const registerSnackBar = (element: HTMLElement) => {
+export const snackbar = (element: HTMLElement) => {
 	let timeoutId = 0;
 	let _visibilityTime = 1000;
 

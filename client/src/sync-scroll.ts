@@ -7,15 +7,15 @@ export const syncScroll = <TElem extends HTMLElement>(els: TElem[]) => {
 		currScroll = null;
 	}, 200);
 
-	for (const scrollEl of els)
-		scrollEl.addEventListener('scroll', function (this: TElem) {
-			currScroll ||= this;
-			if (currScroll === this)
+	for (const el of els) {
+		el.addEventListener('scroll', () => {
+			currScroll ||= el;
+			if (currScroll === el)
 				for (const synchronizedEl of els)
-					if (synchronizedEl !== this)
+					if (synchronizedEl !== el)
 						synchronizedEl.scrollTop =
-							this.scrollTop *
-							(synchronizedEl.scrollHeight / this.scrollHeight);
+							el.scrollTop * (synchronizedEl.scrollHeight / el.scrollHeight);
 			stopScroll();
 		});
+	}
 };
