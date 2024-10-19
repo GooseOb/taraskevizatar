@@ -1,4 +1,4 @@
-import { tarask, pipelines, dicts, wrappers } from 'taraskevizer';
+import { tarask, pipelines, dicts } from 'taraskevizer';
 import { $, debounce } from './utils';
 import { prompts } from './prompts';
 import { syncScroll } from './sync-scroll';
@@ -64,18 +64,10 @@ const output = $<HTMLDivElement>('output');
 const outputContainer = output.parentElement as HTMLDivElement;
 const getCounter = (id: string): HTMLDivElement =>
 	$(id).querySelector('.num-counter')!;
-type CounterKeys = 'input' | 'output';
 const counters = {
 	input: getCounter('official'),
 	output: getCounter('classic'),
-	set(nums) {
-		for (const key in nums)
-			this[key as CounterKeys].textContent =
-				nums[key as CounterKeys].toString();
-	},
-} satisfies Record<CounterKeys, HTMLElement> & {
-	set(nums: Record<CounterKeys, string | number>): void;
-};
+} as const;
 
 {
 	const value = ls.getText();
@@ -99,10 +91,14 @@ const fixInputHeight = () => {
 
 const showSnackbar = register.snackbar($('snackbar'));
 
-input.addEventListener('input', function () {
-	const text = this.value.trim();
-	(text.length > 10_000 ? debouncedConvert : convert)(text);
-	ls.setText(text);
+input.addEventListener('input', () => {
+	const text = input.value.trim();
+	if (text.length > 10_000) {
+		counters.input.textContent = text.length.toString();
+		debouncedConvert(text);
+	} else {
+		convert(text);
+	}
 });
 window.addEventListener('keyup', (e) => {
 	if (e.ctrlKey && e.code === 'KeyA') input.select();
@@ -152,8 +148,15 @@ const registerActionBar = (btnBar: HTMLElement, getText: () => string) => {
 registerActionBar($('input-btns'), () => input.value);
 registerActionBar($('output-btns'), () => output.innerText!);
 
-const convert = async (text: string) => {
-	if (text) {
+const convert = (text: string) => {
+	if (text === '') {
+		output.textContent =
+			OUTPUT_PLACEHOLDER[alphabets.indexOf(taraskConfig.abc)];
+		counters.input.textContent = '0';
+		counters.output.textContent = '0';
+	} else {
+		counters.input.textContent = text.length.toString();
+
 		let result: string;
 		try {
 			result = tarask(text, pipelines.tar, taraskConfig);
@@ -163,21 +166,22 @@ const convert = async (text: string) => {
 				'<br><br>Калі ласка, дашліце памылку на адзін з кантактаў "Для памылак і прапановаў"';
 		}
 
+		output.remove();
 		output.innerHTML = result;
-		counters.set({
-			input: text.length,
-			output: output.textContent!.length,
-		});
+
+		counters.output.textContent = output.textContent!.length.toString();
 
 		tags.apply(output.querySelectorAll('tarH, tarL'));
-	} else {
-		output.innerHTML = OUTPUT_PLACEHOLDER[alphabets.indexOf(taraskConfig.abc)];
-		counters.set({ input: 0, output: 0 });
+
+		outputContainer.appendChild(output);
 	}
+	ls.setText(text);
 };
 const debouncedConvert = debounce(convert, 200);
 
-const forceConversion = () => convert(input.value);
+const forceConversion = () => {
+	convert(input.value);
+};
 forceConversion();
 
 output.addEventListener('click', (e) => {
@@ -186,12 +190,13 @@ output.addEventListener('click', (e) => {
 
 const getRegisterSettingsSelect =
 	(updateView: () => void): register.Select =>
-	(select, initialOption, setValue) =>
+	(select, initialOption, setValue) => {
 		register.select(select, initialOption, (value) => {
 			setValue(value);
 			ls.setConfig(taraskConfig);
 			updateView();
 		});
+	};
 const registerSettingsSelect = getRegisterSettingsSelect(forceConversion);
 
 registerSettingsSelect(
@@ -213,9 +218,9 @@ registerSettingsSelect(
 );
 
 getRegisterSettingsSelect(() => {
-	output.innerHTML = output.innerHTML.replace(/.(?=<\/tarh>)/g, ($0) =>
-		wrappers.html.letterH(dicts.gobj[$0 as keyof typeof dicts.gobj])
-	);
+	for (const el of output.querySelectorAll('tarH')) {
+		el.textContent = dicts.gobj[el.textContent as keyof typeof dicts.gobj];
+	}
 })($('g'), +taraskConfig.g, (value) => {
 	taraskConfig.g = !!value;
 });
