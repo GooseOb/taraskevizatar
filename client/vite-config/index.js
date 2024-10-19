@@ -27,16 +27,13 @@ export default defineConfig(({ command, mode }) => {
 				}),
 			{
 				apply: 'build',
-
 				enforce: 'post',
 				transformIndexHtml() {
 					build({
 						minify: true,
 						bundle: true,
-						entryPoints: [
-							path.join(process.cwd(), 'src', 'service-worker', 'sw.ts'),
-						],
-						outfile: path.join(process.cwd(), 'dist', 'sw.js'),
+						entryPoints: [path.resolve('src', 'service-worker', 'sw.ts')],
+						outdir: path.resolve('dist'),
 						plugins: [cacheVersioner(pkgVersion)],
 					});
 				},

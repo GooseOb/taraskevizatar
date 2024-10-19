@@ -5,11 +5,11 @@ export default (pkgVersion) => ({
 	name: 'cache-versioner',
 	setup(build) {
 		build.onStart(async () => {
-			const swDir = join(process.cwd(), 'src', 'service-worker');
+			const swDir = join(build.initialOptions.entryPoints[0], '..');
 
 			const [paths, versions] = await Promise.all(
-				['cache-paths', 'cache-versions'].map((name) =>
-					readFile(join(swDir, name + '.json'), 'utf-8').then(JSON.parse)
+				['cache-paths.json', 'cache-versions.json'].map((name) =>
+					readFile(join(swDir, name), 'utf-8').then(JSON.parse)
 				)
 			);
 			const newJson = {
