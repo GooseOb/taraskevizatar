@@ -150,7 +150,7 @@ const registerActionBar = (btnBar: HTMLElement, getText: () => string) => {
 };
 
 registerActionBar($('input-btns'), () => input.value);
-registerActionBar($('output-btns'), () => output.textContent!);
+registerActionBar($('output-btns'), () => output.innerText!);
 
 const convert = async (text: string) => {
 	if (text) {
@@ -173,7 +173,6 @@ const convert = async (text: string) => {
 	} else {
 		output.innerHTML = OUTPUT_PLACEHOLDER[alphabets.indexOf(taraskConfig.abc)];
 		counters.set({ input: 0, output: 0 });
-		ls.setText('');
 	}
 };
 const debouncedConvert = debounce(convert, 200);
