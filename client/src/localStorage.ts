@@ -8,26 +8,40 @@ export const setThemeId = (themeId: number) => {
 	localStorage.theme = themeId;
 };
 
-export const getConfig = (): TaraskConfig => {
-	const parsed = JSON.parse(localStorage.tarask_settings);
-	let result: TaraskConfig;
-	if ('general' in parsed) {
-		result = Object.assign(parsed.general, parsed.html, parsed.nonHtml);
-		result.j = jOptions[parsed.j];
-		result.variations = 'all';
+type StoredConfig = Partial<
+	Pick<TaraskConfig, 'abc' | 'j' | 'g' | 'variations' | 'doEscapeCapitalized'>
+>;
+type InternalConfigStructure = Omit<StoredConfig, 'abc'> & {
+	abc?: number;
+};
+
+export const getConfig = () => {
+	let result: StoredConfig;
+	if (localStorage.tarask_settings) {
+		const parsed = JSON.parse(localStorage.tarask_settings);
+		if ('general' in parsed) {
+			result = Object.assign(parsed.general, parsed.html, parsed.nonHtml);
+			result.j = jOptions[parsed.j];
+			result.variations = 'all';
+		} else {
+			result = parsed;
+		}
+		// @ts-ignore
+		result.abc = alphabets[result.abc];
 	} else {
-		result = parsed;
+		result = {};
 	}
-	// @ts-ignore
-	result.abc = alphabets[result.abc];
 	return result;
 };
-export const setConfig = (taraskConfig: TaraskConfig) => {
-	localStorage.tarask_settings = JSON.stringify({
-		...taraskConfig,
-		abc: alphabets.indexOf(taraskConfig.abc) as any,
-		wrapperDict: null,
-	});
+export const setConfig = (cfg: StoredConfig) => {
+	const obj: InternalConfigStructure = {};
+	obj.j = cfg.j;
+	obj.g = cfg.g;
+	obj.variations = cfg.variations;
+	obj.doEscapeCapitalized = cfg.doEscapeCapitalized;
+	if (cfg.abc) obj.abc = alphabets.indexOf(cfg.abc);
+
+	localStorage.tarask_settings = JSON.stringify(obj);
 };
 
 export const getText = () => localStorage.tarask_text;
