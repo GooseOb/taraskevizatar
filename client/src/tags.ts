@@ -25,10 +25,11 @@ export const tags = {
 			el.seqNum = i;
 			if (changeList[i]) {
 				switch (el.tagName) {
-					case 'TARH': {
-						applyG(el);
+					case 'TARH':
+						{
+							applyG(el);
+						}
 						break;
-					}
 					case 'TARL': {
 						let data = el.dataset.l!;
 						if (data.includes(',')) {
@@ -49,14 +50,18 @@ export const tags = {
 		}
 	},
 
+	/**
+	 * @param non-changeable elements are ignored
+	 **/
 	alternate(el: ChangeableElement) {
 		const changeList = this._changeList;
 		switch (el.tagName) {
-			case 'TARH': {
-				changeList[el.seqNum] = changeList[el.seqNum] ? 0 : 1;
-				applyG(el);
+			case 'TARH':
+				{
+					changeList[el.seqNum] = changeList[el.seqNum] ? 0 : 1;
+					applyG(el);
+				}
 				break;
-			}
 			case 'TARL': {
 				let data = el.dataset.l!;
 				if (data.includes(',')) {
