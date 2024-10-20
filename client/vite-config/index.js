@@ -40,7 +40,7 @@ export default defineConfig(({ command, mode }) => {
 			},
 		],
 		define: {
-			__BUILD_DATE__: Date.now(),
+			__BUILD_TIME__: Date.now(),
 			__DEFAULT_TEXT__,
 			__VERSION__: `"${pkgVersion}"`,
 			__SW_SCOPE__: `"${base}"`,
