@@ -36,8 +36,9 @@ export default defineConfig(({ command, mode }) => {
 						outdir: path.resolve('dist'),
 						plugins: [cacheVersioner(pkgVersion)],
 					});
+					const scriptPattern = /<script>[\s\S]+?<\/script>/g;
 					return Promise.all(
-						html.match(/<script data-minify>[\s\S]+?<\/script>/g).map((code) =>
+						html.match(scriptPattern).map((code) =>
 							transform(code.slice(22, -9), {
 								minify: true,
 								loader: 'js',
@@ -46,7 +47,7 @@ export default defineConfig(({ command, mode }) => {
 					).then((arr) => {
 						arr.reverse();
 						return html.replace(
-							/<script data-minify>[\s\S]+?<\/script>/g,
+							scriptPattern,
 							() => `<script>${arr.pop().code}</script>`
 						);
 					});
