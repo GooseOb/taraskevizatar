@@ -1,9 +1,9 @@
-import { Theme, themeSetters } from '../theme';
+import { type ThemeId, AUTO, themeSetters } from '../theme';
 import { setThemeId } from '../localStorage';
 
 export const themeCheckbox = (
 	el: HTMLInputElement,
-	themeId: Theme,
+	themeId: ThemeId,
 	oppositeEl: HTMLInputElement
 ) => {
 	el.addEventListener('click', () => {
@@ -12,7 +12,7 @@ export const themeCheckbox = (
 			themeSetters[themeId]();
 			setThemeId(themeId);
 		} else {
-			setThemeId(Theme.auto);
+			setThemeId(AUTO);
 		}
 	});
 };

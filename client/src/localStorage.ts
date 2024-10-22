@@ -1,9 +1,9 @@
 import type { TaraskConfig } from 'taraskevizer';
 import { alphabets } from './alphabets';
 import { jOptions } from './j-options';
-import type { Theme } from './theme';
+import type { ThemeId } from './theme';
 
-export const getThemeId = (): `${Theme}` => localStorage.theme;
+export const getThemeId = (): `${ThemeId}` => localStorage.theme;
 export const setThemeId = (themeId: number) => {
 	localStorage.theme = themeId;
 };

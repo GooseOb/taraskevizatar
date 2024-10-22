@@ -8,7 +8,7 @@ import { jOptions } from './j-options';
 import { alphabets, OUTPUT_PLACEHOLDER } from './alphabets';
 import * as register from './registars';
 import * as ls from './localStorage';
-import { setDark, Theme } from './theme';
+import * as theme from './theme';
 
 window.addEventListener('load', () => {
 	register
@@ -42,19 +42,20 @@ const lightEl = $<HTMLInputElement>('theme-light');
 const darkEl = $<HTMLInputElement>('theme-dark');
 
 switch (+ls.getThemeId()) {
-	case Theme.dark:
+	case theme.DARK:
 		{
-			setDark();
+			theme.setDark();
 			darkEl.checked = true;
 		}
 		break;
-	case Theme.light: {
+	case theme.LIGHT: {
+		theme.setLight();
 		lightEl.checked = true;
 	}
 }
 
-register.themeCheckbox(lightEl, Theme.light, darkEl);
-register.themeCheckbox(darkEl, Theme.dark, lightEl);
+register.themeCheckbox(lightEl, theme.DARK, darkEl);
+register.themeCheckbox(darkEl, theme.LIGHT, lightEl);
 
 ls.setConfig(taraskConfig);
 

@@ -1,8 +1,7 @@
-export const enum Theme {
-	light,
-	auto,
-	dark,
-}
+export type ThemeId = 0 | 1 | 2;
+export const LIGHT: ThemeId = 0;
+export const AUTO: ThemeId = 1;
+export const DARK: ThemeId = 2;
 
 export const setLight = () => {
 	document.body.classList.remove('dark');
