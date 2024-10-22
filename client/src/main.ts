@@ -1,6 +1,6 @@
 import { tarask, pipelines, dicts } from 'taraskevizer';
 import { $, debounce } from './utils';
-import { prompts } from './prompts';
+import { getNextPrompt } from './prompts';
 import { syncScroll } from './sync-scroll';
 import { type ChangeableElement, tags } from './tags';
 import { taraskConfig } from './default-config';
@@ -112,7 +112,7 @@ const actions = {
 		forceConversion();
 	},
 	info: () => {
-		showSnackbar(prompts.getNext(), 2500);
+		showSnackbar(getNextPrompt(), 2500);
 	},
 	showSettings: () => {
 		settingsElement.classList.toggle('hidden');

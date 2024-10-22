@@ -2,17 +2,16 @@ import { dicts } from 'taraskevizer';
 
 export type ChangeableElement = HTMLElement & { seqNum: number };
 
-export const applyG = (el: ChangeableElement) => {
+const applyG = (el: ChangeableElement) => {
 	el.textContent = dicts.gobj[el.textContent as keyof typeof dicts.gobj];
 };
 
 type NodeList<T extends Node> = T[] | NodeListOf<T>;
 
-export const tags = {
-	_changeList: [] as number[],
+const changeList: number[] = [];
 
+export const tags = {
 	apply(elems: NodeList<ChangeableElement>) {
-		const changeList = this._changeList;
 		if (changeList.length > elems.length) {
 			changeList.length = elems.length;
 		} else {
@@ -54,7 +53,6 @@ export const tags = {
 	 * @param non-changeable elements are ignored
 	 **/
 	alternate(el: ChangeableElement) {
-		const changeList = this._changeList;
 		switch (el.tagName) {
 			case 'TARH':
 				{
