@@ -25,7 +25,6 @@
 		<link rel="manifest" href="/manifest.json" />
 		<link rel="icon" type="image/x-icon" href="/logo/144.png" />
 		<link rel="stylesheet" href="/src/style.sass" />
-		<script defer type="module" src="/src/main.ts"></script>
 	</head>
 	<body class="dark">
 		<header>
@@ -175,11 +174,23 @@
 
 		<div class="hidden" id="snackbar"></div>
 	</body>
-	<script>
-		if (
-			window.matchMedia &&
-			window.matchMedia('(prefers-color-scheme: light)').matches
-		)
+	<script data-minify>
+		const setLight = () => {
 			document.body.classList.remove('dark');
+		};
+		const setDark = () => {
+			document.body.classList.add('dark');
+		};
+		const setAuto = () => {
+			if (window.matchMedia?.('(prefers-color-scheme: light)').matches) {
+				setLight();
+			} else {
+				setDark();
+			}
+		};
+
+		const themeSetters = [setLight, setAuto, setDark];
+		const initialTheme = +(localStorage.theme || '1');
+		themeSetters[initialTheme]();
 	</script>
 </html>

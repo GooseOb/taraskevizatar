@@ -4,7 +4,7 @@ import path from 'path';
 import cacheVersioner from './plugins/cache-versioner';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { version as pkgVersion } from '../node_modules/taraskevizer/package.json';
-import { build } from 'esbuild';
+import { build, transform } from 'esbuild';
 
 const __DEFAULT_TEXT__ = `"${(
 	await readFile('default-text.txt', 'utf-8')
@@ -21,20 +21,34 @@ export default defineConfig(({ command, mode }) => {
 		preview: { port },
 		server: { port },
 		plugins: [
-			isProd &&
-				createHtmlPlugin({
-					minify: true,
-				}),
+			createHtmlPlugin({
+				minify: isProd,
+				entry: 'src/main.ts',
+			}),
 			{
 				apply: 'build',
 				enforce: 'post',
-				transformIndexHtml() {
+				transformIndexHtml(html) {
 					build({
 						minify: true,
 						bundle: true,
 						entryPoints: [path.resolve('src', 'service-worker', 'sw.ts')],
 						outdir: path.resolve('dist'),
 						plugins: [cacheVersioner(pkgVersion)],
+					});
+					return Promise.all(
+						html.match(/<script data-minify>[\s\S]+?<\/script>/g).map((code) =>
+							transform(code.slice(22, -9), {
+								minify: true,
+								loader: 'js',
+							})
+						)
+					).then((arr) => {
+						arr.reverse();
+						return html.replace(
+							/<script data-minify>[\s\S]+?<\/script>/g,
+							() => `<script>${arr.pop().code}</script>`
+						);
 					});
 				},
 			},

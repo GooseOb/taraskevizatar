@@ -1,4 +1,4 @@
-import { type ThemeId, AUTO, themeSetters } from '../theme';
+import { AUTO } from '../theme';
 import { setThemeId } from '../localStorage';
 
 export const themeCheckbox = (
@@ -12,6 +12,7 @@ export const themeCheckbox = (
 			themeSetters[themeId]();
 			setThemeId(themeId);
 		} else {
+			setAuto();
 			setThemeId(AUTO);
 		}
 	});

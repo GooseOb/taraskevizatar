@@ -3,8 +3,7 @@ import { alphabets } from './alphabets';
 import { jOptions } from './j-options';
 import type { ThemeId } from './theme';
 
-export const getThemeId = (): `${ThemeId}` => localStorage.theme;
-export const setThemeId = (themeId: number) => {
+export const setThemeId = (themeId: ThemeId) => {
 	localStorage.theme = themeId;
 };
 

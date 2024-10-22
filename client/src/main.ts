@@ -41,21 +41,19 @@ $('current-year').textContent = new Date().getFullYear().toString();
 const lightEl = $<HTMLInputElement>('theme-light');
 const darkEl = $<HTMLInputElement>('theme-dark');
 
-switch (+ls.getThemeId()) {
+switch (initialTheme) {
 	case theme.DARK:
 		{
-			theme.setDark();
 			darkEl.checked = true;
 		}
 		break;
 	case theme.LIGHT: {
-		theme.setLight();
 		lightEl.checked = true;
 	}
 }
 
-register.themeCheckbox(lightEl, theme.DARK, darkEl);
-register.themeCheckbox(darkEl, theme.LIGHT, lightEl);
+register.themeCheckbox(lightEl, theme.LIGHT, darkEl);
+register.themeCheckbox(darkEl, theme.DARK, lightEl);
 
 ls.setConfig(taraskConfig);
 
@@ -128,7 +126,7 @@ const actions = {
 			showSnackbar('Рэдагаваньне выключана');
 		}
 	},
-} satisfies Record<string, () => void>;
+} satisfies Record<string, VoidFn>;
 
 type Action = keyof typeof actions;
 
@@ -190,7 +188,7 @@ output.addEventListener('click', (e) => {
 });
 
 const getRegisterSettingsSelect =
-	(updateView: () => void): register.Select =>
+	(updateView: VoidFn): register.Select =>
 	(select, initialOption, setValue) => {
 		register.select(select, initialOption, (value) => {
 			setValue(value);
