@@ -6,7 +6,7 @@ export const fileConverter = (
 	let textFileURL: string, fileName: string;
 
 	const reader = new FileReader();
-	reader.addEventListener('load', async ({ target }) => {
+	reader.addEventListener('load', ({ target }) => {
 		Object.assign(download, {
 			href: createTextFileURL(
 				convertText(target!.result as string).replace(/\s([\n\t])\s/g, '$1')
@@ -17,11 +17,11 @@ export const fileConverter = (
 		hooks.onConverted();
 	});
 
-	upload.addEventListener('change', function () {
-		const [file] = this.files!;
+	upload.addEventListener('change', () => {
+		const [file] = upload.files!;
 		fileName = file.name;
 		reader.readAsText(file);
-		this.value = '';
+		upload.value = '';
 	});
 
 	const createTextFileURL = (text: string) => {

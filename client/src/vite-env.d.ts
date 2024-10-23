@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-interface Array<T extends string> {
+interface Array {
 	includes(searchElement: string, fromIndex?: number): boolean;
 }
 
@@ -11,11 +11,6 @@ declare const themeSetters: [VoidFn, VoidFn, VoidFn],
 	setLight: VoidFn,
 	setAuto: VoidFn,
 	initialTheme: ThemeId;
-
-namespace process {
-	type EnvVariable = 'API_URL';
-	export const env: Record<EnvVariable | string, string>;
-}
 
 declare const __BUILD_TIME__: number,
 	__VERSION__: string,

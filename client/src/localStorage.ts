@@ -24,7 +24,7 @@ export const getConfig = () => {
 		} else {
 			result = parsed;
 		}
-		// @ts-ignore
+		// @ts-expect-error number to alphabet
 		result.abc = alphabets[result.abc];
 	} else {
 		result = {};
