@@ -39,7 +39,7 @@ export default defineConfig(({ command, mode }) => {
 					const scriptPattern = /<script>[\s\S]+?<\/script>/g;
 					return Promise.all(
 						html.match(scriptPattern).map((code) =>
-							transform(code.slice(22, -9), {
+							transform(code.slice(8, -9), {
 								minify: true,
 								loader: 'js',
 							})
