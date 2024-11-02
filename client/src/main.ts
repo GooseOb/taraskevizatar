@@ -1,4 +1,4 @@
-import { tarask, pipelines, dicts } from 'taraskevizer';
+import { pipelines, dicts } from 'taraskevizer';
 import { $, debounce } from './utils';
 import { getNextPrompt } from './prompts';
 import { syncScroll } from './sync-scroll';
@@ -9,6 +9,8 @@ import { alphabets, OUTPUT_PLACEHOLDER } from './alphabets';
 import * as register from './registars';
 import * as ls from './localStorage';
 import * as theme from './theme';
+
+const { tarask } = pipelines;
 
 window.addEventListener('load', () => {
 	register
@@ -158,7 +160,7 @@ const convert = (text: string) => {
 
 		let result: string;
 		try {
-			result = tarask(text, pipelines.tar, taraskConfig);
+			result = tarask(text, taraskConfig);
 		} catch (e: any) {
 			result =
 				e.toString() +
@@ -231,9 +233,9 @@ syncScroll([input, outputContainer]);
 
 const uploadLabel = $<HTMLLabelElement>('upload-label');
 register.fileConverter($('upload'), $('download'), (text) =>
-	tarask(text.replace(/\r/g, ''), pipelines.tar, {
+	tarask(text.replace(/\r/g, ''), {
 		...taraskConfig,
-		wrapperDict: null,
+		wrappers: null,
 	})
 ).onConverted = () => {
 	uploadLabel.title = uploadLabel.dataset.title!;
