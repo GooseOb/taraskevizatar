@@ -1,7 +1,7 @@
 # Taraskevizatar
 
 It's a simple web application that uses the newest
-[Taraskevizer package](https://npmjs.com/package/taraskevizer).
+[Taraskevizer package](https://npmjs.com/package/taraskevizer)
 version.
 
 # Development
