@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 interface Array {
-	includes(searchElement: string, fromIndex?: number): boolean;
+	includes(searchElement: any, fromIndex?: number): boolean;
 }
 
 type VoidFn = () => void;
