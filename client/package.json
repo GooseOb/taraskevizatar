@@ -10,7 +10,7 @@
 	"homepage": "https://gooseob.github.io/taraskevizatar/",
 	"scripts": {
 		"dev": "vite --config vite-config",
-		"build": "vite --config vite-config build",
+		"build": "vite build --config vite-config",
 		"preview": "vite preview --config vite-config",
 		"lint": "eslint .",
 		"pretty": "prettier --write ."
