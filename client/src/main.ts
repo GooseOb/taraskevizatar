@@ -1,4 +1,4 @@
-import { pipelines, dicts, interactiveTags } from 'taraskevizer';
+import { pipelines, dicts, createInteractiveTags } from 'taraskevizer';
 import { $, debounce } from './utils';
 import { getNextPrompt } from './prompts';
 import { syncScroll } from './sync-scroll';
@@ -148,6 +148,8 @@ const registerActionBar = (btnBar: HTMLElement, getText: () => string) => {
 registerActionBar($('input-btns'), () => input.value);
 registerActionBar($('output-btns'), () => output.innerText!);
 
+const interactiveTags = createInteractiveTags();
+
 const convert = (text: string) => {
 	if (text === '') {
 		output.textContent =
@@ -171,7 +173,7 @@ const convert = (text: string) => {
 
 		counters.output.textContent = output.textContent!.length.toString();
 
-		interactiveTags.apply(output.querySelectorAll('tarH, tarL'));
+		interactiveTags.update(output);
 
 		outputContainer.appendChild(output);
 	}
