@@ -1,8 +1,7 @@
-import { pipelines, dicts } from 'taraskevizer';
+import { pipelines, dicts, interactiveTags } from 'taraskevizer';
 import { $, debounce } from './utils';
 import { getNextPrompt } from './prompts';
 import { syncScroll } from './sync-scroll';
-import { type ChangeableElement, tags } from './tags';
 import { taraskConfig } from './default-config';
 import { jOptions } from './j-options';
 import { alphabets, OUTPUT_PLACEHOLDER } from './alphabets';
@@ -172,7 +171,7 @@ const convert = (text: string) => {
 
 		counters.output.textContent = output.textContent!.length.toString();
 
-		tags.apply(output.querySelectorAll('tarH, tarL'));
+		interactiveTags.apply(output.querySelectorAll('tarH, tarL'));
 
 		outputContainer.appendChild(output);
 	}
@@ -186,7 +185,7 @@ const forceConversion = () => {
 forceConversion();
 
 output.addEventListener('click', (e) => {
-	tags.alternate(e.target as ChangeableElement);
+	interactiveTags.tryAlternate(e.target as HTMLElement);
 });
 
 const getRegisterSettingsSelect =
