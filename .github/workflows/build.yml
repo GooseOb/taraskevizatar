@@ -13,18 +13,15 @@ jobs:
       run:
         working-directory: ./client
     steps:
-      - uses: actions/checkout@v3
-      - uses: oven-sh/setup-bun@v1
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
       - run: bun i --frozen-lockfile
       - run: bun update taraskevizer
       - run: bun run build
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./client/dist
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
-        env:
-          name: github-pages
-          url: ${{ steps.deployment.outputs.page_url }}
+        uses: actions/deploy-pages@v4
