@@ -74,16 +74,23 @@ const counters = {
 	if (value) {
 		input.value = value;
 	} else {
-		input.value = __DEFAULT_TEXT__;
-		input.onclick = () => {
+		const onClick = () => {
 			input.onclick = null;
 			input.value = '';
 			output.textContent = '';
 			fixInputHeight();
 			convert('');
+			input.removeEventListener('input', onInput);
 		};
+		const onInput = () => {
+			input.removeEventListener('click', onClick);
+		};
+		input.value = __DEFAULT_TEXT__;
+		input.addEventListener('click', onClick, { once: true });
+		input.addEventListener('input', onInput, { once: true });
 	}
 }
+
 const fixInputHeight = () => {
 	input.style.height = '0';
 	input.style.height = input.scrollHeight + 1 + 'px';
