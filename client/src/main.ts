@@ -4,7 +4,7 @@ import { getNextPrompt } from './prompts';
 import { syncScroll } from './sync-scroll';
 import { taraskConfig } from './default-config';
 import { jOptions } from './j-options';
-import { alphabets, OUTPUT_PLACEHOLDER } from './alphabets';
+import { alphabets, isArabic, OUTPUT_PLACEHOLDER } from './alphabets';
 import * as register from './registars';
 import * as ls from './localStorage';
 import * as theme from './theme';
@@ -68,6 +68,10 @@ const counters = {
 	input: getCounter('official'),
 	output: getCounter('classic'),
 } as const;
+
+if (isArabic(taraskConfig.abc)) {
+	output.style.fontFamily = 'NotoSansArabic';
+}
 
 {
 	const value = ls.getText();
@@ -213,6 +217,11 @@ registerSettingsSelect(
 	alphabets.indexOf(taraskConfig.abc),
 	(value) => {
 		taraskConfig.abc = alphabets[value];
+		if (output.style.fontFamily) {
+			output.style.fontFamily = '';
+		} else if (isArabic(taraskConfig.abc)) {
+			output.style.fontFamily = 'NotoSansArabic';
+		}
 	}
 );
 registerSettingsSelect($('j'), jOptions.indexOf(taraskConfig.j), (value) => {
