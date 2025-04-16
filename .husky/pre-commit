@@ -1,7 +1,6 @@
 exec </dev/tty
 node .husky/sw-updater.js
 
-cd ./client
 npm run lint &
 npm run format
 

@@ -1,7 +1,7 @@
+import { exec } from 'node:child_process';
+import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import readline from 'node:readline/promises';
-import { writeFile, readFile } from 'node:fs/promises';
-import { exec } from 'node:child_process';
 
 const PREFIX = '\x1b[35m[sw-updater]\x1b[0m ';
 const print = (msg) => {
@@ -27,7 +27,6 @@ if (
 const PATH_ROOT = process.cwd();
 const PATH_FILE = join(
 	PATH_ROOT,
-	'client',
 	'src',
 	'service-worker',
 	'cache-versions.json'
@@ -72,7 +71,7 @@ const answer = await question(
 		return acc + item + '\n';
 	}, 'What cache version to update? Any separator can be used\n') +
 		ALL_SUGGESTED_ID +
-		`) \x1b[32mall suggested\x1b[0m\n\n> `
+		') \x1b[32mall suggested\x1b[0m\n\n> '
 );
 
 const chosenOptionIds = answer.match(

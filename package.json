@@ -7,16 +7,23 @@
 		"type": "git",
 		"url": "git+https://github.com/GooseOb/taraskevizatar.git"
 	},
+	"homepage": "https://gooseob.github.io/taraskevizatar/",
 	"scripts": {
-		"dev": "cross-env CLIENT_SERVER_MODE=true concurrently --kill-others \"npm run --prefix api start:dev\" \"npm run --prefix client dev\"",
-		"prepare": "husky install",
-		"postinstall": "(cd api && npm i) && (cd client && npm i);"
+		"dev": "vite --config vite-config",
+		"build": "vite build --config vite-config",
+		"preview": "vite preview --config vite-config",
+		"lint": "biome lint",
+		"format": "biome format --write",
+		"check": "biome check --write"
 	},
 	"devDependencies": {
-		"@types/node": "^20.17.30",
-		"concurrently": "^8.2.2",
-		"cross-env": "^7.0.3",
-		"husky": "^8.0.3",
-		"prettier": "3.0.0"
+		"@biomejs/biome": "^1.9.4",
+		"globals": "^15.15.0",
+		"sass": "1.78.0",
+		"taraskevizer": "^10.4.2",
+		"typescript": "^5.8.3",
+		"typescript-eslint": "^8.30.1",
+		"vite": "^5.4.18",
+		"vite-plugin-html": "^3.2.2"
 	}
 }
