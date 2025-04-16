@@ -1,5 +1,5 @@
-import { AUTO } from '../theme';
 import { setThemeId } from '../localStorage';
+import { AUTO } from '../theme';
 
 export const themeCheckbox = (
 	el: HTMLInputElement,

@@ -1,11 +1,8 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-exec < /dev/tty
+exec </dev/tty
 node .husky/sw-updater.js
 
 cd ./client
 npm run lint &
-npm run pretty
+npm run format
 
 git add -A .

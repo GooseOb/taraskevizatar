@@ -1,10 +1,10 @@
-import { loadEnv, defineConfig } from 'vite';
 import { readFile } from 'node:fs/promises';
-import path from 'path';
-import cacheVersioner from './plugins/cache-versioner';
+import path from 'node:path';
+import { build, transform } from 'esbuild';
+import { defineConfig, loadEnv } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { version as pkgVersion } from '../node_modules/taraskevizer/package.json';
-import { build, transform } from 'esbuild';
+import cacheVersioner from './plugins/cache-versioner';
 
 const __DEFAULT_TEXT__ = `"${(
 	await readFile('default-text.txt', 'utf-8')

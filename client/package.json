@@ -12,18 +12,18 @@
 		"dev": "vite --config vite-config",
 		"build": "vite build --config vite-config",
 		"preview": "vite preview --config vite-config",
-		"lint": "eslint .",
-		"pretty": "prettier --write ."
+		"lint": "biome lint",
+		"format": "biome format --write",
+		"lint-format": "biome check --write"
 	},
 	"devDependencies": {
-		"@eslint/js": "^9.18.0",
-		"eslint": "^9.18.0",
-		"globals": "^15.14.0",
+		"@biomejs/biome": "^1.9.4",
+		"globals": "^15.15.0",
 		"sass": "1.78.0",
-		"taraskevizer": "^10.2.9",
-		"typescript": "^5.7.3",
-		"typescript-eslint": "^8.20.0",
-		"vite": "^5.4.11",
+		"taraskevizer": "^10.4.2",
+		"typescript": "^5.8.3",
+		"typescript-eslint": "^8.30.1",
+		"vite": "^5.4.18",
 		"vite-plugin-html": "^3.2.2"
 	}
 }

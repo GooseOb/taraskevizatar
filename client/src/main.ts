@@ -1,13 +1,13 @@
-import { pipelines, dicts, createInteractiveTags } from 'taraskevizer';
-import { $, debounce } from './utils';
-import { getNextPrompt } from './prompts';
-import { syncScroll } from './sync-scroll';
+import { createInteractiveTags, dicts, pipelines } from 'taraskevizer';
+import { OUTPUT_PLACEHOLDER, alphabets, isArabic } from './alphabets';
 import { taraskConfig } from './default-config';
 import { jOptions } from './j-options';
-import { alphabets, isArabic, OUTPUT_PLACEHOLDER } from './alphabets';
-import * as register from './registars';
 import * as ls from './localStorage';
+import { getNextPrompt } from './prompts';
+import * as register from './registars';
+import { syncScroll } from './sync-scroll';
 import * as theme from './theme';
+import { $, debounce } from './utils';
 
 const { tarask } = pipelines;
 

@@ -13,8 +13,8 @@
 		"postinstall": "(cd api && npm i) && (cd client && npm i);"
 	},
 	"devDependencies": {
-		"@types/node": "^20.5.1",
-		"concurrently": "^8.0.1",
+		"@types/node": "^20.17.30",
+		"concurrently": "^8.2.2",
 		"cross-env": "^7.0.3",
 		"husky": "^8.0.3",
 		"prettier": "3.0.0"
