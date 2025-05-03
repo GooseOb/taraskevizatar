@@ -71,7 +71,7 @@
 				<div class="subcard" id="classic">
 					<div class="subcard_header">Клясычны</div>
 					<div class="textfield-cont">
-						<div id="output" class="textfield"></div>
+						<output id="output" class="textfield"></output>
 					</div>
 					<div class="subcard_footer">
 						<div class="icon-btns" id="output-btns">
@@ -176,13 +176,13 @@
 	</body>
 	<script>
 		const setLight = () => {
-			document.body.classList.remove('dark');
+			document.body.classList.remove("dark");
 		};
 		const setDark = () => {
-			document.body.classList.add('dark');
+			document.body.classList.add("dark");
 		};
 		const setAuto = () => {
-			if (window.matchMedia?.('(prefers-color-scheme: light)').matches) {
+			if (window.matchMedia?.("(prefers-color-scheme: light)").matches) {
 				setLight();
 			} else {
 				setDark();
@@ -190,7 +190,7 @@
 		};
 
 		const themeSetters = [setLight, setAuto, setDark];
-		const initialTheme = +(localStorage.theme || '1');
+		const initialTheme = +(localStorage.theme || "1");
 		themeSetters[initialTheme]();
 	</script>
 </html>
