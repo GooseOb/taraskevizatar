@@ -57,7 +57,10 @@
 							id="input"
 							class="textfield"
 							placeholder="Тэкст"
-						></textarea>
+							style="height: 519px"
+						>
+<%- DEFAULT_TEXT %></textarea
+						>
 					</div>
 					<div class="subcard_footer">
 						<div class="icon-btns" id="input-btns">
@@ -84,7 +87,7 @@
 				</div>
 			</div>
 
-			<ul id="settings">
+			<ul id="settings" class="hidden">
 				<li class="select">
 					<div class="title">Альфабэт</div>
 					<div class="options" id="abc">
@@ -169,7 +172,7 @@
 					БКП-2005
 				</a>
 			</p>
-			<p>(c) 2021-<span id="current-year"></span> GooseOb</p>
+			<p>(c) 2021-<span id="current-year">2025</span> GooseOb</p>
 		</footer>
 
 		<div class="hidden" id="snackbar"></div>
@@ -192,5 +195,17 @@
 		const themeSetters = [setLight, setAuto, setDark];
 		const initialTheme = +(localStorage.theme || "1");
 		themeSetters[initialTheme]();
+
+		const input = document.getElementById("input");
+
+		const fixInputHeight = () => {
+			input.style.height = "0";
+			input.style.height = input.scrollHeight + 1 + "px";
+		};
+
+		if (localStorage.tarask_text) {
+			document.getElementById("input").value = localStorage.tarask_text;
+		}
+		fixInputHeight();
 	</script>
 </html>

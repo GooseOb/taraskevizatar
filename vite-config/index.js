@@ -6,9 +6,7 @@ import { createHtmlPlugin } from 'vite-plugin-html';
 import { version as pkgVersion } from '../node_modules/taraskevizer/package.json';
 import cacheVersioner from './plugins/cache-versioner';
 
-const __DEFAULT_TEXT__ = `"${(
-	await readFile('default-text.txt', 'utf-8')
-).replace(/[\r\n]+/g, '\\n')}"`;
+const DEFAULT_TEXT = await readFile('default-text.txt', 'utf-8');
 
 export default defineConfig(({ command, mode }) => {
 	const env = loadEnv(mode, path.resolve('..'), '');
@@ -24,6 +22,11 @@ export default defineConfig(({ command, mode }) => {
 			createHtmlPlugin({
 				minify: isProd,
 				entry: 'src/main.ts',
+				inject: {
+					data: {
+						DEFAULT_TEXT,
+					},
+				},
 			}),
 			{
 				apply: 'build',
@@ -56,16 +59,10 @@ export default defineConfig(({ command, mode }) => {
 		],
 		define: {
 			__BUILD_TIME__: Date.now(),
-			__DEFAULT_TEXT__,
 			__VERSION__: `"${pkgVersion}"`,
 			__SW_SCOPE__: `"${base}"`,
 			'process.env': JSON.stringify(env),
 		},
-		// resolve: {
-		// 	alias: {
-		// 		'@api': isClientServerMode ? './api' : 'taraskevizer',
-		// 	},
-		// },
 		build: {
 			minify: isProd,
 			modulePreload: false,

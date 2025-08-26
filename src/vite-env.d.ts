@@ -10,9 +10,8 @@ declare const themeSetters: [VoidFn, VoidFn, VoidFn],
 	setDark: VoidFn,
 	setLight: VoidFn,
 	setAuto: VoidFn,
-	initialTheme: ThemeId;
+	initialTheme: ThemeId,
+	input: HTMLTextAreaElement,
+	fixInputHeight: VoidFn;
 
-declare const __BUILD_TIME__: number,
-	__VERSION__: string,
-	__DEFAULT_TEXT__: string,
-	__SW_SCOPE__: string;
+declare const __BUILD_TIME__: number, __VERSION__: string, __SW_SCOPE__: string;

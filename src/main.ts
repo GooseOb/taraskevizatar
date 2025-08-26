@@ -1,5 +1,5 @@
 import { createInteractiveTags, dicts, pipelines } from 'taraskevizer';
-import { OUTPUT_PLACEHOLDER, alphabets, isArabic } from './alphabets';
+import { alphabets, isArabic, OUTPUT_PLACEHOLDER } from './alphabets';
 import { taraskConfig } from './default-config';
 import { jOptions } from './j-options';
 import * as ls from './localStorage';
@@ -58,7 +58,6 @@ register.themeCheckbox(darkEl, theme.DARK, lightEl);
 
 ls.setConfig(taraskConfig);
 
-const input = $<HTMLTextAreaElement>('input');
 const settingsElement = $<HTMLDivElement>('settings');
 const output = $<HTMLDivElement>('output');
 const outputContainer = output.parentElement as HTMLDivElement;
@@ -73,32 +72,21 @@ if (isArabic(taraskConfig.abc)) {
 	output.style.fontFamily = 'NotoSansArabic';
 }
 
-{
-	const value = ls.getText();
-	if (value) {
-		input.value = value;
-	} else {
-		const onClick = () => {
-			input.onclick = null;
-			input.value = '';
-			output.textContent = '';
-			fixInputHeight();
-			convert('');
-			input.removeEventListener('input', onInput);
-		};
-		const onInput = () => {
-			input.removeEventListener('click', onClick);
-		};
-		input.value = __DEFAULT_TEXT__;
-		input.addEventListener('click', onClick, { once: true });
-		input.addEventListener('input', onInput, { once: true });
-	}
+if (!ls.getText()) {
+	const onClick = () => {
+		input.onclick = null;
+		input.value = '';
+		output.textContent = '';
+		fixInputHeight();
+		convert('');
+		input.removeEventListener('input', onInput);
+	};
+	const onInput = () => {
+		input.removeEventListener('click', onClick);
+	};
+	input.addEventListener('click', onClick, { once: true });
+	input.addEventListener('input', onInput, { once: true });
 }
-
-const fixInputHeight = () => {
-	input.style.height = '0';
-	input.style.height = input.scrollHeight + 1 + 'px';
-};
 
 const showSnackbar = register.snackbar($('snackbar'));
 
@@ -243,7 +231,6 @@ getRegisterSettingsSelect(() => {
 	taraskConfig.g = !!value;
 });
 
-fixInputHeight();
 input.addEventListener('input', fixInputHeight);
 
 syncScroll([input, outputContainer]);
@@ -273,3 +260,5 @@ $('delete-all-data').addEventListener('click', async () => {
 		showSnackbar('Кэш ужо пусты', 2500);
 	}
 });
+
+actions.showSettings();

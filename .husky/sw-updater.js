@@ -34,7 +34,7 @@ const PATH_FILE = join(
 const ALL_SUGGESTED_ID = 'x';
 
 const diffResult = await new Promise((resolve, reject) => {
-	exec('git diff --name-only HEAD client', (err, stdout, stderr) => {
+	exec('git diff --name-only HEAD', (err, stdout) => {
 		if (err) {
 			reject(err);
 		} else {
