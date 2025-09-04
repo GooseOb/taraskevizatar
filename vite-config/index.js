@@ -6,7 +6,9 @@ import { createHtmlPlugin } from 'vite-plugin-html';
 import { version as pkgVersion } from '../node_modules/taraskevizer/package.json';
 import cacheVersioner from './plugins/cache-versioner';
 
-const DEFAULT_TEXT = await readFile('default-text.txt', 'utf-8');
+const DEFAULT_TEXT = (await readFile('default-text.txt', 'utf-8'))
+	.replace(/</g, '&lt;')
+	.replace(/>/g, '&gt;');
 
 export default defineConfig(({ command, mode }) => {
 	const env = loadEnv(mode, path.resolve('..'), '');
