@@ -1,3 +1,4 @@
+// TODO: Merge with vite.config.ts
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { build, transform } from 'esbuild';

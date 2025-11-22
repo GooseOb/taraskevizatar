@@ -7,7 +7,10 @@ import { getNextPrompt } from './prompts';
 import * as register from './registars';
 import { syncScroll } from './sync-scroll';
 import * as theme from './theme';
-import { $, debounce } from './utils';
+import { el, debounce } from './utils';
+import { fixInputHeight, initialTheme, elements } from '../common.svelte';
+
+const input = $derived(elements.input);
 
 const { tarask } = pipelines;
 
@@ -15,7 +18,7 @@ window.addEventListener('load', () => {
 	register
 		.serviceWorker()
 		.then((sw) => {
-			$('update-app').addEventListener('click', () => {
+			el('update-app').addEventListener('click', () => {
 				if (navigator.onLine) {
 					sw.update().then(() => {
 						showSnackbar('Абноўлена. Перазагрузка старонкі');
@@ -26,10 +29,7 @@ window.addEventListener('load', () => {
 				}
 			});
 			sw.onupdatefound = () => {
-				showSnackbar(
-					'Каб бачыць апошнюю вэрсію старонкі, перазагрузіце старонку',
-					10_000
-				);
+				showSnackbar('Каб бачыць апошнюю вэрсію старонкі, перазагрузіце старонку', 10_000);
 			};
 		})
 		.catch((err) => {
@@ -37,10 +37,10 @@ window.addEventListener('load', () => {
 		});
 });
 
-$('current-year').textContent = new Date().getFullYear().toString();
+el('current-year').textContent = new Date().getFullYear().toString();
 
-const lightEl = $<HTMLInputElement>('theme-light');
-const darkEl = $<HTMLInputElement>('theme-dark');
+const lightEl = el<HTMLInputElement>('theme-light');
+const darkEl = el<HTMLInputElement>('theme-dark');
 
 switch (initialTheme) {
 	case theme.DARK:
@@ -58,14 +58,13 @@ register.themeCheckbox(darkEl, theme.DARK, lightEl);
 
 ls.setConfig(taraskConfig);
 
-const settingsElement = $<HTMLDivElement>('settings');
-const output = $<HTMLDivElement>('output');
+const settingsElement = el<HTMLDivElement>('settings');
+const output = el<HTMLDivElement>('output');
 const outputContainer = output.parentElement as HTMLDivElement;
-const getCounter = (id: string): HTMLDivElement =>
-	$(id).querySelector('.num-counter')!;
+const getCounter = (id: string): HTMLDivElement => el(id).querySelector('.num-counter')!;
 const counters = {
 	input: getCounter('official'),
-	output: getCounter('classic'),
+	output: getCounter('classic')
 } as const;
 
 if (isArabic(taraskConfig.abc)) {
@@ -88,7 +87,7 @@ if (!ls.getText()) {
 	input.addEventListener('input', onInput, { once: true });
 }
 
-const showSnackbar = register.snackbar($('snackbar'));
+const showSnackbar = register.snackbar(el('snackbar'));
 
 input.addEventListener('input', () => {
 	const text = input.value.trim();
@@ -125,7 +124,7 @@ const actions = {
 		} else {
 			showSnackbar('Рэдагаваньне выключана');
 		}
-	},
+	}
 } satisfies Record<string, VoidFn>;
 
 type Action = keyof typeof actions;
@@ -144,15 +143,14 @@ const registerActionBar = (btnBar: HTMLElement, getText: () => string) => {
 	});
 };
 
-registerActionBar($('input-btns'), () => input.value);
-registerActionBar($('output-btns'), () => output.innerText!);
+registerActionBar(el('input-btns'), () => input.value);
+registerActionBar(el('output-btns'), () => output.innerText!);
 
 const interactiveTags = createInteractiveTags();
 
 const convert = (text: string) => {
 	if (text === '') {
-		output.textContent =
-			OUTPUT_PLACEHOLDER[alphabets.indexOf(taraskConfig.abc)];
+		output.textContent = OUTPUT_PLACEHOLDER[alphabets.indexOf(taraskConfig.abc)];
 		counters.input.textContent = '0';
 		counters.output.textContent = '0';
 	} else {
@@ -200,34 +198,26 @@ const getRegisterSettingsSelect =
 	};
 const registerSettingsSelect = getRegisterSettingsSelect(forceConversion);
 
-registerSettingsSelect(
-	$('abc'),
-	alphabets.indexOf(taraskConfig.abc),
-	(value) => {
-		taraskConfig.abc = alphabets[value];
-		if (output.style.fontFamily) {
-			output.style.fontFamily = '';
-		} else if (isArabic(taraskConfig.abc)) {
-			output.style.fontFamily = 'NotoSansArabic';
-		}
+registerSettingsSelect(el('abc'), alphabets.indexOf(taraskConfig.abc), (value) => {
+	taraskConfig.abc = alphabets[value];
+	if (output.style.fontFamily) {
+		output.style.fontFamily = '';
+	} else if (isArabic(taraskConfig.abc)) {
+		output.style.fontFamily = 'NotoSansArabic';
 	}
-);
-registerSettingsSelect($('j'), jOptions.indexOf(taraskConfig.j), (value) => {
+});
+registerSettingsSelect(el('j'), jOptions.indexOf(taraskConfig.j), (value) => {
 	taraskConfig.j = jOptions[value];
 });
-registerSettingsSelect(
-	$('esc-caps'),
-	+taraskConfig.doEscapeCapitalized,
-	(value) => {
-		taraskConfig.doEscapeCapitalized = !!value;
-	}
-);
+registerSettingsSelect(el('esc-caps'), +taraskConfig.doEscapeCapitalized, (value) => {
+	taraskConfig.doEscapeCapitalized = !!value;
+});
 
 getRegisterSettingsSelect(() => {
 	for (const el of output.querySelectorAll('tarH')) {
 		el.textContent = dicts.gobj[el.textContent as keyof typeof dicts.gobj];
 	}
-})($('g'), +taraskConfig.g, (value) => {
+})(el('g'), +taraskConfig.g, (value) => {
 	taraskConfig.g = !!value;
 });
 
@@ -235,11 +225,11 @@ input.addEventListener('input', fixInputHeight);
 
 syncScroll([input, outputContainer]);
 
-const uploadLabel = $<HTMLLabelElement>('upload-label');
-register.fileConverter($('upload'), $('download'), (text) =>
+const uploadLabel = el<HTMLLabelElement>('upload-label');
+register.fileConverter(el('upload'), el('download'), (text) =>
 	tarask(text.replace(/\r/g, ''), {
 		...taraskConfig,
-		wrappers: null,
+		wrappers: null
 	})
 ).onConverted = () => {
 	uploadLabel.title = uploadLabel.dataset.title!;
@@ -250,7 +240,7 @@ document.body.onload = () => {
 	input.focus();
 };
 
-$('delete-all-data').addEventListener('click', async () => {
+el('delete-all-data').addEventListener('click', async () => {
 	ls.clear();
 	const cacheNames = await caches.keys();
 	if (cacheNames.length) {
