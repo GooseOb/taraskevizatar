@@ -4,6 +4,7 @@
 	import type { ComponentProps } from 'svelte';
 	import { taraskConfig } from '$lib/state.svelte';
 	import { dicts } from 'taraskevizer';
+	import Footer from './Footer.svelte';
 
 	type Options = ComponentProps<typeof AccordionPicker>['options'];
 
@@ -61,6 +62,7 @@
 		options={ignoreCaps}
 		bind:value={$taraskConfig.doEscapeCapitalized}
 	></AccordionPicker>
+	<Footer />
 </aside>
 
 <style>

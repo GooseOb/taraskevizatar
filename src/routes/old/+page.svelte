@@ -1,6 +1,7 @@
 <script lang="ts">
-	import './style.sass';
+	import './style.scss';
 	import { fixInputHeight, initialTheme, themeSetters, elements } from './common.svelte';
+	import Footer from '$lib/components/Footer.svelte';
 
 	themeSetters[initialTheme]();
 
@@ -150,12 +151,6 @@
 	</ul>
 </main>
 
-<footer>
-	<p>
-		Базуецца на
-		<a target="_blank" href="https://knihi.com/storage/pravapis2005.html"> БКП-2005 </a>
-	</p>
-	<p>(c) 2021-<span id="current-year">2025</span> GooseOb</p>
-</footer>
+<Footer />
 
 <div class="hidden" id="snackbar"></div>

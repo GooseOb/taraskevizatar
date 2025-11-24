@@ -15,30 +15,19 @@ const input = $derived(elements.input)!;
 
 const { tarask } = pipelines;
 
-window.addEventListener('load', () => {
-	register
-		.serviceWorker()
-		.then((sw) => {
-			el('update-app').addEventListener('click', () => {
-				if (navigator.onLine) {
-					sw.update().then(() => {
-						showSnackbar('Абноўлена. Перазагрузка старонкі');
-						location.reload();
-					});
-				} else {
-					showSnackbar('Нельга абнавіцца пакуль вы афлайн');
+navigator.serviceWorker.ready.then((sw) => {
+	sw.addEventListener('updatefound', () => {
+		const newSW = sw.installing;
+		newSW?.addEventListener('statechange', () => {
+			if (newSW.state === 'installed') {
+				if (navigator.serviceWorker.controller) {
+					showSnackbar('Каб бачыць апошнюю вэрсію, перазагрузіце старонку', 10_000);
+					newSW.postMessage({ type: 'SKIP_WAITING' });
 				}
-			});
-			sw.onupdatefound = () => {
-				showSnackbar('Каб бачыць апошнюю вэрсію старонкі, перазагрузіце старонку', 10_000);
-			};
-		})
-		.catch((err) => {
-			console.warn('Service worker register fail', err);
+			}
 		});
+	});
 });
-
-el('current-year').textContent = new Date().getFullYear().toString();
 
 const lightEl = el<HTMLInputElement>('theme-light');
 const darkEl = el<HTMLInputElement>('theme-dark');

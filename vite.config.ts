@@ -8,11 +8,10 @@ const base = process.env.BASE_PATH || '/';
 export default defineConfig({
 	plugins: [sveltekit()],
 	define: {
-		__DEFAULT_TEXT__: JSON.stringify(
-			await readFile('./default-text.txt', 'utf-8')
-		),
+		__DEFAULT_TEXT__: JSON.stringify(await readFile('./default-text.txt', 'utf-8')),
 		__BUILD_TIME__: Date.now(),
 		__VERSION__: `"${pkgVersion}"`,
 		__SW_SCOPE__: `"${base}"`,
+		__CURRENT_YEAR__: `${new Date().getFullYear()}`,
 	},
 });

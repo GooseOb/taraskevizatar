@@ -1,6 +1,3 @@
-exec </dev/tty
-node .husky/sw-updater.js
-
 bun run check
 
 git add -A .
