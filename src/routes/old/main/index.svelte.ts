@@ -1,5 +1,5 @@
 import { createInteractiveTags, dicts, pipelines } from 'taraskevizer';
-import { alphabets, isArabic, OUTPUT_PLACEHOLDER } from './alphabets';
+import { alphabets, getOutputPlaceholder, isArabic } from '$lib/alphabets';
 import { taraskConfig } from './default-config';
 import { jOptions } from './j-options';
 import * as ls from './localStorage';
@@ -7,10 +7,11 @@ import { getNextPrompt } from './prompts';
 import * as register from './registars';
 import { syncScroll } from './sync-scroll';
 import * as theme from './theme';
-import { el, debounce } from './utils';
+import { el } from './utils';
 import { fixInputHeight, initialTheme, elements } from '../common.svelte';
+import { debounce } from '$lib/debounce';
 
-const input = $derived(elements.input);
+const input = $derived(elements.input)!;
 
 const { tarask } = pipelines;
 
@@ -64,7 +65,7 @@ const outputContainer = output.parentElement as HTMLDivElement;
 const getCounter = (id: string): HTMLDivElement => el(id).querySelector('.num-counter')!;
 const counters = {
 	input: getCounter('official'),
-	output: getCounter('classic')
+	output: getCounter('classic'),
 } as const;
 
 if (isArabic(taraskConfig.abc)) {
@@ -124,7 +125,7 @@ const actions = {
 		} else {
 			showSnackbar('Рэдагаваньне выключана');
 		}
-	}
+	},
 } satisfies Record<string, VoidFn>;
 
 type Action = keyof typeof actions;
@@ -150,7 +151,7 @@ const interactiveTags = createInteractiveTags();
 
 const convert = (text: string) => {
 	if (text === '') {
-		output.textContent = OUTPUT_PLACEHOLDER[alphabets.indexOf(taraskConfig.abc)];
+		output.textContent = getOutputPlaceholder(taraskConfig.abc);
 		counters.input.textContent = '0';
 		counters.output.textContent = '0';
 	} else {
@@ -159,9 +160,9 @@ const convert = (text: string) => {
 		let result: string;
 		try {
 			result = tarask(text, taraskConfig);
-		} catch (e: any) {
+		} catch (e) {
 			result =
-				e.toString() +
+				(e as Error).toString() +
 				'<br><br>Калі ласка, дашліце памылку на адзін з кантактаў "Для памылак і прапановаў"';
 		}
 
@@ -229,7 +230,7 @@ const uploadLabel = el<HTMLLabelElement>('upload-label');
 register.fileConverter(el('upload'), el('download'), (text) =>
 	tarask(text.replace(/\r/g, ''), {
 		...taraskConfig,
-		wrappers: null
+		wrappers: null,
 	})
 ).onConverted = () => {
 	uploadLabel.title = uploadLabel.dataset.title!;

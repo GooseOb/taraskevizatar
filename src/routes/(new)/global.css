@@ -1,0 +1,58 @@
+html {
+	--fg: #000;
+	--primary-light: #ddf;
+	--primary: #b9f;
+	--primary-dark: #b5f;
+	--secondary: #ff8;
+	--secondary-dark: #fd8;
+	--tertiary: #faa;
+	--btn-hover: #00000008;
+	--link: #28f;
+	--link-hover: #26f;
+	--scrollbar-bg: #0002;
+	--scrollbar: #0004;
+	--scrollbar-hover: #0005;
+
+	&.light {
+		--fg: #000;
+		--bg: #ddf;
+		--1: #b9f;
+		--2: #ff8;
+		--3: #fd8;
+		--4: #b5f;
+		--btn-hover: #00000008;
+		--link: #28f;
+		--link-hover: #26f;
+		--scrollbar-bg: #0002;
+		--scrollbar: #0004;
+		--scrollbar-hover: #0005;
+	}
+
+	@media (prefers-color-scheme: light) {
+		&.auto {
+			--fg: #000;
+			--bg: #ddf;
+			--1: #b9f;
+			--2: #ff8;
+			--3: #fd8;
+			--4: #b5f;
+			--btn-hover: #00000008;
+			--link: #28f;
+			--link-hover: #26f;
+			--scrollbar-bg: #0002;
+			--scrollbar: #0004;
+			--scrollbar-hover: #0005;
+		}
+	}
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+}
+
+html,
+body {
+	height: 100%;
+}

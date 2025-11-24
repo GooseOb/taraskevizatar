@@ -139,6 +139,14 @@
 				<button id="delete-all-data">выдаліць усе зьвесткі</button>
 			</div>
 		</li>
+		<li class="select">
+			<div class="title">Перайсьці да новай вэрсіі</div>
+			<div class="options">
+				<a href="/">
+					<button tabindex="-1">тык</button>
+				</a>
+			</div>
+		</li>
 	</ul>
 </main>
 

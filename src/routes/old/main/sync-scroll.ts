@@ -1,4 +1,4 @@
-import { debounce } from './utils';
+import { debounce } from '$lib/debounce';
 
 export const syncScroll = <TElem extends HTMLElement>(els: TElem[]) => {
 	let currScroll: null | HTMLElement = null;

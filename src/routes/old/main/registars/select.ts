@@ -1,4 +1,5 @@
-import { debounce, getShifts } from '../utils';
+import { debounce } from '$lib/debounce';
+import { getShifts } from '../utils';
 
 export type Select = <T extends number>(
 	elem: HTMLElement,
