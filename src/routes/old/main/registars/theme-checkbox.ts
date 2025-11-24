@@ -1,3 +1,4 @@
+import { setAuto, themeSetters } from '../../common.svelte';
 import { setThemeId } from '../localStorage';
 import { AUTO } from '../theme';
 
