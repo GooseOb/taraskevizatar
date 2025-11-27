@@ -118,7 +118,7 @@
 					</label>
 				</button>
 				<button tabindex="-1">
-					<a id="download" href="#"> спампаваць </a>
+					<a id="download" href={'#'}> спампаваць </a>
 				</button>
 			</div>
 		</li>

@@ -1,10 +1,17 @@
 <script lang="ts">
-	import { slide } from 'svelte/transition';
 	import AccordionPicker from './AccordionPicker.svelte';
 	import type { ComponentProps } from 'svelte';
 	import { taraskConfig } from '$lib/state.svelte';
 	import { dicts } from 'taraskevizer';
 	import Footer from './Footer.svelte';
+	import Navigation from './Navigation.svelte';
+	import { isMobile } from '$lib/isMobile';
+
+	let {
+		isOpen = $bindable(),
+	}: {
+		isOpen: boolean;
+	} = $props();
 
 	type Options = ComponentProps<typeof AccordionPicker>['options'];
 
@@ -14,39 +21,39 @@
 		{
 			label: 'Арабскі',
 			value: dicts.alphabets.arabic,
-			note: { label: '(не стандартызаваны)' }
+			note: { label: '(не стандартызаваны)' },
 		},
 		{
 			label: 'Лацінскі',
 			value: dicts.alphabets.latinJi,
-			note: { label: '(зь ji)', include: true }
-		}
+			note: { label: '(зь ji)', include: true },
+		},
 	] satisfies Options;
 	const iToJ = [
 		{ label: 'Ніколі', value: 'never' },
 		{ label: 'Выпадкова', value: 'random' },
-		{ label: 'Заўсёды', value: 'always' }
+		{ label: 'Заўсёды', value: 'always' },
 	] satisfies Options;
 	const hToG = [
 		{ label: 'Не', value: false },
-		{ label: 'Так', value: true }
+		{ label: 'Так', value: true },
 	] satisfies Options;
 	const ignoreCaps = [
 		{ label: 'Не', value: false },
-		{ label: 'Так', value: true }
+		{ label: 'Так', value: true },
 	] satisfies Options;
 </script>
 
+<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
 <aside
-	in:slide={{
-		axis: 'x',
-		duration: 300
-	}}
-	out:slide={{
-		axis: 'x',
-		duration: 300
+	class:open={isOpen}
+	onclick={(e) => {
+		if (isMobile() && (e.target as HTMLElement).closest('a')) {
+			isOpen = false;
+		}
 	}}
 >
+	<Navigation />
 	<AccordionPicker
 		title="Альфабэт"
 		options={alphabets}
@@ -62,18 +69,34 @@
 		options={ignoreCaps}
 		bind:value={$taraskConfig.doEscapeCapitalized}
 	></AccordionPicker>
+	<a href="/old"> Перайсьці да старой вэрсіі </a>
 	<Footer />
 </aside>
 
 <style>
 	aside {
-		width: 20%;
+		width: 0;
 		height: 100%;
 		background-color: var(--secondary);
+		display: flex;
+		flex-direction: column;
+		white-space: nowrap;
+		transition: width 0.3s;
+		overflow-x: hidden;
+
+		&.open {
+			width: 20%;
+		}
 
 		@media (max-width: 768px) {
 			position: absolute;
-			width: 100%;
+			&.open {
+				width: 100%;
+			}
 		}
+	}
+
+	a {
+		margin: 0.75rem auto;
 	}
 </style>

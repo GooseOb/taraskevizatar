@@ -15,9 +15,7 @@
 		<BurgerButton bind:isOpen={isSidebarOpen} />
 	</Header>
 	<div class="workspace">
-		{#if isSidebarOpen}
-			<Sidebar />
-		{/if}
+		<Sidebar bind:isOpen={isSidebarOpen} />
 		<main>
 			{@render children()}
 		</main>
