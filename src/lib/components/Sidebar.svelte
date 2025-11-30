@@ -54,21 +54,19 @@
 	}}
 >
 	<Navigation />
-	<AccordionPicker
-		title="Альфабэт"
-		options={alphabets}
-		bind:value={$taraskConfig.abc}
-		compare={(a, b) => a.lower === b.lower}
-	></AccordionPicker>
-	<AccordionPicker title="і > й пасьля галосных" options={iToJ} bind:value={$taraskConfig.j}
-	></AccordionPicker>
-	<AccordionPicker title="Адразу г > ґ" options={hToG} bind:value={$taraskConfig.g}
-	></AccordionPicker>
-	<AccordionPicker
-		title="Ігнараваць caps"
-		options={ignoreCaps}
-		bind:value={$taraskConfig.doEscapeCapitalized}
-	></AccordionPicker>
+	<div class="pickers">
+		<AccordionPicker title="Альфабэт" options={alphabets} bind:value={$taraskConfig.abc}
+		></AccordionPicker>
+		<AccordionPicker title="і > й пасьля галосных" options={iToJ} bind:value={$taraskConfig.j}
+		></AccordionPicker>
+		<AccordionPicker title="Адразу г > ґ" options={hToG} bind:value={$taraskConfig.g}
+		></AccordionPicker>
+		<AccordionPicker
+			title="Ігнараваць caps"
+			options={ignoreCaps}
+			bind:value={$taraskConfig.doEscapeCapitalized}
+		></AccordionPicker>
+	</div>
 	<a href="/old"> Перайсьці да старой вэрсіі </a>
 	<Footer />
 </aside>
@@ -83,6 +81,7 @@
 		white-space: nowrap;
 		transition: width 0.3s;
 		overflow-x: hidden;
+		z-index: 1;
 
 		&.open {
 			width: 20%;
@@ -94,6 +93,13 @@
 				width: 100%;
 			}
 		}
+	}
+
+	.pickers {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		padding: 1rem 0.5rem;
 	}
 
 	a {

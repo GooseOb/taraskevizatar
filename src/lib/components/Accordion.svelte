@@ -14,8 +14,8 @@
 	const id = `accordion-${Math.random().toString(36)}`;
 </script>
 
-<div>
-	<label class="accordion-title" for={id}>
+<div class="accordion">
+	<label class="accordion-title" for={id} class:open>
 		{@render title()}
 		<input class="checkbox" type="checkbox" bind:checked={open} {id} />
 	</label>
@@ -36,14 +36,23 @@
 		font-weight: bold;
 	}
 
+	.accordion:has(.checkbox:focus-visible) .accordion-title {
+		border: 2px solid var(--fg);
+	}
+
 	.checkbox {
 		appearance: none;
 		position: relative;
 		width: 12px;
 		margin: 0 8px;
 
+		&:focus-visible {
+			outline: none;
+		}
+
 		&::after {
 			content: '';
+			cursor: pointer;
 			position: absolute;
 			top: 50%;
 			left: 50%;

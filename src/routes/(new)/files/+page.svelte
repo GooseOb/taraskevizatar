@@ -19,19 +19,6 @@
 </script>
 
 <div class="page">
-	{#each files as file, i (file)}
-		<div in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
-			<FileCard
-				file={file.value}
-				afterProcess={() => {
-					file.isProcessed = true;
-				}}
-				onRemove={() => {
-					files.splice(i, 1);
-				}}
-			/>
-		</div>
-	{/each}
 	<label class="upload">
 		<input
 			type="file"
@@ -46,6 +33,19 @@
 		/>
 		Запампаваць файлы
 	</label>
+	{#each files as file, i (file)}
+		<div in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
+			<FileCard
+				file={file.value}
+				afterProcess={() => {
+					file.isProcessed = true;
+				}}
+				onRemove={() => {
+					files.splice(i, 1);
+				}}
+			/>
+		</div>
+	{/each}
 </div>
 
 <style>

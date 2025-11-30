@@ -1,14 +1,10 @@
 <script lang="ts">
 	let {
 		title,
-		// value = $bindable(''),
 		children,
-		placeholder = '',
 	}: {
 		title: string;
-		// value?: string;
 		children: () => any;
-		placeholder?: string;
 	} = $props();
 </script>
 
@@ -30,7 +26,7 @@
 			padding: 0.25em;
 			font-family: inherit;
 			font-size: inherit;
-			background: #fafafa;
+			background: var(--anti-fg);
 			border: none;
 			overflow: auto;
 
@@ -42,7 +38,7 @@
 
 	.title {
 		font-weight: bold;
-		padding: 0.5em;
+		padding: 0.5em 1em;
 		background-color: var(--primary-dark);
 	}
 </style>

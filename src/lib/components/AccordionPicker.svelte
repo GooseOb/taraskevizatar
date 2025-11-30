@@ -3,16 +3,11 @@
 	import Accordion from './Accordion.svelte';
 	import AnimationElement from './AnimationElement.svelte';
 
-	type Compare = {
-		compare: (a: TOptionValue, b: TOptionValue) => boolean;
-	};
-
 	let {
 		title: titleValue,
 		options,
 		value = $bindable(),
 		open = $bindable(true),
-		compare = (a, b) => a === b,
 	}: {
 		title: string;
 		options: readonly {
@@ -25,11 +20,9 @@
 		}[];
 		value: TValue;
 		open?: boolean;
-	} &
-		// Cannot directly compare reactive `value` to a static `options[number].value`
-		(TOptionValue extends object ? Compare : Partial<Compare>) = $props();
+	} = $props();
 
-	let selectedOption = $state(options.find((opt) => compare(opt.value, value))!);
+	let selectedOption = $state(options.find((opt) => opt.value === value)!);
 	let selectedOptionIndex = $state(0);
 	const optionElements: HTMLElement[] = $state([]);
 </script>
@@ -40,12 +33,12 @@
 			<div class="title">
 				{titleValue}
 				{#if !open && value !== undefined}
-					<span class="badge" transition:fade={{ duration: 200 }}>
+					<div class="badge" transition:fade={{ duration: 200 }}>
 						{selectedOption.label}
 						{#if selectedOption.note?.include}
 							{selectedOption.note.label}
 						{/if}
-					</span>
+					</div>
 				{/if}
 			</div>
 		{/snippet}
@@ -69,7 +62,11 @@
 					</label>
 				</li>
 			{/each}
-			<AnimationElement elements={optionElements} activeIndex={selectedOptionIndex} />
+			<AnimationElement
+				elements={optionElements}
+				activeIndex={selectedOptionIndex}
+				color="var(--tertiary)"
+			/>
 		</ul>
 	</Accordion>
 </div>
@@ -91,21 +88,44 @@
 		transition: background-color 0.2s ease;
 		z-index: 10;
 		&:has(.radio:focus-visible) {
-			outline: 2px solid var(--primary-dark);
+			&:after {
+				content: '<';
+				margin-left: 0.5em;
+			}
 		}
 	}
+	.title {
+		display: flex;
+		width: 100%;
+	}
 	.badge {
-		background-color: var(--secondary-dark);
+		background-color: var(--tertiary-light);
 		border-radius: 12px;
 		font-size: 0.8em;
 		padding: 2px 8px;
+		margin-left: auto;
 	}
 	ul {
 		position: relative;
 	}
 	.picker {
+		background-color: var(--tertiary-light);
+		border-radius: 1rem;
+		overflow: hidden;
 		:global(.accordion-title) {
-			background-color: var(--tertiary);
+			background-color: var(--tertiary-dark);
+			border-radius: 1rem;
+			transition: 0.2s ease;
+
+			&.open {
+				border-bottom-left-radius: 0;
+				border-bottom-right-radius: 0;
+			}
+
+			&:hover,
+			&:focus-visible {
+				background-color: var(--tertiary-dark);
+			}
 		}
 	}
 </style>

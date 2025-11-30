@@ -88,6 +88,7 @@
 	.actions {
 		display: flex;
 		gap: 0.5rem;
+		padding-right: 0.5rem;
 	}
 
 	.icon {
@@ -114,7 +115,7 @@
 	}
 
 	.wrapper {
-		background-color: #fff;
+		background-color: var(--anti-fg);
 		border-radius: 0.5rem;
 		:global(.accordion-title) {
 			border-radius: 0.5rem;
@@ -125,6 +126,7 @@
 			&:focus-visible {
 				background-color: var(--secondary-dark);
 			}
+
 			&:has(.icon:hover),
 			&:has(.icon:focus) {
 				background-color: var(--secondary);

@@ -9,26 +9,37 @@
 	];
 </script>
 
-<nav>
-	{#each links as { href, label }, index}
-		<a {href} bind:this={elements[index]}>{label}</a>
-	{/each}
-	<AnimationElement
-		{elements}
-		activeIndex={links.findIndex(({ href }) => href === page.url.pathname)}
-	/>
-</nav>
+<div class="wrapper">
+	<nav>
+		{#each links as { href, label }, index}
+			<a {href} bind:this={elements[index]}>{label}</a>
+		{/each}
+		<AnimationElement
+			color="var(--secondary-dark)"
+			{elements}
+			activeIndex={links.findIndex(({ href }) => href === page.url.pathname)}
+		/>
+	</nav>
+</div>
 
 <style>
+	.wrapper {
+		padding: 0.5rem;
+		background-color: var(--primary);
+	}
 	nav {
 		display: flex;
 		position: relative;
-		width: 100%;
+		background-color: var(--secondary);
+		border-radius: 1rem;
+		overflow: hidden;
+		margin: 0.25rem;
 	}
 	a {
 		flex: 1;
 		text-align: center;
 		padding: 0.5rem;
 		z-index: 1;
+		color: var(--fg);
 	}
 </style>

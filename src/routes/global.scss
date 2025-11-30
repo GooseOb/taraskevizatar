@@ -1,62 +1,52 @@
 html {
   color: var(--fg);
   --fg: #eee;
+  --anti-fg: #111;
   --bg: #113;
   --1: #338;
   --2: #222;
   --3: #111;
   --4: #739;
+
+  --primary-light: #113;
+  --primary: #338;
+  --primary-dark: #739;
+  --secondary: #222;
+  --secondary-dark: #111;
+  --tertiary-dark: #739;
+  --tertiary: #338;
+  --tertiary-light: #113;
+
+  --link: #28f;
+  --link-hover: #26f;
+
   --btn-hover: #ffffff08;
   --scrollbar-bg: #444;
   --scrollbar: #666;
   --scrollbar-hover: #777;
 
-
-
   &.light {
     --fg: #000;
+    --anti-fg: #fff;
     --primary-light: #ddf;
     --primary: #b9f;
     --primary-dark: #b5f;
     --secondary: #ff8;
     --secondary-dark: #fd8;
+    --tertiary-light: #fcc;
     --tertiary: #faa;
     --tertiary-dark: #f88;
-    --btn-hover: #00000008;
-    --link: #28f;
-    --link-hover: #26f;
-    --scrollbar-bg: #0002;
-    --scrollbar: #0004;
-    --scrollbar-hover: #0005;
 
     --bg: #ddf;
     --1: #b9f;
     --2: #ff8;
     --3: #fd8;
     --4: #b5f;
+
     --btn-hover: #00000008;
-    --link: #28f;
-    --link-hover: #26f;
     --scrollbar-bg: #0002;
     --scrollbar: #0004;
     --scrollbar-hover: #0005;
-  }
-
-  @media (prefers-color-scheme: light) {
-    &.auto {
-      --fg: #000;
-      --bg: #ddf;
-      --1: #b9f;
-      --2: #ff8;
-      --3: #fd8;
-      --4: #b5f;
-      --btn-hover: #00000008;
-      --link: #28f;
-      --link-hover: #26f;
-      --scrollbar-bg: #0002;
-      --scrollbar: #0004;
-      --scrollbar-hover: #0005;
-    }
   }
 }
 

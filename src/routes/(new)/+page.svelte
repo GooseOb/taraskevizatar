@@ -16,7 +16,7 @@
 	};
 </script>
 
-<div>
+<div class="page">
 	<TextCard title="Клясычны">
 		<textarea class="textfield" bind:value={$taraskText} placeholder="Тэкст" use:syncScroll
 		></textarea>
@@ -35,7 +35,8 @@
 </div>
 
 <style>
-	div {
+	.page {
+		background: var(--primary);
 		display: flex;
 		flex-direction: column;
 		height: 100%;

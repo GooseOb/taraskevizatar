@@ -3,7 +3,10 @@
 	import SettingsCard from './SettingsCard.svelte';
 
 	const onDeleteAllData = async () => {
-		localStorage.clear();
+		localStorage.removeItem('tarask_settings');
+		localStorage.removeItem('tarask_text');
+		localStorage.removeItem('tarask_redirected');
+		localStorage.removeItem('theme');
 		const cacheNames = await caches.keys();
 
 		if (cacheNames.length) {

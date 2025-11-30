@@ -4,8 +4,21 @@
 	import BurgerButton from '$lib/components/BurgerButton.svelte';
 	import { isMobile } from '$lib/isMobile';
 	import StatusLine from '$lib/components/StatusLine.svelte';
+	import { page } from '$app/state';
+	import { fly } from 'svelte/transition';
 
 	const { children } = $props();
+	const ANIMATION_DURATION = 500;
+	$inspect(page.url.pathname);
+
+	$effect(() => {
+		document.documentElement.style.height = '100%';
+		document.body.style.height = '100%';
+		return () => {
+			document.documentElement.style.height = '';
+			document.body.style.height = '';
+		};
+	});
 
 	let isSidebarOpen = $state(!isMobile());
 </script>
@@ -17,9 +30,26 @@
 	<div class="workspace">
 		<Sidebar bind:open={isSidebarOpen} />
 		<div class="main-area">
-			<main>
-				{@render children()}
-			</main>
+			<div class="main">
+				{#key page.url.pathname}
+					{@const navigationDirection = page.url.pathname === '/files' ? 'forward' : 'backward'}
+					<main
+						in:fly={{
+							opacity: 1,
+							x: navigationDirection === 'forward' ? '100%' : '-100%',
+							duration: ANIMATION_DURATION,
+						}}
+						out:fly={{
+							opacity: 1,
+							x: navigationDirection === 'forward' ? '-100%' : '100%',
+							duration: ANIMATION_DURATION,
+						}}
+					>
+						{@render children()}
+					</main>
+				{/key}
+			</div>
+
 			<StatusLine />
 		</div>
 	</div>
@@ -31,30 +61,42 @@
 		display: flex;
 		flex-direction: column;
 	}
+
 	.workspace {
 		display: flex;
 		height: 100%;
 		overflow: hidden;
 	}
+
 	.main-area {
 		display: flex;
 		flex-direction: column;
 		width: 80%;
 		min-height: 0;
 		overflow: hidden;
+		background-color: var(--primary);
 		@media (max-width: 768px) {
 			width: 100%;
 		}
 	}
-	main {
+
+	.main {
+		position: relative;
+		width: 100%;
 		height: 100%;
-		overflow: auto;
+		overflow: hidden;
+
+		border-radius: 1rem 1rem 0 0;
+		@media (min-width: 769px) {
+			border-radius: 1rem 0 0 0;
+		}
 	}
 
-	:global {
-		html,
-		body {
-			height: 100%;
-		}
+	main {
+		width: 100%;
+		height: 100%;
+		position: absolute;
+
+		overflow: auto;
 	}
 </style>

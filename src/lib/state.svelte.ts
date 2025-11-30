@@ -1,7 +1,7 @@
 import { dicts, htmlConfigOptions, pipelines, TaraskConfig } from 'taraskevizer';
 import { localStorageWritable, localStorageWritableString } from './localStorage';
 import { alphabets, getOutputPlaceholder } from './alphabets';
-import { derived } from 'svelte/store';
+import { derived, writable } from 'svelte/store';
 
 type SerializableConfig = Pick<TaraskConfig, 'j' | 'doEscapeCapitalized' | 'g'> & {
 	abc: number;
@@ -85,3 +85,6 @@ export const setStatus = (value: string) => {
 };
 
 export const getStatus = () => status;
+
+// TODO: keep uploaded files here
+export const files = writable<File[]>([]);
