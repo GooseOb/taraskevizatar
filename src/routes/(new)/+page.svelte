@@ -1,23 +1,20 @@
 <script lang="ts">
-	import { getOutputPlaceholder } from '$lib/alphabets';
 	import StatusLine from '$lib/components/StatusLine.svelte';
 	import TextCard from '$lib/components/TextCard.svelte';
-	import { taraskConfig, taraskText } from '$lib/state.svelte';
-	import { createInteractiveTags, pipelines } from 'taraskevizer';
-
-	const outputValue = $derived(
-		pipelines.tarask($taraskText, $taraskConfig) || getOutputPlaceholder($taraskConfig.abc)
-	);
+	import { outputText, taraskText } from '$lib/state.svelte';
+	import { createInteractiveTags } from 'taraskevizer';
 
 	const interactiveTags = createInteractiveTags();
 	const initInteractiveTags = (node: Element) => {
-		$effect(() => {
-			if (outputValue) interactiveTags.update(node);
+		outputText.subscribe(() => {
+			interactiveTags.update(node);
 		});
 	};
 	const onOutputClick = (e: Event) => {
 		interactiveTags.tryAlternate(e.target as Element);
 	};
+	$inspect($taraskText, 'taraskText');
+	$inspect($outputText, 'outputText');
 </script>
 
 <div>
@@ -30,7 +27,7 @@
 			class="textfield"
 			contenteditable={false}
 			use:initInteractiveTags
-			onclick={onOutputClick}>{@html outputValue}</output
+			onclick={onOutputClick}>{@html $outputText}</output
 		>
 	</TextCard>
 	<StatusLine />

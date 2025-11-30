@@ -12,10 +12,10 @@
 
 <div class="app">
 	<Header>
-		<BurgerButton bind:isOpen={isSidebarOpen} />
+		<BurgerButton bind:open={isSidebarOpen} />
 	</Header>
 	<div class="workspace">
-		<Sidebar bind:isOpen={isSidebarOpen} />
+		<Sidebar bind:open={isSidebarOpen} />
 		<main>
 			{@render children()}
 		</main>

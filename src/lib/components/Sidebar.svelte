@@ -8,9 +8,9 @@
 	import { isMobile } from '$lib/isMobile';
 
 	let {
-		isOpen = $bindable(),
+		open = $bindable(),
 	}: {
-		isOpen: boolean;
+		open: boolean;
 	} = $props();
 
 	type Options = ComponentProps<typeof AccordionPicker>['options'];
@@ -46,10 +46,10 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
 <aside
-	class:open={isOpen}
+	class:open
 	onclick={(e) => {
 		if (isMobile() && (e.target as HTMLElement).closest('a')) {
-			isOpen = false;
+			open = false;
 		}
 	}}
 >

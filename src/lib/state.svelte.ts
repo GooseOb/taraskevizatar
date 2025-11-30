@@ -1,6 +1,7 @@
-import { dicts, htmlConfigOptions, TaraskConfig } from 'taraskevizer';
+import { dicts, htmlConfigOptions, pipelines, TaraskConfig } from 'taraskevizer';
 import { localStorageWritable, localStorageWritableString } from './localStorage';
-import { alphabets } from './alphabets';
+import { alphabets, getOutputPlaceholder } from './alphabets';
+import { derived } from 'svelte/store';
 
 type SerializableConfig = Pick<TaraskConfig, 'j' | 'doEscapeCapitalized' | 'g'> & {
 	abc: number;
@@ -10,10 +11,11 @@ export const taraskConfig = localStorageWritable<TaraskConfig>(
 	'tarask_settings',
 	() =>
 		new TaraskConfig({
+			...htmlConfigOptions,
 			abc: dicts.alphabets.cyrillic,
 			j: 'never',
 			doEscapeCapitalized: true,
-			g: false
+			g: false,
 		}),
 	(value) => {
 		const parsed: SerializableConfig = JSON.parse(value);
@@ -23,7 +25,7 @@ export const taraskConfig = localStorageWritable<TaraskConfig>(
 			abc: alphabets[parsed.abc],
 			j: parsed.j,
 			doEscapeCapitalized: parsed.doEscapeCapitalized,
-			g: parsed.g
+			g: parsed.g,
 		});
 	},
 	(value) =>
@@ -31,11 +33,50 @@ export const taraskConfig = localStorageWritable<TaraskConfig>(
 			j: value.j,
 			doEscapeCapitalized: value.doEscapeCapitalized,
 			g: value.g,
-			abc: alphabets.indexOf(value.abc)
+			abc: alphabets.indexOf(value.abc),
 		} satisfies SerializableConfig)
 );
 
+export const taraskPlainTextConfig = derived(
+	taraskConfig,
+	({ abc, j, g, doEscapeCapitalized }) =>
+		new TaraskConfig({
+			abc,
+			j,
+			g,
+			doEscapeCapitalized,
+			wrappers: null,
+		})
+);
+
 export const taraskText = localStorageWritableString('tarask_text', () => __DEFAULT_TEXT__, 400);
+
+export const outputText = derived([taraskText, taraskConfig], ([$taraskText, $taraskConfig]) => {
+	if (!$taraskText.trim()) {
+		return getOutputPlaceholder($taraskConfig.abc);
+	}
+	try {
+		return pipelines.tarask($taraskText, $taraskConfig);
+	} catch (e) {
+		return (
+			(e as Error).toString() +
+			'<br><br>Калі ласка, дашліце памылку на адзін з кантактаў "Для памылак і прапановаў"'
+		);
+	}
+});
+
+export const theme = localStorageWritableString<'0' | '1' | '2'>('theme', () => '0', 10);
+
+theme.subscribe((value) => {
+	document.documentElement.className =
+		value === '0'
+			? 'light'
+			: value === '2'
+				? 'dark'
+				: window.matchMedia?.('(prefers-color-scheme: dark)').matches
+					? 'dark'
+					: 'light';
+});
 
 let status = $state('');
 

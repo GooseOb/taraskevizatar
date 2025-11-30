@@ -4,20 +4,20 @@
 	let {
 		title,
 		details,
-		isOpen = $bindable()
+		open: open = $bindable(),
 	}: {
 		title: () => any;
 		details: () => any;
-		isOpen?: boolean;
+		open?: boolean;
 	} = $props();
 </script>
 
 <div>
 	<label class="title">
 		{@render title()}
-		<input class="checkbox" type="checkbox" bind:checked={isOpen} />
+		<input class="checkbox" type="checkbox" bind:checked={open} />
 	</label>
-	{#if isOpen}
+	{#if open}
 		<div transition:slide>
 			{@render details()}
 		</div>

@@ -11,8 +11,8 @@
 		title: titleValue,
 		options,
 		value = $bindable(),
-		isOpen = $bindable(true),
-		compare = (a, b) => a === b
+		open = $bindable(true),
+		compare = (a, b) => a === b,
 	}: {
 		title: string;
 		options: readonly {
@@ -24,23 +24,20 @@
 			};
 		}[];
 		value: TValue;
-		isOpen?: boolean;
+		open?: boolean;
 	} &
 		// Cannot directly compare reactive `value` to a static `options[number].value`
 		(TOptionValue extends object ? Compare : Partial<Compare>) = $props();
 
 	let selectedOption = $state(options.find((opt) => compare(opt.value, value))!);
-	let activeElement: HTMLElement | undefined = $state();
-	const setInitialActiveElement = (node: HTMLElement, isActive: boolean) => {
-		if (isActive) activeElement = node;
-	};
+	const optionElements: HTMLElement[] = $state([]);
 </script>
 
-<Accordion bind:isOpen>
+<Accordion bind:open>
 	{#snippet title()}
 		<div class="title">
 			{titleValue}
-			{#if !isOpen && value !== undefined}
+			{#if !open && value !== undefined}
 				<span class="badge" transition:fade={{ duration: 200 }}>
 					{selectedOption.label}
 					{#if selectedOption.note?.include}
@@ -52,18 +49,17 @@
 	{/snippet}
 	{#snippet details()}
 		<ul>
-			{#each options as option}
+			{#each options as option, i}
 				<li>
-					<label class="option" use:setInitialActiveElement={compare(option.value, value)}>
+					<label class="option" bind:this={optionElements[i]}>
 						<input
 							type="radio"
 							name={titleValue}
 							class="radio"
 							value={option.label + (option.note?.label || '')}
-							onchange={(e) => {
+							onchange={() => {
 								selectedOption = option;
 								value = option.value as TValue;
-								activeElement = e.currentTarget.parentElement as HTMLElement;
 							}}
 						/>
 						{option.label}
@@ -71,7 +67,7 @@
 					</label>
 				</li>
 			{/each}
-			<AnimationElement {activeElement} />
+			<AnimationElement elements={optionElements} activeIndex={options.indexOf(selectedOption)} />
 		</ul>
 	{/snippet}
 </Accordion>

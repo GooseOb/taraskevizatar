@@ -1,9 +1,9 @@
 <script lang="ts">
-	let { isOpen = $bindable() }: { isOpen: boolean } = $props();
+	let { open = $bindable() }: { open: boolean } = $props();
 </script>
 
 <label>
-	<input type="checkbox" bind:checked={isOpen} />
+	<input type="checkbox" bind:checked={open} />
 	<span></span>
 </label>
 

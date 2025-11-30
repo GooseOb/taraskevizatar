@@ -1,0 +1,43 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+a {
+  text-decoration: none;
+  font-weight: bold;
+  color: var(--link);
+  transition: color .2s;
+
+  &:hover,
+  &:focus {
+    color: var(--link-hover);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 0.625rem;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-bg);
+  border-radius: 0.375rem 0 0 0.375rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar);
+  border-radius: 0.375rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-hover);
+}
+
+@font-face {
+  font-family: 'NotoSansArabic';
+  src: url('/fonts/NotoSansArabic-SemiBold.ttf') format('truetype');
+}

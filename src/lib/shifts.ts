@@ -1,6 +1,3 @@
-export const el = <T extends HTMLElement = HTMLElement>(id: string) =>
-	document.getElementById(id) as T;
-
 export const getShifts = (parent: HTMLElement, children: HTMLElement[]) => {
 	const { left, top } = parent.getBoundingClientRect();
 	return children.map((item) => {
