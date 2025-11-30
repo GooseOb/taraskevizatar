@@ -3,7 +3,7 @@
 		title,
 		// value = $bindable(''),
 		children,
-		placeholder = ''
+		placeholder = '',
 	}: {
 		title: string;
 		// value?: string;
@@ -15,17 +15,17 @@
 <div class="card">
 	<div class="title">{title}</div>
 	{@render children()}
-	<!-- <textarea bind:value class="textfield" {placeholder}></textarea> -->
 </div>
 
 <style>
 	.card {
-		height: 100%;
+		flex: 1;
+		max-height: 50%;
 		display: flex;
 		flex-direction: column;
 	}
+
 	.title {
-		width: 100%;
 		font-weight: bold;
 		padding: 0.5em;
 	}
@@ -38,6 +38,8 @@
 		font-size: inherit;
 		background: #fafafa;
 		border: none;
+		overflow: auto;
+
 		&:focus {
 			outline: none;
 		}

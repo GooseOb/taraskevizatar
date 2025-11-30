@@ -1,7 +1,10 @@
 <script lang="ts">
+	import { isArabic } from '$lib/alphabets';
 	import StatusLine from '$lib/components/StatusLine.svelte';
 	import TextCard from '$lib/components/TextCard.svelte';
-	import { outputText, taraskText } from '$lib/state.svelte';
+	import { parentUse } from '$lib/parent-use';
+	import { outputText, taraskConfig, taraskText } from '$lib/state.svelte';
+	import { syncScroll } from '$lib/sync-scroll.svelte';
 	import { createInteractiveTags } from 'taraskevizer';
 
 	const interactiveTags = createInteractiveTags();
@@ -13,20 +16,21 @@
 	const onOutputClick = (e: Event) => {
 		interactiveTags.tryAlternate(e.target as Element);
 	};
-	$inspect($taraskText, 'taraskText');
-	$inspect($outputText, 'outputText');
 </script>
 
 <div>
 	<TextCard title="Клясычны">
-		<textarea bind:value={$taraskText} placeholder="Тэкст" class="textfield"></textarea>
+		<textarea class="textfield" bind:value={$taraskText} placeholder="Тэкст" use:syncScroll
+		></textarea>
 	</TextCard>
 	<TextCard title="Афіцыйны">
 		<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 		<output
 			class="textfield"
 			contenteditable={false}
+			style="font-family: {isArabic($taraskConfig.abc) ? 'NotoSansArabic' : 'inherit'};"
 			use:initInteractiveTags
+			use:syncScroll
 			onclick={onOutputClick}>{@html $outputText}</output
 		>
 	</TextCard>

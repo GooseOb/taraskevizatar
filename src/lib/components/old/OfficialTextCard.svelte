@@ -28,7 +28,6 @@
 
 <svelte:window
 	onkeyup={(e) => {
-		console.log(e);
 		if (e.ctrlKey && e.code === 'KeyA') {
 			element.focus();
 			element.select();

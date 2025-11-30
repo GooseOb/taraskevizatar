@@ -1,6 +1,6 @@
 <script lang="ts">
 	const {
-		children
+		children,
 	}: {
 		children?: () => any;
 	} = $props();
@@ -18,7 +18,7 @@
 		display: flex;
 		align-items: center;
 		gap: 1rem;
-		padding: 0 1rem;
+		padding: 0.25rem 1rem;
 		font-size: 1.6rem;
 		font-weight: bold;
 	}

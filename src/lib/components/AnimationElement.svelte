@@ -11,13 +11,21 @@
 		activeIndex: number;
 	} = $props();
 
-	const parentRect = $derived(animationElement!.parentElement!.getBoundingClientRect());
+	const getRect = (el: HTMLElement) => el.getBoundingClientRect();
 
-	const rects = $derived(elements.map((el) => el.getBoundingClientRect()));
+	let parentRect = $derived(getRect(animationElement.parentElement!));
+	let rects = $derived(elements.map(getRect));
+
+	$effect(() => {
+		new ResizeObserver(() => {
+			parentRect = getRect(animationElement.parentElement!);
+			rects = elements.map(getRect);
+		}).observe(animationElement.parentElement!);
+	});
 
 	$effect(() => {
 		const { height, width, top, left } = rects[activeIndex];
-		Object.assign(animationElement!.style, {
+		Object.assign(animationElement.style, {
 			height: `${height}px`,
 			width: `${width}px`,
 			top: `${top - parentRect.top}px`,

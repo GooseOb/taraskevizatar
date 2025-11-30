@@ -3,14 +3,19 @@
 	import AnimationElement from './AnimationElement.svelte';
 
 	const elements: HTMLAnchorElement[] = $state([]);
+	const links = [
+		{ href: '/', label: 'Тэкст' },
+		{ href: '/files', label: 'Файлы' },
+	];
 </script>
 
 <nav>
-	<a href="/" bind:this={elements[0]}>Тэкст</a>
-	<a href="/files" bind:this={elements[1]}>Файлы</a>
+	{#each links as { href, label }, index}
+		<a {href} bind:this={elements[index]}>{label}</a>
+	{/each}
 	<AnimationElement
 		{elements}
-		activeIndex={elements.findIndex(({ href }) => href === page.url.pathname)}
+		activeIndex={links.findIndex(({ href }) => href === page.url.pathname)}
 	/>
 </nav>
 

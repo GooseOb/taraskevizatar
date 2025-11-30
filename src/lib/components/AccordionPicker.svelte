@@ -30,6 +30,7 @@
 		(TOptionValue extends object ? Compare : Partial<Compare>) = $props();
 
 	let selectedOption = $state(options.find((opt) => compare(opt.value, value))!);
+	let selectedOptionIndex = $state(0);
 	const optionElements: HTMLElement[] = $state([]);
 </script>
 
@@ -60,6 +61,7 @@
 							onchange={() => {
 								selectedOption = option;
 								value = option.value as TValue;
+								selectedOptionIndex = i;
 							}}
 						/>
 						{option.label}
@@ -67,7 +69,7 @@
 					</label>
 				</li>
 			{/each}
-			<AnimationElement elements={optionElements} activeIndex={options.indexOf(selectedOption)} />
+			<AnimationElement elements={optionElements} activeIndex={selectedOptionIndex} />
 		</ul>
 	{/snippet}
 </Accordion>
