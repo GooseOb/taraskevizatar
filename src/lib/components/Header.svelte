@@ -1,4 +1,6 @@
 <script lang="ts">
+	import ThemePicker from './old/ThemePicker.svelte';
+
 	const {
 		children,
 	}: {
@@ -9,6 +11,7 @@
 <header>
 	{@render children?.()}
 	<span>Тарашкевізатар</span>
+	<ThemePicker />
 </header>
 
 <style>

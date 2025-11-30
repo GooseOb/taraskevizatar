@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { isArabic } from '$lib/alphabets';
-	import StatusLine from '$lib/components/StatusLine.svelte';
 	import TextCard from '$lib/components/TextCard.svelte';
-	import { parentUse } from '$lib/parent-use';
 	import { outputText, taraskConfig, taraskText } from '$lib/state.svelte';
 	import { syncScroll } from '$lib/sync-scroll.svelte';
 	import { createInteractiveTags } from 'taraskevizer';
@@ -34,7 +32,6 @@
 			onclick={onOutputClick}>{@html $outputText}</output
 		>
 	</TextCard>
-	<StatusLine />
 </div>
 
 <style>
@@ -42,6 +39,10 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
+	}
+
+	.textfield {
+		color: inherit;
 	}
 
 	output :global {

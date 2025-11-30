@@ -34,21 +34,21 @@
 	const optionElements: HTMLElement[] = $state([]);
 </script>
 
-<Accordion bind:open>
-	{#snippet title()}
-		<div class="title">
-			{titleValue}
-			{#if !open && value !== undefined}
-				<span class="badge" transition:fade={{ duration: 200 }}>
-					{selectedOption.label}
-					{#if selectedOption.note?.include}
-						{selectedOption.note.label}
-					{/if}
-				</span>
-			{/if}
-		</div>
-	{/snippet}
-	{#snippet details()}
+<div class="picker">
+	<Accordion bind:open>
+		{#snippet title()}
+			<div class="title">
+				{titleValue}
+				{#if !open && value !== undefined}
+					<span class="badge" transition:fade={{ duration: 200 }}>
+						{selectedOption.label}
+						{#if selectedOption.note?.include}
+							{selectedOption.note.label}
+						{/if}
+					</span>
+				{/if}
+			</div>
+		{/snippet}
 		<ul>
 			{#each options as option, i}
 				<li>
@@ -71,8 +71,8 @@
 			{/each}
 			<AnimationElement elements={optionElements} activeIndex={selectedOptionIndex} />
 		</ul>
-	{/snippet}
-</Accordion>
+	</Accordion>
+</div>
 
 <style>
 	.radio {
@@ -103,7 +103,9 @@
 	ul {
 		position: relative;
 	}
-	:global(.title) {
-		background-color: var(--tertiary);
+	.picker {
+		:global(.accordion-title) {
+			background-color: var(--tertiary);
+		}
 	}
 </style>

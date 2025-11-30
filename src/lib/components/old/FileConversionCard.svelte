@@ -34,7 +34,7 @@
 
 <SettingsCard title="Канвэртацыя файлу">
 	<button class="upload" tabindex="-1">
-		<label title="Файл ня выбраны" data-title="Файл выбраны">
+		<label title={file ? 'Файл выбраны' : 'Файл ня выбраны'}>
 			<input
 				type="file"
 				tabindex="0"

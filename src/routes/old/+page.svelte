@@ -64,44 +64,8 @@
 	}
 
 	:global {
-		html {
-			color: #000;
-			--bg: #ddf;
-			--1: #b9f;
-			--2: #ff8;
-			--3: #fd8;
-			--4: #b5f;
-			--btn-hover: #00000008;
-			--link: #28f;
-			--link-hover: #26f;
-			--scrollbar-bg: #0002;
-			--scrollbar: #0004;
-			--scrollbar-hover: #0005;
-		}
-
-		html.dark {
-			color: #eee;
-			--bg: #113;
-			--1: #338;
-			--2: #222;
-			--3: #111;
-			--4: #739;
-			--btn-hover: #ffffff08;
-			--scrollbar-bg: #444;
-			--scrollbar: #666;
-			--scrollbar-hover: #777;
-
-			.icon-btns > button,
-			.checkbox {
-				filter: invert(1);
-			}
-		}
-
 		body {
 			background-color: var(--bg);
-			/* display: flex; */
-			/* flex-direction: column; */
-			/* justify-content: center; */
 		}
 
 		:focus {

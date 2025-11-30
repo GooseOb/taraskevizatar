@@ -23,6 +23,7 @@
 
 <style>
 	.picker {
+		font-size: 1rem;
 		display: flex;
 		background-color: var(--bg);
 		margin-left: auto;
