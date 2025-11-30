@@ -1,12 +1,17 @@
-<script>
+<script lang="ts">
 	import { page } from '$app/state';
 	import AnimationElement from './AnimationElement.svelte';
+
+	const elements: HTMLAnchorElement[] = $state([]);
 </script>
 
 <nav>
-	<a href="/">Тэкст</a>
-	<a href="/files">Файлы</a>
-	<AnimationElement findActive={(el) => el.querySelector(`a[href="${page.url.pathname}"]`)} />
+	<a href="/" bind:this={elements[0]}>Тэкст</a>
+	<a href="/files" bind:this={elements[1]}>Файлы</a>
+	<AnimationElement
+		{elements}
+		activeIndex={elements.findIndex(({ href }) => href === page.url.pathname)}
+	/>
 </nav>
 
 <style>
