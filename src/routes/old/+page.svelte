@@ -25,19 +25,20 @@
 	let areSettingsOpen = $state(true);
 </script>
 
-<Header />
+<div>
+	<Header />
 
-<main>
-	<div class="card">
-		<OfficialTextCard bind:value={$taraskText} />
-		<ClassicTextCard value={$outputText} bind:areSettingsOpen />
-	</div>
+	<main>
+		<div class="card">
+			<OfficialTextCard bind:value={$taraskText} />
+			<ClassicTextCard value={$outputText} bind:areSettingsOpen />
+		</div>
 
-	<Settings open={areSettingsOpen} />
-</main>
+		<Settings open={areSettingsOpen} />
+	</main>
 
-<Footer />
-
+	<Footer />
+</div>
 <Snackbar />
 
 <style>

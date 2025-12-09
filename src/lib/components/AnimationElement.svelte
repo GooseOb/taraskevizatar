@@ -17,10 +17,14 @@
 	let rects = $derived(elements.map(getRect));
 
 	$effect(() => {
-		new ResizeObserver(() => {
+		const observer = new ResizeObserver(() => {
 			parentRect = getRect(animationElement.parentElement!);
 			rects = elements.map(getRect);
-		}).observe(animationElement.parentElement!);
+		});
+		observer.observe(animationElement.parentElement!);
+		return () => {
+			observer.disconnect();
+		};
 	});
 
 	$effect(() => {

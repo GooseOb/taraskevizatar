@@ -86,6 +86,7 @@
 				width: 2rem;
 				height: 100%;
 				cursor: pointer;
+				transition: opacity 0.2s ease;
 				opacity: 0.8;
 
 				&:hover,

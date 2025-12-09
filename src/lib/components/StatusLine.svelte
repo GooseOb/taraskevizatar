@@ -12,5 +12,7 @@
 		width: 100%;
 		padding: 0.5em;
 		background-color: var(--tertiary);
+		border-radius: 1rem 0 0 0;
+		z-index: 1;
 	}
 </style>

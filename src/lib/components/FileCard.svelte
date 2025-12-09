@@ -34,6 +34,18 @@
 	let text: string | null = $derived(null);
 
 	let open = $state(false);
+
+	const onDownload = () => {
+		const blob = new Blob([text!], { type: 'text/plain;charset=utf-8' });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = file.name;
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		URL.revokeObjectURL(url);
+	};
 </script>
 
 <div class="wrapper" class:open>
@@ -57,7 +69,7 @@
 					{file.name}
 				</span>
 				<div class="actions">
-					<button class="icon" title="Спампаваць файл">
+					<button class="icon" onclick={onDownload} title="Спампаваць файл">
 						<DownloadIcon />
 					</button>
 					<button class="icon" onclick={onRemove} title="Выдаліць">

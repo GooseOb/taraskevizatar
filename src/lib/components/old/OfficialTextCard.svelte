@@ -40,7 +40,6 @@
 		use:dynamicHeight
 		use:syncScroll
 		bind:this={element}
-		autofocus
 		class="textfield"
 		placeholder="Тэкст"
 		style="height: 519px"

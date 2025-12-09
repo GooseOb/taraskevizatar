@@ -1,7 +1,7 @@
 <script lang="ts">
 	import FileCard from '$lib/components/FileCard.svelte';
 	import { setStatus } from '$lib/state.svelte';
-	import { fade, slide } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	const files: { value: File; isProcessed: boolean }[] = $state([]);
 
 	let processedCount = $derived(
@@ -56,12 +56,14 @@
 		gap: 1rem;
 		padding: 1rem;
 		overflow-y: auto;
-		background-color: var(--bg);
+		background-color: var(--primary-light);
 	}
 
 	input {
 		position: absolute;
-		visibility: hidden;
+		width: 0;
+		height: 0;
+		outline: none;
 	}
 
 	.upload {
@@ -74,7 +76,7 @@
 		transition: background-color 0.2s ease;
 
 		&:hover,
-		&:focus-visible {
+		&:has(input:focus-visible) {
 			background-color: var(--primary-dark);
 		}
 	}
