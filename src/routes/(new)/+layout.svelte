@@ -31,6 +31,7 @@
 <style>
 	.app {
 		height: 100%;
+		width: 100%;
 		display: flex;
 		flex-direction: column;
 	}
@@ -54,6 +55,13 @@
 		@media (max-width: 768px) {
 			width: 100%;
 			border-radius: 1rem 1rem 0 0;
+		}
+		:global(.page) {
+			border-radius: 0 0 0 1rem;
+			flex: 1;
+			@media (max-width: 768px) {
+				border-radius: 0;
+			}
 		}
 	}
 </style>

@@ -78,13 +78,7 @@ theme.subscribe((value) => {
 					: 'light';
 });
 
-let status = $state('');
-
-export const setStatus = (value: string) => {
-	status = value;
-};
-
-export const getStatus = () => status;
+export let status = writable<string>('');
 
 // TODO: keep uploaded files here
 export const files = writable<File[]>([]);

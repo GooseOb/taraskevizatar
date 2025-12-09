@@ -3,7 +3,7 @@
 	import TextCard from '$lib/components/TextCard.svelte';
 	import CopyIcon from '$lib/icons/CopyIcon.svelte';
 	import EditIcon from '$lib/icons/EditIcon.svelte';
-	import { outputText, setStatus, taraskConfig, taraskText } from '$lib/state.svelte';
+	import { outputText, status, taraskConfig, taraskText } from '$lib/state.svelte';
 	import { syncScroll } from '$lib/sync-scroll.svelte';
 	import { createInteractiveTags } from 'taraskevizer';
 
@@ -31,7 +31,7 @@
 				class="action-button"
 				onclick={() => {
 					navigator.clipboard.writeText($taraskText);
-					setStatus('Скапіявана');
+					status.set('Скапіявана');
 				}}
 			>
 				<CopyIcon />
@@ -54,7 +54,7 @@
 				class="action-button"
 				onclick={() => {
 					navigator.clipboard.writeText(outputElement!.innerText);
-					setStatus('Скапіявана');
+					status.set('Скапіявана');
 				}}
 			>
 				<CopyIcon />
@@ -64,7 +64,7 @@
 				title={contenteditable ? 'Спыніць рэдагаваньне' : 'Рэдагаваць'}
 				onclick={() => {
 					contenteditable = !contenteditable;
-					setStatus(contenteditable ? 'Рэдагаваньне ўключана' : 'Рэдагаваньне выключана');
+					status.set(contenteditable ? 'Рэдагаваньне ўключана' : 'Рэдагаваньне выключана');
 				}}
 			>
 				<EditIcon />
@@ -77,7 +77,6 @@
 	.page {
 		display: flex;
 		flex-direction: column;
-		height: 100%;
 
 		:global {
 			.card:nth-child(2) {

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import FileCard from '$lib/components/FileCard.svelte';
-	import { setStatus } from '$lib/state.svelte';
+	import { status } from '$lib/state.svelte';
 	import { fade } from 'svelte/transition';
 	const files: { value: File; isProcessed: boolean }[] = $state([]);
 
@@ -11,9 +11,9 @@
 	$effect(() => {
 		if (files.length === 0) return;
 		if (processedCount === files.length) {
-			setStatus('Апрацоўка файлаў завершана.');
+			status.set('Апрацоўка файлаў завершана.');
 		} else {
-			setStatus('Апрацоўка файлаў... [' + processedCount + '/' + files.length + ']');
+			status.set('Апрацоўка файлаў... [' + processedCount + '/' + files.length + ']');
 		}
 	});
 </script>
@@ -50,7 +50,6 @@
 
 <style>
 	.page {
-		height: 100%;
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
