@@ -107,4 +107,4 @@ taraskPlainTextConfig.subscribe((cfg) => {
 	});
 });
 
-export const previousPathname = writable<string>('/');
+export const previousPathname = writable<string>('/taraskevizatar');
