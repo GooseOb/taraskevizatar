@@ -1,0 +1,122 @@
+<script lang="ts">
+	import { isArabic } from '$lib/alphabets';
+	import TextCard from '$lib/components/TextCard.svelte';
+	import CopyIcon from '$lib/icons/CopyIcon.svelte';
+	import EditIcon from '$lib/icons/EditIcon.svelte';
+	import { outputText, status, taraskConfig, taraskText } from '$lib/state.svelte';
+	import { syncScroll } from '$lib/sync-scroll.svelte';
+	import { createInteractiveTags } from 'taraskevizer';
+
+	const interactiveTags = createInteractiveTags();
+	const initInteractiveTags = (node: Element) => {
+		outputText.subscribe(() => {
+			interactiveTags.update(node);
+		});
+	};
+	const onOutputClick = (e: Event) => {
+		interactiveTags.tryAlternate(e.target as Element);
+	};
+
+	let contenteditable = $state(false);
+
+	let outputElement = $state<HTMLElement>();
+</script>
+
+<div class="page">
+	<TextCard title="Клясычны" count={$taraskText.length}>
+		<textarea class="textfield" bind:value={$taraskText} placeholder="Тэкст" use:syncScroll
+		></textarea>
+		{#snippet buttons()}
+			<button
+				class="action-button"
+				onclick={() => {
+					navigator.clipboard.writeText($taraskText);
+					status.set('Скапіявана');
+				}}
+			>
+				<CopyIcon />
+			</button>
+		{/snippet}
+	</TextCard>
+	<TextCard title="Афіцыйны" count={outputElement?.textContent.length ?? 0}>
+		<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+		<output
+			class="textfield"
+			bind:this={outputElement}
+			{contenteditable}
+			style="font-family: {isArabic($taraskConfig.abc) ? 'NotoSansArabic' : 'inherit'};"
+			use:initInteractiveTags
+			use:syncScroll
+			onclick={onOutputClick}>{@html $outputText}</output
+		>
+		{#snippet buttons()}
+			<button
+				class="action-button"
+				onclick={() => {
+					navigator.clipboard.writeText(outputElement!.innerText);
+					status.set('Скапіявана');
+				}}
+			>
+				<CopyIcon />
+			</button>
+			<button
+				class="action-button"
+				title={contenteditable ? 'Спыніць рэдагаваньне' : 'Рэдагаваць'}
+				onclick={() => {
+					contenteditable = !contenteditable;
+					status.set(contenteditable ? 'Рэдагаваньне ўключана' : 'Рэдагаваньне выключана');
+				}}
+			>
+				<EditIcon />
+			</button>
+		{/snippet}
+	</TextCard>
+</div>
+
+<style>
+	.page {
+		display: flex;
+		flex-direction: column;
+
+		:global {
+			.card:nth-child(2) {
+				background: var(--secondary);
+				.title {
+					transition: border-radius 0.3s;
+					border-radius: var(--is-fullwidth, 1rem) 0 0 0;
+				}
+			}
+		}
+	}
+
+	.textfield {
+		color: inherit;
+	}
+
+	output :global {
+		tarF {
+			color: #090;
+		}
+		tarL,
+		tarH {
+			cursor: pointer;
+			color: #95f;
+		}
+	}
+
+	.action-button {
+		cursor: pointer;
+		width: 1.5rem;
+		height: 1.5rem;
+		background-color: var(--tertiary);
+		color: var(--fg);
+		border: none;
+		border-radius: 0.25rem;
+		transition: background-color 0.2s ease;
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--tertiary-dark);
+		}
+	}
+</style>
