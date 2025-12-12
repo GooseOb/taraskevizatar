@@ -109,7 +109,6 @@
 	.title {
 		display: flex;
 		width: 100%;
-		cursor: auto;
 	}
 	.badge {
 		background-color: var(--tertiary-light);
