@@ -71,7 +71,7 @@
 		></AccordionPicker>
 	</div>
 	<ContactsCard />
-	<a href="/old"> Перайсьці да старой вэрсіі </a>
+	<a href="/taraskevizatar/old"> Перайсьці да старой вэрсіі </a>
 	<Footer />
 </aside>
 

@@ -4,8 +4,8 @@
 
 	const elements: HTMLAnchorElement[] = $state([]);
 	const links = [
-		{ href: '/', label: 'Тэкст' },
-		{ href: '/files', label: 'Файлы' },
+		{ href: '/taraskevizatar/', label: 'Тэкст' },
+		{ href: '/taraskevizatar/files', label: 'Файлы' },
 	];
 </script>
 

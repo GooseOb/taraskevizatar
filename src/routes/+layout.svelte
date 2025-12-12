@@ -5,7 +5,7 @@
 	import { beforeNavigate } from '$app/navigation';
 
 	beforeNavigate(({ from }) => {
-		if (from) $previousPathname = from.url.pathname;
+		if (from) $previousPathname = '/taraskevizatar' + from.url.pathname;
 	});
 
 	const {
