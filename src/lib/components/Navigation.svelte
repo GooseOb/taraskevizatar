@@ -41,5 +41,6 @@
 		padding: 0.5rem;
 		z-index: 1;
 		color: var(--fg);
+		user-select: none;
 	}
 </style>

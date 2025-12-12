@@ -36,6 +36,12 @@
 			flex-direction: column;
 			border-radius: 0 0 0 1rem;
 			overflow: hidden;
+			:global {
+				::selection,
+				::-moz-selection {
+					background: var(--1);
+				}
+			}
 		}
 
 		:global(.textfield) {

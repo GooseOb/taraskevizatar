@@ -1,6 +1,12 @@
 <script lang="ts">
 	import './global.scss';
 	import PageTransition from '$lib/components/PageTransition.svelte';
+	import { previousPathname } from '$lib/state.svelte.ts';
+	import { beforeNavigate } from '$app/navigation';
+
+	beforeNavigate(({ from }) => {
+		if (from) $previousPathname = from.url.pathname;
+	});
 
 	const {
 		children,

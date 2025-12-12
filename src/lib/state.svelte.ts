@@ -2,6 +2,7 @@ import { dicts, htmlConfigOptions, pipelines, TaraskConfig } from 'taraskevizer'
 import { localStorageWritable, localStorageWritableString } from './localStorage';
 import { alphabets, getOutputPlaceholder } from './alphabets';
 import { derived, writable } from 'svelte/store';
+import { ofFiles } from './numeral-helpers';
 
 type SerializableConfig = Pick<TaraskConfig, 'j' | 'doEscapeCapitalized' | 'g'> & {
 	abc: number;
@@ -78,7 +79,32 @@ theme.subscribe((value) => {
 					: 'light';
 });
 
-export let status = writable<string>('');
+export const status = writable<string>('');
 
-// TODO: keep uploaded files here
-export const files = writable<File[]>([]);
+export interface FileData {
+	name: string;
+	raw: string | null;
+	value: string | null;
+}
+
+export const files = writable<FileData[]>([]);
+
+taraskPlainTextConfig.subscribe((cfg) => {
+	files.update((data) => {
+		if (data.length === 0) {
+			return data;
+		}
+		status.set(`Абнаўленне файлаў... [0/${data.length}]`);
+		for (let i = 0; i < data.length; i++) {
+			const file = data[i];
+			if (file.raw) {
+				file.value = pipelines.tarask(file.raw!, cfg);
+			}
+			status.set(`Абнаўленне файлаў... [${i + 1}/${data.length}]`);
+		}
+		status.set(`${ofFiles(data.length)} абноўлена.`);
+		return data;
+	});
+});
+
+export const previousPathname = writable<string>('/');

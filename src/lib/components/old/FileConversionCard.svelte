@@ -1,58 +1,46 @@
 <script lang="ts">
 	import SettingsCard from './SettingsCard.svelte';
 	import { pipelines } from 'taraskevizer';
-	import { taraskPlainTextConfig } from '$lib/state.svelte';
+	import { files, taraskPlainTextConfig } from '$lib/state.svelte';
 	import { setSnackbar } from '$lib/state.old.svelte';
-	import { getCreateUniqueTextFileURL, readFileAsText } from '$lib/fileUtils';
 	import { delay } from '$lib/delay';
+	import { getOnDownload } from '$lib/on-download';
 
-	const createTextFileURL = getCreateUniqueTextFileURL();
+	const onFileChange = ({ currentTarget }: { currentTarget: HTMLInputElement }) => {
+		const file = currentTarget.files![0];
 
-	let file: File | null = $state(null);
+		$files[0] = {
+			name: file.name,
+			raw: null,
+			value: null,
+		};
 
-	let href = $derived(
-		file
-			? readFileAsText(file).then((text) => {
-					setSnackbar('Апрацоўка файлу...', 5000);
-					return delay(1).then(() =>
-						createTextFileURL(
-							pipelines.tarask(text, $taraskPlainTextConfig).replace(/\s([\n\t])\s/g, '$1')
-						)
-					);
-				})
-			: Promise.resolve('#')
-	);
-
-	$effect(() => {
-		href.then((val) => {
-			if (val !== '#') {
+		file.text().then((text) => {
+			$files[0].raw = text;
+			setSnackbar('Апрацоўка файлу...', 5000);
+			delay(1).then(() => {
+				const result = pipelines
+					.tarask($files[0].raw!, $taraskPlainTextConfig)
+					.replace(/\s([\n\t])\s/g, '$1');
+				$files[0].value = result;
 				setSnackbar('Файл гатовы да спампоўкі', 5000);
-			}
+			});
 		});
-	});
+		currentTarget.value = '';
+	};
 </script>
 
 <SettingsCard title="Канвэртацыя файлу">
 	<button class="upload" tabindex="-1">
-		<label title={file ? 'Файл выбраны' : 'Файл ня выбраны'}>
-			<input
-				type="file"
-				tabindex="0"
-				onchange={({ currentTarget }) => {
-					file = currentTarget.files![0];
-					currentTarget.value = '';
-				}}
-			/>
+		<label title={$files[0] ? 'Файл выбраны' : 'Файл ня выбраны'}>
+			<input type="file" tabindex="0" onchange={onFileChange} />
 			запампаваць
 		</label>
 	</button>
-	{#await href then href}
-		{#if href !== '#'}
-			<button tabindex="-1">
-				<a class="download" {href} download="tarask-{file?.name}"> спампаваць </a>
-			</button>
-		{/if}
-	{/await}
+	{#if $files[0]?.value}
+		{@const { name, value } = $files[0]}
+		<button onclick={getOnDownload('tarask-' + name, value!)}> спампаваць </button>
+	{/if}
 </SettingsCard>
 
 <style>
@@ -69,10 +57,5 @@
 		display: block;
 		cursor: pointer;
 		padding: 0.5em 1em;
-	}
-
-	.download {
-		font: inherit;
-		color: inherit;
 	}
 </style>

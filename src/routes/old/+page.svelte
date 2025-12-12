@@ -25,7 +25,7 @@
 	let areSettingsOpen = $state(true);
 </script>
 
-<div>
+<div class="page">
 	<Header />
 
 	<main>
@@ -42,6 +42,21 @@
 <Snackbar />
 
 <style>
+	.page {
+		/* TODO: why does it help and what to replace it with */
+		display: table;
+
+		:global {
+			:focus {
+				outline: none;
+			}
+
+			::selection,
+			::-moz-selection {
+				background: var(--2);
+			}
+		}
+	}
 	main {
 		height: 80%;
 		width: 85%;
@@ -61,21 +76,6 @@
 
 		@media (max-width: 650px) {
 			flex-direction: column;
-		}
-	}
-
-	:global {
-		body {
-			background-color: var(--bg);
-		}
-
-		:focus {
-			outline: none;
-		}
-
-		::selection,
-		::-moz-selection {
-			background: var(--2);
 		}
 	}
 </style>

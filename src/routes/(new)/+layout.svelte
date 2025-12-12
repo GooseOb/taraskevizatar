@@ -33,6 +33,9 @@
 		width: 100%;
 		display: flex;
 		flex-direction: column;
+		:global(::selection, ::-moz-selection) {
+			background: var(--2);
+		}
 	}
 
 	.workspace {

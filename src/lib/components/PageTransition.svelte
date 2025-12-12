@@ -35,7 +35,6 @@
 
 <div class="base">
 	{#key key}
-		{@debug key}
 		<div
 			in:fly={{
 				opacity: 1,

@@ -1,59 +1,29 @@
 <script lang="ts">
-	import { readFileAsText } from '$lib/fileUtils';
-	import { pipelines } from 'taraskevizer';
 	import Accordion from './Accordion.svelte';
 	import Loader from './Loader.svelte';
-	import { taraskPlainTextConfig } from '$lib/state.svelte';
 	import DownloadIcon from '$lib/icons/DownloadIcon.svelte';
 	import CloseIcon from '$lib/icons/CloseIcon.svelte';
+	import { getOnDownload } from '$lib/on-download';
 
 	const {
-		file,
-		beforeProcess,
-		afterProcess,
+		name,
+		value,
 		onRemove,
 	}: {
-		file: File;
-		beforeProcess?: () => void;
-		afterProcess?: () => void;
+		name: string;
+		value: string | null;
 		onRemove?: () => void;
 	} = $props();
 
-	const process = async () => {
-		beforeProcess?.();
-		const data = await readFileAsText(file);
-		const converted = pipelines.tarask(data, $taraskPlainTextConfig);
-		afterProcess?.();
-		text = converted;
-	};
-
-	$effect(() => {
-		process();
-	});
-
-	let text: string | null = $derived(null);
-
 	let open = $state(false);
-
-	const onDownload = () => {
-		const blob = new Blob([text!], { type: 'text/plain;charset=utf-8' });
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = file.name;
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
-		URL.revokeObjectURL(url);
-	};
 </script>
 
 <div class="wrapper" class:open>
-	{#if text === null}
+	{#if value === null}
 		<Accordion bind:open>
 			{#snippet title()}
 				<span class="title">
-					{file.name}
+					{name}
 				</span>
 				<Loader />
 			{/snippet}
@@ -66,10 +36,10 @@
 		<Accordion bind:open>
 			{#snippet title()}
 				<span class="title">
-					{file.name}
+					{name}
 				</span>
 				<div class="actions">
-					<button class="icon" onclick={onDownload} title="Спампаваць файл">
+					<button class="icon" onclick={getOnDownload(name, value)} title="Спампаваць файл">
 						<DownloadIcon />
 					</button>
 					<button class="icon" onclick={onRemove} title="Выдаліць">
@@ -78,7 +48,7 @@
 				</div>
 			{/snippet}
 
-			<pre class="content">{text}</pre>
+			<pre class="content">{value}</pre>
 		</Accordion>
 	{/if}
 </div>
@@ -88,6 +58,10 @@
 		white-space: pre-wrap;
 		word-break: break-word;
 		padding: 0.5em;
+		&::selection,
+		&::-moz-selection {
+			background: var(--1) !important;
+		}
 	}
 
 	.loading-container {
@@ -124,6 +98,7 @@
 
 	.title {
 		margin-right: auto;
+		cursor: auto;
 	}
 
 	.wrapper {
@@ -131,6 +106,7 @@
 		border-radius: 0.5rem;
 		:global(.accordion-title) {
 			border-radius: 0.5rem;
+			border: var(--tertiary) solid 2px;
 			background-color: var(--secondary);
 			transition: background-color 0.2s ease;
 
@@ -142,6 +118,10 @@
 			&:has(.icon:hover),
 			&:has(.icon:focus) {
 				background-color: var(--secondary);
+			}
+			::selection,
+			::-moz-selection {
+				background: var(--1);
 			}
 		}
 	}

@@ -23,8 +23,9 @@
 		open?: boolean;
 	} = $props();
 
-	let selectedOption = $state(options.find((opt) => opt.value === value)!);
-	let selectedOptionIndex = $state(0);
+	let selectedOptionIndex = $state(options.findIndex((opt) => opt.value === value)!);
+	let selectedOption = $derived(options[selectedOptionIndex]);
+
 	const optionElements: HTMLElement[] = $state([]);
 </script>
 

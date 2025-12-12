@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { dicts } from 'taraskevizer';
 	import type { ComponentProps } from 'svelte';
-	import { taraskConfig } from '$lib/state.svelte.ts';
+	import { previousPathname, taraskConfig } from '$lib/state.svelte.ts';
 	import Selector from '$lib/components/old/Selector.svelte';
 	import SettingsCard from '$lib/components/old/SettingsCard.svelte';
 	import FileConversionCard from '$lib/components/old/FileConversionCard.svelte';
@@ -54,7 +54,7 @@
 	<ContactsCard />
 	<OtherCard />
 	<SettingsCard title="Перайсьці да новай вэрсіі">
-		<a href="/">
+		<a href={$previousPathname}>
 			<button tabindex="-1">тык</button>
 		</a>
 	</SettingsCard>
