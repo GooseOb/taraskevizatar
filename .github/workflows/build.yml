@@ -18,10 +18,12 @@ jobs:
       - run: bun i --frozen-lockfile
       - run: bun update taraskevizer
       - run: bun run build
+        env:
+          BASE_PATH: '/${{ github.event.repository.name }}'
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./build
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
