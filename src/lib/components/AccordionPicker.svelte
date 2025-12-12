@@ -16,6 +16,7 @@
 			note?: {
 				label: string;
 				include?: boolean;
+				small?: boolean;
 			};
 		}[];
 		value: TValue;
@@ -50,7 +51,6 @@
 							type="radio"
 							name={titleValue}
 							class="radio"
-							value={option.label + (option.note?.label || '')}
 							onchange={() => {
 								selectedOption = option;
 								value = option.value as TValue;
@@ -58,7 +58,12 @@
 							}}
 						/>
 						{option.label}
-						{option.note?.label}
+						{#if option.note}
+							{@const { small, label } = option.note}
+							<span class="note" class:small>
+								{label}
+							</span>
+						{/if}
 					</label>
 				</li>
 			{/each}
@@ -93,6 +98,12 @@
 				margin-left: 0.5em;
 			}
 		}
+	}
+	.note {
+		margin-left: 0.25em;
+	}
+	.small {
+		font-size: 0.75em;
 	}
 	.title {
 		display: flex;

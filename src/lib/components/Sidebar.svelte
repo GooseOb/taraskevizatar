@@ -21,7 +21,7 @@
 		{
 			label: 'Арабскі',
 			value: dicts.alphabets.arabic,
-			note: { label: '(не стандартызаваны)' },
+			note: { label: '(не стандартызаваны)', small: true },
 		},
 		{
 			label: 'Лацінскі',
@@ -84,6 +84,7 @@
 		z-index: 1;
 
 		&.open {
+			min-width: 250px;
 			width: 20%;
 		}
 

@@ -22,7 +22,6 @@
 				{@render children()}
 			</PageTransition>
 
-			<!-- TODO: fix overlapping -->
 			<StatusLine />
 		</div>
 	</div>
