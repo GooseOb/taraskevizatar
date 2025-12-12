@@ -23,7 +23,7 @@
 </script>
 
 <div class="page">
-	<TextCard title="Клясычны" count={$taraskText.length}>
+	<TextCard title="Афіцыйны" count={$taraskText.length}>
 		<textarea class="textfield" bind:value={$taraskText} placeholder="Тэкст" use:syncScroll
 		></textarea>
 		{#snippet buttons()}
@@ -38,7 +38,7 @@
 			</button>
 		{/snippet}
 	</TextCard>
-	<TextCard title="Афіцыйны" count={outputElement?.textContent.length ?? 0}>
+	<TextCard title="Клясычны" count={outputElement?.textContent.length ?? 0}>
 		<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 		<output
 			class="textfield"
