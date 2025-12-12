@@ -136,8 +136,11 @@
 
 			&:hover,
 			&:focus-visible {
-				background-color: var(--tertiary-dark);
+				background-color: var(--tertiary-dark-hover);
 			}
 		}
+	}
+	.option:hover {
+		background-color: var(--tertiary);
 	}
 </style>

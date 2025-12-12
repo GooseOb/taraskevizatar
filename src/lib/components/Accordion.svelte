@@ -4,7 +4,7 @@
 	let {
 		title,
 		children,
-		open: openValue = $bindable(),
+		open: openValue = $bindable(false),
 	}: {
 		title: () => any;
 		children: () => any;

@@ -6,8 +6,7 @@
 	import Footer from './Footer.svelte';
 	import Navigation from './Navigation.svelte';
 	import { isMobile } from '$lib/isMobile';
-	import Accordion from './Accordion.svelte';
-	import { contactLinks } from '$lib/contacts';
+	import ContactsCard from './ContactsCard.svelte';
 
 	let {
 		open = $bindable(),
@@ -44,17 +43,18 @@
 		{ label: 'Не', value: false },
 		{ label: 'Так', value: true },
 	] satisfies Options;
-	// TODO: abstract styled accordion for pickers and contacts
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
 <aside
 	class:open
-	onclick={(e) => {
-		if (isMobile() && (e.target as HTMLElement).closest('a')) {
-			open = false;
-		}
-	}}
+	onclick={isMobile()
+		? (e) => {
+				if ((e.target as HTMLElement).closest('a')) {
+					open = false;
+				}
+			}
+		: undefined}
 >
 	<Navigation />
 	<div class="pickers">
@@ -69,17 +69,8 @@
 			options={ignoreCaps}
 			bind:value={$taraskConfig.doEscapeCapitalized}
 		></AccordionPicker>
-		<Accordion>
-			{#snippet title()}
-				Для памылак і прапановаў
-			{/snippet}
-			{#each contactLinks as { value, label }}
-				<a href={value} target="_blank" rel="noopener noreferrer">
-					<button tabindex="-1">{label}</button>
-				</a>
-			{/each}
-		</Accordion>
 	</div>
+	<ContactsCard />
 	<a href="/old"> Перайсьці да старой вэрсіі </a>
 	<Footer />
 </aside>

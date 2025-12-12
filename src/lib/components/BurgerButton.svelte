@@ -22,10 +22,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		outline: none;
-		&:focus-visible {
-			outline: auto;
-		}
+		/* outline: none; */
 	}
 
 	input::before,
@@ -67,12 +64,12 @@
 		bottom: 50%;
 		transform: translateY(50%) rotate(-45deg);
 	}
-	input:hover::before,
-	input:hover::after,
-	input:hover ~ span,
-	input:focus::before,
-	input:focus::after,
-	input:focus ~ span {
-		background-color: var(--fg);
-	}
+	/* input:hover::before, */
+	/* input:hover::after, */
+	/* input:hover ~ span, */
+	/* input:focus-visible::before, */
+	/* input:focus-visible::after, */
+	/* input:focus-visible ~ span { */
+	/* 	background-color: var(--fg); */
+	/* } */
 </style>

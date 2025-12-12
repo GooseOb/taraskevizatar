@@ -42,5 +42,22 @@
 		z-index: 1;
 		color: var(--fg);
 		user-select: none;
+		position: relative;
+		outline: none;
+		&::after {
+			content: '';
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			background-color: var(--primary-dark);
+			transition: opacity 0.2s;
+			opacity: 0;
+		}
+		&:focus-visible::after,
+		&:hover::after {
+			opacity: 0.1;
+		}
 	}
 </style>

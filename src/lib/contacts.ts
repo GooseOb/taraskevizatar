@@ -1,10 +1,10 @@
 export const contactLinks = [
 	{
-		label: 'telegram',
+		label: 'Telegram',
 		value: 'https://t.me/GooseOb',
 	},
 	{
-		label: 'github',
+		label: 'GitHub',
 		value: 'https://github.com/GooseOb/taraskevizatar/issues',
 	},
 ];
