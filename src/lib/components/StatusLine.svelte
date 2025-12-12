@@ -6,11 +6,11 @@
 	let visible = $state(!isMobile());
 
 	if (isMobile()) {
-		let timeout: number;
+		let timeout: ReturnType<typeof setTimeout>;
 		status.subscribe((value) => {
 			clearTimeout(timeout);
 			if (value) visible = true;
-			timeout = window.setTimeout(() => {
+			timeout = setTimeout(() => {
 				visible = false;
 			}, 3000);
 		});

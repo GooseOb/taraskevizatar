@@ -1,4 +1,5 @@
 html {
+  height: 100%;
   color: var(--fg);
   --fg: #eee;
   --anti-fg: #111;
@@ -54,10 +55,6 @@ html {
 * {
   margin: 0;
   padding: 0;
-}
-
-html {
-  height: 100%;
 }
 
 body {

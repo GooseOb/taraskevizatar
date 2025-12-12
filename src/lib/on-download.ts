@@ -6,6 +6,6 @@ export const getOnDownload = (name: string, value: string) => () => {
 	a.download = name;
 	document.body.appendChild(a);
 	a.click();
-	document.body.removeChild(a);
+	a.remove();
 	URL.revokeObjectURL(url);
 };

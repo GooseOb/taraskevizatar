@@ -13,18 +13,18 @@
 
 	const ANIMATION_DURATION = 400;
 
-	let timeoutId: ReturnType<typeof setTimeout>;
+	let timeout: ReturnType<typeof setTimeout>;
 	$effect(() => {
-		clearTimeout(timeoutId);
+		clearTimeout(timeout);
 		if (openValue) {
 			open = true;
 		} else {
-			timeoutId = setTimeout(() => {
+			timeout = setTimeout(() => {
 				open = false;
 			}, ANIMATION_DURATION);
 		}
 		return () => {
-			clearTimeout(timeoutId);
+			clearTimeout(timeout);
 		};
 	});
 

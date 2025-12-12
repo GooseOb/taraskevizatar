@@ -1,16 +1,16 @@
 export const snackbar = $state({ value: '', visible: false });
 
-let timeoutId: number | null = null;
+let timeout: ReturnType<typeof setTimeout>;
 let durationValue = 0;
 
 export const cancelHiding = () => {
-	if (timeoutId) {
-		clearTimeout(timeoutId);
+	if (timeout) {
+		clearTimeout(timeout);
 	}
 };
 
 export const hideWithTimeout = () => {
-	timeoutId = window.setTimeout(() => {
+	timeout = setTimeout(() => {
 		snackbar.visible = false;
 	}, durationValue);
 };
