@@ -78,14 +78,21 @@
 <style>
 	aside {
 		width: 0;
+		min-width: 0;
 		height: 100%;
 		background-color: var(--secondary);
 		display: flex;
 		flex-direction: column;
 		white-space: nowrap;
-		transition: width 0.3s;
+		transition: 0.3s;
 		overflow-x: hidden;
 		z-index: 1;
+		:global {
+			::selection,
+			::-moz-selection {
+				background: var(--primary) !important;
+			}
+		}
 
 		&.open {
 			min-width: 250px;

@@ -121,13 +121,14 @@
 		word-break: break-word;
 		margin-bottom: 3rem;
 
-		&::selection,
-		&::-moz-selection {
-			background: var(--1);
-		}
-
-		:global(.textfield) {
-			padding: 1rem;
+		:global {
+			.textfield {
+				padding: 1rem;
+			}
+			::selection,
+			::-moz-selection {
+				background: var(--1) !important;
+			}
 		}
 	}
 </style>

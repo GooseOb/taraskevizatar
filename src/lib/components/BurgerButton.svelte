@@ -64,12 +64,4 @@
 		bottom: 50%;
 		transform: translateY(50%) rotate(-45deg);
 	}
-	/* input:hover::before, */
-	/* input:hover::after, */
-	/* input:hover ~ span, */
-	/* input:focus-visible::before, */
-	/* input:focus-visible::after, */
-	/* input:focus-visible ~ span { */
-	/* 	background-color: var(--fg); */
-	/* } */
 </style>

@@ -60,7 +60,7 @@
 		padding: 0.5em;
 		&::selection,
 		&::-moz-selection {
-			background: var(--1) !important;
+			background: var(--primary) !important;
 		}
 	}
 
@@ -121,7 +121,7 @@
 			}
 			::selection,
 			::-moz-selection {
-				background: var(--1);
+				background: var(--primary);
 			}
 		}
 	}

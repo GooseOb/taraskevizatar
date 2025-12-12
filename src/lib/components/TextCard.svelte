@@ -34,12 +34,13 @@
 			flex: 1;
 			display: flex;
 			flex-direction: column;
-			border-radius: 0 0 0 1rem;
+			transition: border-radius 0.3s;
+			border-radius: 0 0 0 var(--is-fullwidth, 1rem);
 			overflow: hidden;
 			:global {
 				::selection,
 				::-moz-selection {
-					background: var(--1);
+					background: var(--primary);
 				}
 			}
 		}

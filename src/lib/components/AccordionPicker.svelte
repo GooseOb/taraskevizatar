@@ -109,6 +109,7 @@
 	.title {
 		display: flex;
 		width: 100%;
+		cursor: auto;
 	}
 	.badge {
 		background-color: var(--tertiary-light);
@@ -119,6 +120,7 @@
 	}
 	ul {
 		position: relative;
+		user-select: none;
 	}
 	.picker {
 		background-color: var(--tertiary-light);
@@ -128,6 +130,12 @@
 			background-color: var(--tertiary-dark);
 			border-radius: 1rem;
 			transition: 0.2s ease;
+			:global {
+				::selection,
+				::-moz-selection {
+					background: var(--secondary) !important;
+				}
+			}
 
 			&.open {
 				border-bottom-left-radius: 0;

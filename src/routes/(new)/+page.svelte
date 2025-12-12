@@ -82,7 +82,8 @@
 			.card:nth-child(2) {
 				background: var(--secondary);
 				.title {
-					border-radius: 1rem 0 0 0;
+					transition: border-radius 0.3s;
+					border-radius: var(--is-fullwidth, 1rem) 0 0 0;
 				}
 			}
 		}

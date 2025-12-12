@@ -29,7 +29,8 @@
 		width: 100%;
 		padding: 0.5em;
 		background-color: var(--tertiary);
-		border-radius: 1rem 0 0 0;
+		transition: border-radius 0.3s;
+		border-radius: var(--is-fullwidth, 1rem) 0 0 0;
 		z-index: 1;
 
 		@media (max-width: 768px) {

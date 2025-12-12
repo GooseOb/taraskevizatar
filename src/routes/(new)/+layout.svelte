@@ -17,7 +17,7 @@
 	</Header>
 	<div class="workspace">
 		<Sidebar bind:open={isSidebarOpen} />
-		<div class="main-area">
+		<div class="main-area" style:--is-fullwidth={isSidebarOpen ? undefined : '0'}>
 			<PageTransition axis="x" duration={500} routes={['/(new)', '/(new)/files']}>
 				{@render children()}
 			</PageTransition>
@@ -34,7 +34,7 @@
 		display: flex;
 		flex-direction: column;
 		:global(::selection, ::-moz-selection) {
-			background: var(--2);
+			background: var(--secondary);
 		}
 	}
 
@@ -52,14 +52,16 @@
 		height: 100%;
 		overflow: hidden;
 		background-color: var(--secondary);
-		border-radius: 1rem 0 0 0;
+		transition: border-radius 0.3s;
+		border-radius: var(--is-fullwidth, 1rem) 0 0 0;
 
 		@media (max-width: 768px) {
 			width: 100%;
 			border-radius: 1rem 1rem 0 0;
 		}
 		:global(.page) {
-			border-radius: 0 0 0 1rem;
+			transition: border-radius 0.3s;
+			border-radius: 0 0 0 var(--is-fullwidth, 1rem);
 			flex: 1;
 			@media (max-width: 768px) {
 				border-radius: 0;
