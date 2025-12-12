@@ -3,6 +3,7 @@ import { localStorageWritable, localStorageWritableString } from './localStorage
 import { alphabets, getOutputPlaceholder } from './alphabets';
 import { derived, writable } from 'svelte/store';
 import { ofFiles } from './numeral-helpers';
+import { resolve } from '$app/paths';
 
 type SerializableConfig = Pick<TaraskConfig, 'j' | 'doEscapeCapitalized' | 'g'> & {
 	abc: number;
@@ -94,17 +95,17 @@ taraskPlainTextConfig.subscribe((cfg) => {
 		if (data.length === 0) {
 			return data;
 		}
-		status.set(`Абнаўленне файлаў... [0/${data.length}]`);
+		status.set(`Абнаўленьне файлаў... [0/${data.length}]`);
 		for (let i = 0; i < data.length; i++) {
 			const file = data[i];
 			if (file.raw) {
 				file.value = pipelines.tarask(file.raw!, cfg);
 			}
-			status.set(`Абнаўленне файлаў... [${i + 1}/${data.length}]`);
+			status.set(`Абнаўленьне файлаў... [${i + 1}/${data.length}]`);
 		}
 		status.set(`${ofFiles(data.length)} абноўлена.`);
 		return data;
 	});
 });
 
-export const previousPathname = writable<string>('/taraskevizatar');
+export const previousPathname = writable<string>(resolve('/'));

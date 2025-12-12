@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import AnimationElement from './AnimationElement.svelte';
+	import { resolve } from '$app/paths';
 
 	const elements: HTMLAnchorElement[] = $state([]);
 	const links = [
-		{ href: '/taraskevizatar/', label: 'Тэкст' },
-		{ href: '/taraskevizatar/files', label: 'Файлы' },
+		{ href: resolve('/'), label: 'Тэкст' },
+		{ href: resolve('/files'), label: 'Файлы' },
 	];
 </script>
 

@@ -7,6 +7,7 @@
 	import Navigation from './Navigation.svelte';
 	import { isMobile } from '$lib/isMobile';
 	import ContactsCard from './ContactsCard.svelte';
+	import { resolve } from '$app/paths';
 
 	let {
 		open = $bindable(),
@@ -71,7 +72,7 @@
 		></AccordionPicker>
 	</div>
 	<ContactsCard />
-	<a href="/taraskevizatar/old"> Перайсьці да старой вэрсіі </a>
+	<a href={resolve('/old')}> Перайсьці да старой вэрсіі </a>
 	<Footer />
 </aside>
 
