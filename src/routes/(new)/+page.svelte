@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { isArabic } from '$lib/alphabets';
 	import TextCard from '$lib/components/TextCard.svelte';
+	import CloseIcon from '$lib/icons/CloseIcon.svelte';
 	import CopyIcon from '$lib/icons/CopyIcon.svelte';
 	import EditIcon from '$lib/icons/EditIcon.svelte';
 	import { outputText, status, taraskConfig, taraskText } from '$lib/state.svelte';
@@ -29,12 +30,22 @@
 		{#snippet buttons()}
 			<button
 				class="action-button"
+				title="Капіяваць"
 				onclick={() => {
 					navigator.clipboard.writeText($taraskText);
-					status.set('Скапіявана');
+					$status = 'Скапіявана';
 				}}
 			>
 				<CopyIcon />
+			</button>
+			<button
+				class="action-button"
+				title="Ачысьціць"
+				onclick={() => {
+					$taraskText = '';
+				}}
+			>
+				<CloseIcon />
 			</button>
 		{/snippet}
 	</TextCard>
@@ -52,9 +63,10 @@
 		{#snippet buttons()}
 			<button
 				class="action-button"
+				title="Капіяваць"
 				onclick={() => {
 					navigator.clipboard.writeText(outputElement!.innerText);
-					status.set('Скапіявана');
+					$status = 'Скапіявана';
 				}}
 			>
 				<CopyIcon />
@@ -64,7 +76,7 @@
 				title={contenteditable ? 'Спыніць рэдагаваньне' : 'Рэдагаваць'}
 				onclick={() => {
 					contenteditable = !contenteditable;
-					status.set(contenteditable ? 'Рэдагаваньне ўключана' : 'Рэдагаваньне выключана');
+					$status = contenteditable ? 'Рэдагаваньне ўключана' : 'Рэдагаваньне выключана';
 				}}
 			>
 				<EditIcon />
