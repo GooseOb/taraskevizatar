@@ -10,7 +10,13 @@
 	} = $props();
 </script>
 
-<span role="status" aria-live="polite" class="spinner" style="width:{size}px; height:{size}px;">
+<span
+	role="status"
+	aria-live="polite"
+	class="spinner"
+	style:width="{size}px"
+	style:height="{size}px"
+>
 	<svg viewBox="0 0 50 50" width={size} height={size} aria-hidden="true" focusable="false">
 		<circle
 			cx="25"

@@ -4,9 +4,7 @@ let timeout: ReturnType<typeof setTimeout>;
 let durationValue = 0;
 
 export const cancelHiding = () => {
-	if (timeout) {
-		clearTimeout(timeout);
-	}
+	clearTimeout(timeout);
 };
 
 export const hideWithTimeout = () => {

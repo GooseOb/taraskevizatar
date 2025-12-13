@@ -2,13 +2,13 @@
 	import CopyIcon from '$lib/icons/CopyIcon.svelte';
 	import EditIcon from '$lib/icons/EditIcon.svelte';
 	import SettingsIcon from '$lib/icons/SettingsIcon.svelte';
-	import { createInteractiveTags } from 'taraskevizer';
 	import TextCard from './TextCard.svelte';
 	import { setSnackbar } from '$lib/state.old.svelte';
 	import { taraskConfig } from '$lib/state.svelte';
 	import { isArabic } from '$lib/alphabets';
 	import { syncScroll } from '$lib/sync-scroll.svelte';
 	import { parentUse } from '$lib/parent-use';
+	import { initInteractiveTags } from '$lib/interactive-tags';
 
 	let {
 		value,
@@ -39,16 +39,6 @@
 	};
 
 	let counterValue = $state(0);
-
-	const interactiveTags = createInteractiveTags();
-	$effect(() => {
-		if (value) 0;
-		interactiveTags.update(element);
-		counterValue = element.textContent.length;
-	});
-	const onOutputClick = (e: Event) => {
-		interactiveTags.tryAlternate(e.target as Element);
-	};
 </script>
 
 <TextCard title="Клясычны" {counterValue}>
@@ -57,8 +47,8 @@
 		bind:this={element}
 		id="output"
 		class="textfield"
-		style="font-family: {isArabic($taraskConfig.abc) ? 'NotoSansArabic' : 'inherit'};"
-		onclick={onOutputClick}
+		style:font-family={isArabic($taraskConfig.abc) ? 'NotoSansArabic' : 'inherit'}
+		use:initInteractiveTags
 		use:parentUse(syncScroll)
 		{contenteditable}>{@html value}</output
 	>

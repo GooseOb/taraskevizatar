@@ -51,7 +51,21 @@ export const taraskPlainTextConfig = derived(
 		})
 );
 
-export const taraskText = localStorageWritableString('tarask_text', () => __DEFAULT_TEXT__, 400);
+export const clearDefaultText = (node: HTMLInputElement) => {
+	node.addEventListener(
+		'focus',
+		() => {
+			if (node.value === getDefaultText()) {
+				taraskText.update(() => '');
+			}
+		},
+		{ once: true }
+	);
+};
+
+const getDefaultText = () => __DEFAULT_TEXT__;
+
+export const taraskText = localStorageWritableString('tarask_text', getDefaultText, 400);
 
 export const outputText = derived([taraskText, taraskConfig], ([$taraskText, $taraskConfig]) => {
 	if (!$taraskText.trim()) {

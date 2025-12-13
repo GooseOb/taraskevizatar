@@ -4,19 +4,15 @@
 	import CloseIcon from '$lib/icons/CloseIcon.svelte';
 	import CopyIcon from '$lib/icons/CopyIcon.svelte';
 	import EditIcon from '$lib/icons/EditIcon.svelte';
-	import { outputText, status, taraskConfig, taraskText } from '$lib/state.svelte';
+	import { initInteractiveTags } from '$lib/interactive-tags';
+	import {
+		clearDefaultText,
+		outputText,
+		status,
+		taraskConfig,
+		taraskText,
+	} from '$lib/state.svelte';
 	import { syncScroll } from '$lib/sync-scroll.svelte';
-	import { createInteractiveTags } from 'taraskevizer';
-
-	const interactiveTags = createInteractiveTags();
-	const initInteractiveTags = (node: Element) => {
-		outputText.subscribe(() => {
-			interactiveTags.update(node);
-		});
-	};
-	const onOutputClick = (e: Event) => {
-		interactiveTags.tryAlternate(e.target as Element);
-	};
 
 	let contenteditable = $state(false);
 
@@ -25,7 +21,12 @@
 
 <div class="page">
 	<TextCard title="Афіцыйны" count={$taraskText.length}>
-		<textarea class="textfield" bind:value={$taraskText} placeholder="Тэкст" use:syncScroll
+		<textarea
+			class="textfield"
+			bind:value={$taraskText}
+			placeholder="Тэкст"
+			use:syncScroll
+			use:clearDefaultText
 		></textarea>
 		{#snippet buttons()}
 			<button
@@ -55,10 +56,9 @@
 			class="textfield"
 			bind:this={outputElement}
 			{contenteditable}
-			style="font-family: {isArabic($taraskConfig.abc) ? 'NotoSansArabic' : 'inherit'};"
+			style:font-family={isArabic($taraskConfig.abc) ? 'NotoSansArabic' : 'inherit'}
 			use:initInteractiveTags
-			use:syncScroll
-			onclick={onOutputClick}>{@html $outputText}</output
+			use:syncScroll>{@html $outputText}</output
 		>
 		{#snippet buttons()}
 			<button
