@@ -51,7 +51,7 @@ export const taraskPlainTextConfig = derived(
 		})
 );
 
-export const clearDefaultText = (node: HTMLInputElement) => {
+export const clearDefaultText = (node: HTMLInputElement | HTMLTextAreaElement) => {
 	node.addEventListener(
 		'focus',
 		() => {
