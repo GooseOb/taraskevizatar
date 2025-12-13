@@ -4,8 +4,8 @@
 	import CopyIcon from '$lib/icons/CopyIcon.svelte';
 	import InfoIcon from '$lib/icons/InfoIcon.svelte';
 	import { getNextPrompt } from '$lib/prompts';
-	import { setSnackbar } from '$lib/state.old.svelte';
-	import { clearDefaultText, taraskText } from '$lib/state.svelte';
+	import { setSnackbar } from '$lib/store/snackbar.old.svelte';
+	import { clearDefaultText, taraskText } from '$lib/store/text';
 	import { syncScroll } from '$lib/sync-scroll.svelte';
 	import TextCard from './TextCard.svelte';
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { theme } from '$lib/state.svelte';
+	import { theme } from '$lib/store/theme';
 	import LightThemeIcon from '$lib/icons/LightThemeIcon.svelte';
 	import DarkThemeIcon from '$lib/icons/DarkThemeIcon.svelte';
 

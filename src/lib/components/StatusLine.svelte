@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { isMobile } from '$lib/isMobile';
-	import { status } from '$lib/state.svelte';
+	import { status } from '$lib/store/status';
 	import { fade } from 'svelte/transition';
 
 	let visible = $state(!isMobile());

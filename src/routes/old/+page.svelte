@@ -5,7 +5,7 @@
 	import Header from '$lib/components/old/Header.svelte';
 	import OfficialTextCard from '$lib/components/old/OfficialTextCard.svelte';
 	import ClassicTextCard from '$lib/components/old/ClassicTextCard.svelte';
-	import { setSnackbar } from '$lib/state.old.svelte';
+	import { setSnackbar } from '$lib/store/snackbar.old.svelte';
 
 	navigator.serviceWorker.ready.then((sw) => {
 		sw.addEventListener('updatefound', () => {

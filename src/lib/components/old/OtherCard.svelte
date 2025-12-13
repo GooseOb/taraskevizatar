@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setSnackbar } from '$lib/state.old.svelte';
+	import { setSnackbar } from '$lib/store/snackbar.old.svelte';
 	import SettingsCard from './SettingsCard.svelte';
 
 	const onDeleteAllData = async () => {

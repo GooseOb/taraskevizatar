@@ -1,5 +1,5 @@
 <script>
-	import { cancelHiding, hideWithTimeout, snackbar } from '$lib/state.old.svelte';
+	import { cancelHiding, hideWithTimeout, snackbar } from '$lib/store/snackbar.old.svelte';
 	import { fade } from 'svelte/transition';
 </script>
 

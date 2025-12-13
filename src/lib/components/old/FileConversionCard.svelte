@@ -1,10 +1,11 @@
 <script lang="ts">
 	import SettingsCard from './SettingsCard.svelte';
 	import { pipelines } from 'taraskevizer';
-	import { files, taraskPlainTextConfig } from '$lib/state.svelte';
-	import { setSnackbar } from '$lib/state.old.svelte';
 	import { delay } from '$lib/delay';
 	import { getOnDownload } from '$lib/on-download';
+	import { files } from '$lib/store/files';
+	import { setSnackbar } from '$lib/store/snackbar.old.svelte';
+	import { taraskPlainTextConfig } from '$lib/store/config';
 
 	const onFileChange = ({ currentTarget }: { currentTarget: HTMLInputElement }) => {
 		const file = currentTarget.files![0];

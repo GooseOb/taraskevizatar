@@ -1,13 +1,13 @@
 <script lang="ts">
 	import AccordionPicker from './AccordionPicker.svelte';
 	import type { ComponentProps } from 'svelte';
-	import { taraskConfig } from '$lib/state.svelte';
 	import { dicts } from 'taraskevizer';
 	import Footer from './Footer.svelte';
 	import Navigation from './Navigation.svelte';
 	import { isMobile } from '$lib/isMobile';
 	import ContactsCard from './ContactsCard.svelte';
 	import { resolve } from '$app/paths';
+	import { taraskConfig } from '$lib/store/config';
 
 	let {
 		open = $bindable(),

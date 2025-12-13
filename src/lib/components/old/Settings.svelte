@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { dicts } from 'taraskevizer';
 	import type { ComponentProps } from 'svelte';
-	import { previousPathname, taraskConfig } from '$lib/state.svelte.ts';
 	import Selector from '$lib/components/old/Selector.svelte';
 	import SettingsCard from '$lib/components/old/SettingsCard.svelte';
 	import FileConversionCard from '$lib/components/old/FileConversionCard.svelte';
 	import ContactsCard from './ContactsCard.svelte';
 	import OtherCard from './OtherCard.svelte';
+	import { taraskConfig } from '$lib/store/config';
+	import { previousPathname } from '$lib/store/pathname';
 
 	let { open }: { open: boolean } = $props();
 

@@ -6,14 +6,10 @@
 	import CopyIcon from '$lib/icons/CopyIcon.svelte';
 	import EditIcon from '$lib/icons/EditIcon.svelte';
 	import { initInteractiveTags } from '$lib/interactive-tags';
-	import {
-		clearDefaultText,
-		outputText,
-		status,
-		taraskConfig,
-		taraskText,
-	} from '$lib/state.svelte';
+	import { clearDefaultText, outputText, taraskText } from '$lib/store/text';
 	import { syncScroll } from '$lib/sync-scroll.svelte';
+	import { taraskConfig } from '$lib/store/config';
+	import { status } from '$lib/store/status';
 
 	let contenteditable = $state(false);
 

@@ -3,12 +3,13 @@
 	import EditIcon from '$lib/icons/EditIcon.svelte';
 	import SettingsIcon from '$lib/icons/SettingsIcon.svelte';
 	import TextCard from './TextCard.svelte';
-	import { setSnackbar } from '$lib/state.old.svelte';
-	import { outputText, taraskConfig } from '$lib/state.svelte';
 	import { isArabic } from '$lib/alphabets';
 	import { syncScroll } from '$lib/sync-scroll.svelte';
 	import { parentUse } from '$lib/parent-use';
 	import { initInteractiveTags } from '$lib/interactive-tags';
+	import { outputText } from '$lib/store/text';
+	import { setSnackbar } from '$lib/store/snackbar.old.svelte';
+	import { taraskConfig } from '$lib/store/config';
 
 	let {
 		areSettingsOpen = $bindable(),

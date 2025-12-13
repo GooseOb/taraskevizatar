@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { pipelines } from 'taraskevizer';
-	import { files, taraskPlainTextConfig, type FileData } from '$lib/state.svelte';
 	import FileCard from '$lib/components/FileCard.svelte';
-	import { status } from '$lib/state.svelte';
 	import { fade } from 'svelte/transition';
 	import { ofNewFiles } from '$lib/numeral-helpers';
+	import { type FileData, files } from '$lib/store/files';
+	import { taraskPlainTextConfig } from '$lib/store/config';
+	import { status } from '$lib/store/status';
 
 	async function handleFiles(e: Event) {
 		const fileList = (e.target as HTMLInputElement).files;

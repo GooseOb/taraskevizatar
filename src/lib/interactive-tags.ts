@@ -1,5 +1,5 @@
 import { createInteractiveTags } from 'taraskevizer';
-import { outputText } from './state.svelte';
+import { outputText } from './store/text';
 
 const interactiveTags = createInteractiveTags();
 

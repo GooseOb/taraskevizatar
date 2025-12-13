@@ -1,7 +1,7 @@
 <script lang="ts">
 	import './global.scss';
 	import PageTransition from '$lib/components/PageTransition.svelte';
-	import { previousPathname } from '$lib/state.svelte.ts';
+	import { previousPathname } from '$lib/store/pathname';
 	import { beforeNavigate } from '$app/navigation';
 
 	beforeNavigate(({ from }) => {
