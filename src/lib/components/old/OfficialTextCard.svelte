@@ -5,25 +5,19 @@
 	import InfoIcon from '$lib/icons/InfoIcon.svelte';
 	import { getNextPrompt } from '$lib/prompts';
 	import { setSnackbar } from '$lib/state.old.svelte';
-	import { clearDefaultText } from '$lib/state.svelte';
+	import { clearDefaultText, taraskText } from '$lib/state.svelte';
 	import { syncScroll } from '$lib/sync-scroll.svelte';
 	import TextCard from './TextCard.svelte';
-
-	let {
-		value = $bindable(''),
-	}: {
-		value: string;
-	} = $props();
 
 	let element: HTMLTextAreaElement = $state()!;
 
 	const onCopy = async () => {
-		await navigator.clipboard.writeText(value);
+		await navigator.clipboard.writeText($taraskText);
 		setSnackbar('Скапіявана');
 	};
 
 	const onClear = () => {
-		value = '';
+		$taraskText = '';
 	};
 
 	const onInfo = () => {
@@ -39,7 +33,7 @@
 		}
 	}}
 />
-<TextCard title="Афіцыйны" counterValue={value.length}>
+<TextCard title="Афіцыйны" counterValue={$taraskText.length}>
 	<!-- svelte-ignore a11y_autofocus -->
 	<textarea
 		use:dynamicHeight
@@ -49,7 +43,7 @@
 		class="textfield"
 		placeholder="Тэкст"
 		style:height="519px"
-		bind:value
+		bind:value={$taraskText}
 	></textarea>
 	{#snippet iconButtons()}
 		<button onclick={onCopy} title="Капіяваць">

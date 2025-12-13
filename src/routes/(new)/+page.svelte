@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { adjustHeightToResize } from '$lib/adjustHeightToResize';
+	import { adjustHeightToResize } from '$lib/adjustHeightToResize.svelte';
 	import { isArabic } from '$lib/alphabets';
 	import TextCard from '$lib/components/TextCard.svelte';
 	import CloseIcon from '$lib/icons/CloseIcon.svelte';
@@ -18,6 +18,15 @@
 	let contenteditable = $state(false);
 
 	let outputElement = $state<HTMLElement>();
+
+	let classicCharCount = $state(0);
+	$effect(() =>
+		outputText.subscribe(() => {
+			queueMicrotask(() => {
+				classicCharCount = outputElement?.innerText.length ?? 0;
+			});
+		})
+	);
 </script>
 
 <div class="page" use:adjustHeightToResize>
@@ -51,7 +60,7 @@
 			</button>
 		{/snippet}
 	</TextCard>
-	<TextCard title="Клясычны" count={outputElement?.innerText.length ?? 0}>
+	<TextCard title="Клясычны" count={classicCharCount}>
 		<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 		<output
 			class="textfield"

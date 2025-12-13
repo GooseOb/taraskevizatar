@@ -4,17 +4,15 @@
 	import SettingsIcon from '$lib/icons/SettingsIcon.svelte';
 	import TextCard from './TextCard.svelte';
 	import { setSnackbar } from '$lib/state.old.svelte';
-	import { taraskConfig } from '$lib/state.svelte';
+	import { outputText, taraskConfig } from '$lib/state.svelte';
 	import { isArabic } from '$lib/alphabets';
 	import { syncScroll } from '$lib/sync-scroll.svelte';
 	import { parentUse } from '$lib/parent-use';
 	import { initInteractiveTags } from '$lib/interactive-tags';
 
 	let {
-		value,
 		areSettingsOpen = $bindable(),
 	}: {
-		value: string;
 		areSettingsOpen: boolean;
 	} = $props();
 
@@ -22,7 +20,7 @@
 	let element: HTMLElement = $state()!;
 
 	const onCopy = async () => {
-		await navigator.clipboard.writeText(value);
+		await navigator.clipboard.writeText($outputText);
 		setSnackbar('Скапіявана');
 	};
 
@@ -39,18 +37,24 @@
 	};
 
 	let counterValue = $state(0);
+	$effect(() =>
+		outputText.subscribe(() => {
+			queueMicrotask(() => {
+				counterValue = element?.innerText.length ?? 0;
+			});
+		})
+	);
 </script>
 
 <TextCard title="Клясычны" {counterValue}>
 	<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 	<output
 		bind:this={element}
-		id="output"
 		class="textfield"
 		style:font-family={isArabic($taraskConfig.abc) ? 'NotoSansArabic' : 'inherit'}
 		use:initInteractiveTags
 		use:parentUse(syncScroll)
-		{contenteditable}>{@html value}</output
+		{contenteditable}>{@html $outputText}</output
 	>
 	{#snippet iconButtons()}
 		<button onclick={onCopy} title="Капіяваць">

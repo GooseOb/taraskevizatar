@@ -5,7 +5,6 @@
 	import Header from '$lib/components/old/Header.svelte';
 	import OfficialTextCard from '$lib/components/old/OfficialTextCard.svelte';
 	import ClassicTextCard from '$lib/components/old/ClassicTextCard.svelte';
-	import { outputText, taraskText } from '$lib/state.svelte.ts';
 	import { setSnackbar } from '$lib/state.old.svelte';
 
 	navigator.serviceWorker.ready.then((sw) => {
@@ -30,8 +29,8 @@
 
 	<main>
 		<div class="card">
-			<OfficialTextCard bind:value={$taraskText} />
-			<ClassicTextCard value={$outputText} bind:areSettingsOpen />
+			<OfficialTextCard />
+			<ClassicTextCard bind:areSettingsOpen />
 		</div>
 
 		<Settings open={areSettingsOpen} />
