@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { adjustHeightToResize } from '$lib/adjustHeightToResize';
 	import { isArabic } from '$lib/alphabets';
 	import TextCard from '$lib/components/TextCard.svelte';
 	import CloseIcon from '$lib/icons/CloseIcon.svelte';
@@ -19,7 +20,7 @@
 	let outputElement = $state<HTMLElement>();
 </script>
 
-<div class="page">
+<div class="page" use:adjustHeightToResize>
 	<TextCard title="Афіцыйны" count={$taraskText.length}>
 		<textarea
 			class="textfield"
@@ -50,7 +51,7 @@
 			</button>
 		{/snippet}
 	</TextCard>
-	<TextCard title="Клясычны" count={outputElement?.textContent.length ?? 0}>
+	<TextCard title="Клясычны" count={outputElement?.innerText.length ?? 0}>
 		<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 		<output
 			class="textfield"
