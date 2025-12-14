@@ -7,7 +7,7 @@
 	import { syncScroll } from '$lib/actions/syncScroll.svelte';
 	import { status } from '$lib/store/status';
 	import { avoidVirtualKeyboard } from '$lib/actions/avoidVirtualKeyboard.svelte';
-	import { output } from '$lib/actions/output';
+	import { output } from '$lib/actions/output.svelte';
 
 	let contenteditable = $state(false);
 

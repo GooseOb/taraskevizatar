@@ -7,7 +7,7 @@
 	import { parentUse } from '$lib/actions/parentUse';
 	import { outputTextLength } from '$lib/store/text';
 	import { setSnackbar } from '$lib/store/snackbar.old.svelte';
-	import { output } from '$lib/actions/output';
+	import { output } from '$lib/actions/output.svelte';
 
 	let {
 		areSettingsOpen = $bindable(),
