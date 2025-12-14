@@ -3,13 +3,11 @@
 	import EditIcon from '$lib/icons/EditIcon.svelte';
 	import SettingsIcon from '$lib/icons/SettingsIcon.svelte';
 	import TextCard from './TextCard.svelte';
-	import { isArabic } from '$lib/alphabets';
 	import { syncScroll } from '$lib/actions/syncScroll.svelte';
 	import { parentUse } from '$lib/actions/parentUse';
-	import { initInteractiveTags } from '$lib/actions/interactiveTags';
-	import { outputText } from '$lib/store/text';
+	import { outputTextLength } from '$lib/store/text';
 	import { setSnackbar } from '$lib/store/snackbar.old.svelte';
-	import { taraskConfig } from '$lib/store/config';
+	import { output } from '$lib/actions/output';
 
 	let {
 		areSettingsOpen = $bindable(),
@@ -21,7 +19,7 @@
 	let element: HTMLElement = $state()!;
 
 	const onCopy = async () => {
-		await navigator.clipboard.writeText($outputText);
+		await navigator.clipboard.writeText(element.innerText);
 		setSnackbar('Скапіявана');
 	};
 
@@ -36,27 +34,17 @@
 			setSnackbar('Рэдагаваньне выключана');
 		}
 	};
-
-	let counterValue = $state(0);
-	$effect(() =>
-		outputText.subscribe(() => {
-			queueMicrotask(() => {
-				counterValue = element?.innerText.length ?? 0;
-			});
-		})
-	);
 </script>
 
-<TextCard title="Клясычны" {counterValue}>
+<TextCard title="Клясычны" counterValue={$outputTextLength}>
 	<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 	<output
 		bind:this={element}
 		class="textfield"
-		style:font-family={isArabic($taraskConfig.abc) ? 'NotoSansArabic' : 'inherit'}
-		use:initInteractiveTags
+		use:output
 		use:parentUse(syncScroll)
-		{contenteditable}>{@html $outputText}</output
-	>
+		{contenteditable}
+	></output>
 	{#snippet iconButtons()}
 		<button onclick={onCopy} title="Капіяваць">
 			<CopyIcon />

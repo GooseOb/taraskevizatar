@@ -7,7 +7,7 @@
 	import { taraskPlainTextConfig } from '$lib/store/config';
 	import { status } from '$lib/store/status';
 
-	async function handleFiles(e: Event) {
+	const handleFiles = async (e: Event) => {
 		const fileList = (e.target as HTMLInputElement).files;
 		if (!fileList || fileList.length === 0) return;
 
@@ -45,7 +45,7 @@
 		}
 
 		status.set(`Апрацавана: ${ofNewFiles(total)}`);
-	}
+	};
 </script>
 
 <div class="page">

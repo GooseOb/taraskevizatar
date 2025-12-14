@@ -1,4 +1,4 @@
-import { derived } from 'svelte/store';
+import { derived, writable } from 'svelte/store';
 import { taraskConfig } from './config';
 import { getOutputPlaceholder } from '$lib/alphabets';
 import { pipelines } from 'taraskevizer';
@@ -33,3 +33,5 @@ export const outputText = derived([taraskText, taraskConfig], ([$taraskText, $ta
 		);
 	}
 });
+
+export const outputTextLength = writable(0);
