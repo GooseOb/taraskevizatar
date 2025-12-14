@@ -1,3 +1,4 @@
 bun run check
+bun run format
 
 git add -A .
