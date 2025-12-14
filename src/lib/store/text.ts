@@ -1,8 +1,8 @@
-import { localStorageWritableString } from '$lib/localStorage';
 import { derived } from 'svelte/store';
 import { taraskConfig } from './config';
 import { getOutputPlaceholder } from '$lib/alphabets';
 import { pipelines } from 'taraskevizer';
+import { localStorageWritableString } from './localStorage';
 
 export const clearDefaultText = (node: HTMLInputElement | HTMLTextAreaElement) => {
 	node.addEventListener(

@@ -2,7 +2,7 @@
 	import Header from '$lib/components/Header.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import BurgerButton from '$lib/components/BurgerButton.svelte';
-	import { isMobile } from '$lib/isMobile';
+	import { isMobile } from '$lib/utils/isMobile';
 	import StatusLine from '$lib/components/StatusLine.svelte';
 	import PageTransition from '$lib/components/PageTransition.svelte';
 

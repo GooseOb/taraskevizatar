@@ -2,7 +2,7 @@
 	import { pipelines } from 'taraskevizer';
 	import FileCard from '$lib/components/FileCard.svelte';
 	import { fade } from 'svelte/transition';
-	import { ofNewFiles } from '$lib/numeral-helpers';
+	import { ofNewFiles } from '$lib/plurals';
 	import { type FileData, files } from '$lib/store/files';
 	import { taraskPlainTextConfig } from '$lib/store/config';
 	import { status } from '$lib/store/status';

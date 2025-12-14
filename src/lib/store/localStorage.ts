@@ -1,5 +1,5 @@
+import { debounce } from '$lib/utils/debounce';
 import { writable } from 'svelte/store';
-import { debounce } from './debounce';
 
 export const localStorageWritableString = <T extends string>(
 	key: string,

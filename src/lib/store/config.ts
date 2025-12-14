@@ -1,7 +1,7 @@
 import { dicts, htmlConfigOptions, TaraskConfig } from 'taraskevizer';
 import { derived } from 'svelte/store';
 import { alphabets } from '$lib/alphabets';
-import { localStorageWritable } from '$lib/localStorage';
+import { localStorageWritable } from './localStorage';
 
 type SerializableConfig = Pick<TaraskConfig, 'j' | 'doEscapeCapitalized' | 'g'> & {
 	abc: number;

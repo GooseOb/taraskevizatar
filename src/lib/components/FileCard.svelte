@@ -3,7 +3,7 @@
 	import Loader from './Loader.svelte';
 	import DownloadIcon from '$lib/icons/DownloadIcon.svelte';
 	import CloseIcon from '$lib/icons/CloseIcon.svelte';
-	import { getOnDownload } from '$lib/on-download';
+	import { getOnDownload } from '$lib/onDownload';
 
 	const {
 		name,

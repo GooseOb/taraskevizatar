@@ -1,8 +1,8 @@
 <script lang="ts">
 	import SettingsCard from './SettingsCard.svelte';
 	import { pipelines } from 'taraskevizer';
-	import { delay } from '$lib/delay';
-	import { getOnDownload } from '$lib/on-download';
+	import { delay } from '$lib/utils/delay';
+	import { getOnDownload } from '$lib/onDownload';
 	import { files } from '$lib/store/files';
 	import { setSnackbar } from '$lib/store/snackbar.old.svelte';
 	import { taraskPlainTextConfig } from '$lib/store/config';

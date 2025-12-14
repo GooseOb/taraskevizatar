@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isMobile } from '$lib/isMobile';
+	import { isMobile } from '$lib/utils/isMobile';
 	import { status } from '$lib/store/status';
 	import { fade } from 'svelte/transition';
 

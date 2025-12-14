@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { adjustHeightToResize } from '$lib/adjustHeightToResize.svelte';
 	import { isArabic } from '$lib/alphabets';
 	import TextCard from '$lib/components/TextCard.svelte';
 	import CloseIcon from '$lib/icons/CloseIcon.svelte';
 	import CopyIcon from '$lib/icons/CopyIcon.svelte';
 	import EditIcon from '$lib/icons/EditIcon.svelte';
-	import { initInteractiveTags } from '$lib/interactive-tags';
+	import { initInteractiveTags } from '$lib/actions/interactiveTags';
 	import { clearDefaultText, outputText, taraskText } from '$lib/store/text';
-	import { syncScroll } from '$lib/sync-scroll.svelte';
+	import { syncScroll } from '$lib/actions/syncScroll.svelte';
 	import { taraskConfig } from '$lib/store/config';
 	import { status } from '$lib/store/status';
+	import { avoidVirtualKeyboard } from '$lib/actions/avoidVirtualKeyboard.svelte';
 
 	let contenteditable = $state(false);
 
@@ -25,7 +25,7 @@
 	);
 </script>
 
-<div class="page" use:adjustHeightToResize>
+<div class="page" use:avoidVirtualKeyboard>
 	<TextCard title="Афіцыйны" count={$taraskText.length}>
 		<textarea
 			class="textfield"

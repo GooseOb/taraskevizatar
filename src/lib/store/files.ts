@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import { taraskPlainTextConfig } from './config';
 import { pipelines } from 'taraskevizer';
-import { ofFiles } from '$lib/numeral-helpers';
+import { ofFiles } from '$lib/plurals';
 import { status } from './status';
 
 export interface FileData {

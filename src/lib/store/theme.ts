@@ -1,4 +1,4 @@
-import { localStorageWritableString } from '$lib/localStorage';
+import { localStorageWritableString } from './localStorage';
 
 export const theme = localStorageWritableString<'0' | '1' | '2'>('theme', () => '0', 10);
 

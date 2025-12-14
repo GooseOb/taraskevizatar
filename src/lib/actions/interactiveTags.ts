@@ -1,5 +1,5 @@
+import { outputText } from '$lib/store/text';
 import { createInteractiveTags } from 'taraskevizer';
-import { outputText } from './store/text';
 
 const interactiveTags = createInteractiveTags();
 

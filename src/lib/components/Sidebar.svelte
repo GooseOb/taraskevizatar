@@ -4,7 +4,7 @@
 	import { dicts } from 'taraskevizer';
 	import Footer from './Footer.svelte';
 	import Navigation from './Navigation.svelte';
-	import { isMobile } from '$lib/isMobile';
+	import { isMobile } from '$lib/utils/isMobile';
 	import ContactsCard from './ContactsCard.svelte';
 	import { resolve } from '$app/paths';
 	import { taraskConfig } from '$lib/store/config';
