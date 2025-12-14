@@ -1,11 +1,12 @@
 import { isArabic } from '$lib/alphabets';
 import { taraskConfig } from '$lib/store/config';
 import { outputText, outputTextLength } from '$lib/store/text';
+import type { Action } from 'svelte/action';
 import { createInteractiveTags } from 'taraskevizer';
 
 const interactiveTags = createInteractiveTags();
 
-export const output = (node: HTMLElement) => {
+export const output: Action = (node) => {
 	const unsubText = outputText.subscribe((text) => {
 		node.innerHTML = text;
 		interactiveTags.update(node);
@@ -16,13 +17,15 @@ export const output = (node: HTMLElement) => {
 		node.style.fontFamily = isArabic(abc) ? 'NotoSansArabic' : 'inherit';
 	});
 
-	$effect(() => () => {
-		unsubText();
-		unsubConfig();
-	});
-
 	node.addEventListener('click', (e) => {
 		interactiveTags.tryAlternate(e.target as Element);
 		outputTextLength.set(node.innerText.length);
 	});
+
+	return {
+		destroy: () => {
+			unsubText();
+			unsubConfig();
+		},
+	};
 };

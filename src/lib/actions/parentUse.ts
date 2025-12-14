@@ -1,7 +1,6 @@
+import type { Action } from 'svelte/action';
+
 export const parentUse =
-	<T>(fn: (el: T) => void) =>
-	(el: { parentElement?: T | null }) => {
-		if (el.parentElement) {
-			fn(el.parentElement);
-		}
-	};
+	<TElement>(fn: Action<TElement>): Action<{ parentElement?: TElement | null }> =>
+	({ parentElement }) =>
+		parentElement ? fn(parentElement) : undefined;

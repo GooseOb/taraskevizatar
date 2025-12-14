@@ -1,4 +1,6 @@
-export const avoidVirtualKeyboard = (node: HTMLElement) => {
+import type { Action } from 'svelte/action';
+
+export const avoidVirtualKeyboard: Action = (node) => {
 	if (window.visualViewport) {
 		const handler = () => {
 			node.style.height = `calc(100% - ${Math.max(0, window.innerHeight - window.visualViewport!.height)}px)`;
@@ -6,8 +8,10 @@ export const avoidVirtualKeyboard = (node: HTMLElement) => {
 
 		window.visualViewport.addEventListener('resize', handler);
 
-		$effect(() => () => {
-			window.visualViewport!.removeEventListener('resize', handler);
-		});
+		return {
+			destroy: () => {
+				window.visualViewport!.removeEventListener('resize', handler);
+			},
+		};
 	}
 };

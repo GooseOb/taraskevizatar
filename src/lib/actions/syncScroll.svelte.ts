@@ -1,6 +1,8 @@
+import type { Action } from 'svelte/action';
+
 let ratio = $state(0);
 
-export const syncScroll = (el: HTMLElement) => {
+export const syncScroll: Action = (el) => {
 	$effect(() => {
 		el.scrollTop = ratio * (el.scrollHeight - el.clientHeight);
 	});

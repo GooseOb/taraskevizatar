@@ -6,8 +6,8 @@
 	import { clearDefaultText, outputTextLength, taraskText } from '$lib/store/text';
 	import { syncScroll } from '$lib/actions/syncScroll.svelte';
 	import { status } from '$lib/store/status';
-	import { avoidVirtualKeyboard } from '$lib/actions/avoidVirtualKeyboard.svelte';
-	import { output } from '$lib/actions/output.svelte';
+	import { avoidVirtualKeyboard } from '$lib/actions/avoidVirtualKeyboard';
+	import { output } from '$lib/actions/output';
 
 	let contenteditable = $state(false);
 

@@ -1,3 +1,5 @@
+import type { Action } from 'svelte/action';
+
 const getHelper = (element: HTMLElement) => () => {
 	element.style.height = '0';
 	requestAnimationFrame(() => {
@@ -5,7 +7,7 @@ const getHelper = (element: HTMLElement) => () => {
 	});
 };
 
-export const dynamicHeight = (element: HTMLElement) => {
+export const dynamicHeight: Action = (element) => {
 	const helper = getHelper(element);
 	helper();
 	element.addEventListener('input', helper);
