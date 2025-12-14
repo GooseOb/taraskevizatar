@@ -14,23 +14,28 @@ export const localStorageWritableString = <T extends string>(
 		delay
 	);
 
-export const localStorageWritable = <T>(
-	key: string,
-	getDefaultValue: () => T,
-	deserialize: (value: string) => T,
-	serialize: (value: T) => string,
-	delay = 100
-) => {
-	const value = localStorage.getItem(key);
+const getStorageWriteable =
+	(storage: Storage) =>
+	<T>(
+		key: string,
+		getDefaultValue: () => T,
+		deserialize: (value: string) => T,
+		serialize: (value: T) => string,
+		delay = 100
+	) => {
+		const value = storage.getItem(key);
 
-	const store = writable<T>(value ? deserialize(value) : getDefaultValue());
+		const store = writable<T>(value ? deserialize(value) : getDefaultValue());
 
-	store.subscribe(
-		// Ensure that data to be stored do not cause app to freeze
-		debounce((value) => {
-			localStorage.setItem(key, serialize(value));
-		}, delay)
-	);
+		store.subscribe(
+			// Ensure that data to be stored do not cause app to freeze
+			debounce((value) => {
+				storage.setItem(key, serialize(value));
+			}, delay)
+		);
 
-	return store;
-};
+		return store;
+	};
+
+export const localStorageWritable = getStorageWriteable(localStorage);
+export const sessionStorageWritable = getStorageWriteable(sessionStorage);
