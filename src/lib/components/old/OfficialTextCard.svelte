@@ -36,7 +36,7 @@
 <TextCard title="Афіцыйны" counterValue={$taraskText.length}>
 	<!-- svelte-ignore a11y_autofocus -->
 	<textarea
-		use:dynamicHeight
+		use:dynamicHeight={taraskText}
 		use:syncScroll
 		use:clearDefaultText
 		bind:this={element}
