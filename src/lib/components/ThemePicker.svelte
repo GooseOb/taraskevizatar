@@ -25,7 +25,7 @@
 	.picker {
 		font-size: 1rem;
 		display: flex;
-		background-color: var(--bg);
+		background-color: var(--primary-light);
 		margin-left: auto;
 		border-radius: 1rem;
 		overflow: hidden;
@@ -49,7 +49,7 @@
 			}
 		}
 		&:has(input:checked) {
-			background-color: var(--4);
+			background-color: var(--primary-dark);
 		}
 	}
 

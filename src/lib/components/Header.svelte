@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ThemePicker from './old/ThemePicker.svelte';
+	import ThemePicker from './ThemePicker.svelte';
 
 	const {
 		children,

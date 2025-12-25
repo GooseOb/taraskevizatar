@@ -46,11 +46,11 @@
 		}
 
 		&:first-child {
-			background-color: var(--3);
+			background-color: var(--secondary-dark);
 		}
 
 		&:last-child {
-			background-color: var(--2);
+			background-color: var(--secondary);
 		}
 	}
 
@@ -59,7 +59,7 @@
 		padding: 0.8rem;
 		padding-left: 1.8rem;
 		font-weight: bold;
-		background-color: var(--1);
+		background-color: var(--primary);
 		display: flex;
 		flex-direction: row;
 	}
@@ -127,7 +127,7 @@
 			}
 			::selection,
 			::-moz-selection {
-				background: var(--1) !important;
+				background: var(--primary) !important;
 			}
 		}
 	}

@@ -69,7 +69,7 @@
 
 		&::selection,
 		&::-moz-selection {
-			background: var(--1);
+			background: var(--primary);
 		}
 	}
 </style>

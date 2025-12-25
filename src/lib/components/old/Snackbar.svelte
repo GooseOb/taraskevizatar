@@ -18,7 +18,7 @@
 
 <style>
 	div {
-		background: var(--4);
+		background: var(--primary-dark);
 		position: fixed;
 		bottom: 1rem;
 		left: 1rem;
@@ -37,7 +37,7 @@
 
 		:global {
 			.demo {
-				background-color: var(--3);
+				background-color: var(--secondary-dark);
 				padding: 0.2rem;
 				border-radius: 0.4rem;
 			}

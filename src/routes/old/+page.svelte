@@ -52,7 +52,7 @@
 
 			::selection,
 			::-moz-selection {
-				background: var(--2);
+				background: var(--secondary-dark);
 			}
 		}
 	}

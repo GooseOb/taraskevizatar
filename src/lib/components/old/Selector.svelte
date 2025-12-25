@@ -31,7 +31,7 @@
 	<AnimationElement
 		elements={optionElements}
 		activeIndex={options.findIndex((opt) => opt.value === value)}
-		color="var(--3)"
+		color="var(--secondary-dark)"
 	/>
 </SettingsCard>
 

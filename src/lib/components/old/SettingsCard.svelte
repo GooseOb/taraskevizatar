@@ -21,7 +21,7 @@
 		margin: 1rem;
 		height: fit-content;
 		justify-content: center;
-		background-color: var(--1);
+		background-color: var(--primary);
 		align-items: center;
 		border-radius: 1rem;
 		overflow: hidden;
@@ -40,7 +40,7 @@
 		user-select: none;
 		overflow: hidden;
 		justify-content: center;
-		background-color: var(--2);
+		background-color: var(--secondary);
 		border-radius: 0 1rem 0 0;
 		position: relative;
 		display: flex;

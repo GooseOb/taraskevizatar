@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ThemePicker from './ThemePicker.svelte';
+	import ThemePicker from '../ThemePicker.svelte';
 </script>
 
 <header>
@@ -15,7 +15,7 @@
 		display: flex;
 		align-items: center;
 		padding: 0 1rem;
-		background-color: var(--1);
+		background-color: var(--primary);
 		font-size: 1rem;
 		box-shadow: #0004 0 0 20px;
 
