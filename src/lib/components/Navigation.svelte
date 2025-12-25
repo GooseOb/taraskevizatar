@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import AnimationElement from './AnimationElement.svelte';
 	import { resolve } from '$app/paths';
+	import { preserveFocusAfterClick } from '$lib/actions/preserveFocus';
 
 	const elements: HTMLAnchorElement[] = $state([]);
 	const links = [
@@ -13,7 +14,7 @@
 <div class="wrapper">
 	<nav>
 		{#each links as { href, label }, index}
-			<a {href} bind:this={elements[index]}>{label}</a>
+			<a {href} bind:this={elements[index]} use:preserveFocusAfterClick>{label}</a>
 		{/each}
 		<AnimationElement
 			color="var(--secondary-dark)"

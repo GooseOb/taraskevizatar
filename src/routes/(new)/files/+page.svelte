@@ -114,8 +114,10 @@
 		transition: background-color 0.2s ease;
 		border: none;
 		font-size: 1rem;
+		outline: none;
 
 		&:hover,
+		&:focus-visible,
 		&:has(input:focus-visible) {
 			background-color: var(--primary-dark);
 		}

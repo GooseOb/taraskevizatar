@@ -40,6 +40,17 @@
 		cursor: pointer;
 		transition: background-color 0.2s;
 		position: relative;
+
+		&:hover,
+		&:has(input:focus-visible) {
+			background-color: var(--btn-hover);
+			.icon {
+				opacity: 1;
+			}
+		}
+		&:has(input:checked) {
+			background-color: var(--4);
+		}
 	}
 
 	input {
@@ -47,6 +58,11 @@
 		opacity: 0;
 		inset: 0;
 		cursor: pointer;
+
+		&:checked + .icon {
+			opacity: 1;
+			transform: scale(1.05);
+		}
 	}
 
 	.icon {
@@ -57,26 +73,5 @@
 			opacity 0.2s,
 			transform 0.2s;
 		opacity: 0.8;
-	}
-
-	.item:hover {
-		background-color: #0002;
-	}
-
-	.item:hover .icon {
-		opacity: 1;
-	}
-
-	input:checked + .icon {
-		opacity: 1;
-		transform: scale(1.05);
-	}
-
-	input:checked ~ .icon {
-		opacity: 1;
-	}
-
-	.item:has(input:checked) {
-		background-color: var(--4);
 	}
 </style>
