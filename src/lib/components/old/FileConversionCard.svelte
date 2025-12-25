@@ -3,18 +3,14 @@
 	import { pipelines } from 'taraskevizer';
 	import { delay } from '$lib/utils/delay';
 	import { getOnDownload } from '$lib/onDownload';
-	import { files } from '$lib/store/files';
+	import { FileData, files } from '$lib/store/files';
 	import { setSnackbar } from '$lib/store/snackbar.old.svelte';
 	import { taraskPlainTextConfig } from '$lib/store/config';
 
 	const onFileChange = ({ currentTarget }: { currentTarget: HTMLInputElement }) => {
 		const file = currentTarget.files![0];
 
-		$files[0] = {
-			name: file.name,
-			raw: null,
-			value: null,
-		};
+		$files[0] = new FileData(file.name);
 
 		file.text().then((text) => {
 			$files[0].raw = text;

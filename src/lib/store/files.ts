@@ -4,10 +4,20 @@ import { pipelines } from 'taraskevizer';
 import { ofFiles } from '$lib/plurals';
 import { status } from './status';
 
-export interface FileData {
+export class FileData {
+	id: number = Math.random() * 1e17;
 	name: string;
-	raw: string | null;
-	value: string | null;
+	raw: string | null = null;
+	value: string | null = null;
+
+	constructor(name: string) {
+		this.name = name;
+	}
+}
+
+export interface FileDataProcessed extends FileData {
+	raw: string;
+	value: string;
 }
 
 export const files = writable<FileData[]>([]);

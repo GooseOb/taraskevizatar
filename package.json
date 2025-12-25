@@ -34,6 +34,7 @@
 		"vite": "^7.2.7"
 	},
 	"dependencies": {
+		"jszip": "^3.10.1",
 		"taraskevizer": "^10.4.14"
 	}
 }
