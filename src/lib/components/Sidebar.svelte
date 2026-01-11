@@ -60,40 +60,42 @@
 		: undefined}
 >
 	<Navigation />
-	<div class="pickers">
-		<AccordionPicker title="Альфабэт" options={alphabets} bind:value={$taraskConfig.abc}
-		></AccordionPicker>
-		<AccordionPicker title="і > й пасьля галосных" options={iToJ} bind:value={$taraskConfig.j}
-		></AccordionPicker>
-		<AccordionPicker title="Адразу г > ґ" options={hToG} bind:value={$taraskConfig.g}
-		></AccordionPicker>
-		<AccordionPicker
-			title="Ігнараваць caps"
-			options={ignoreCaps}
-			bind:value={$taraskConfig.doEscapeCapitalized}
-		></AccordionPicker>
-		{#each $plugins as { ui } (ui)}
-			{#if ui}
-				{#each ui as { getValue, setValue, title, options } (title)}
-					<AccordionPicker {title} {options} bind:value={getValue, setValue} />
-				{/each}
-			{/if}
-		{/each}
-		<!-- <Accordion open> -->
-		<!-- 	{#snippet title()} -->
-		<!-- 		<div>Плагіны (у распрацоўцы)</div> -->
-		<!-- 	{/snippet} -->
-		<!-- 	{#each $plugins as { description, name } (name)} -->
-		<!-- 		<div> -->
-		<!-- 			<strong>{name}</strong> -->
-		<!-- 			<p>{description}</p> -->
-		<!-- 		</div> -->
-		<!-- 	{/each} -->
-		<!-- </Accordion> -->
+	<div class="content">
+		<div class="pickers">
+			<AccordionPicker title="Альфабэт" options={alphabets} bind:value={$taraskConfig.abc}
+			></AccordionPicker>
+			<AccordionPicker title="і > й пасьля галосных" options={iToJ} bind:value={$taraskConfig.j}
+			></AccordionPicker>
+			<AccordionPicker title="Адразу г > ґ" options={hToG} bind:value={$taraskConfig.g}
+			></AccordionPicker>
+			<AccordionPicker
+				title="Ігнараваць caps"
+				options={ignoreCaps}
+				bind:value={$taraskConfig.doEscapeCapitalized}
+			></AccordionPicker>
+			{#each $plugins as { ui } (ui)}
+				{#if ui}
+					{#each ui as { getValue, setValue, title, options } (title)}
+						<AccordionPicker {title} {options} bind:value={getValue, setValue} />
+					{/each}
+				{/if}
+			{/each}
+			<!-- <Accordion open> -->
+			<!-- 	{#snippet title()} -->
+			<!-- 		<div>Плагіны (у распрацоўцы)</div> -->
+			<!-- 	{/snippet} -->
+			<!-- 	{#each $plugins as { description, name } (name)} -->
+			<!-- 		<div> -->
+			<!-- 			<strong>{name}</strong> -->
+			<!-- 			<p>{description}</p> -->
+			<!-- 		</div> -->
+			<!-- 	{/each} -->
+			<!-- </Accordion> -->
+		</div>
+		<ContactsCard />
+		<a href={resolve('/old')}> Перайсьці да старой вэрсіі </a>
+		<Footer />
 	</div>
-	<ContactsCard />
-	<a href={resolve('/old')}> Перайсьці да старой вэрсіі </a>
-	<Footer />
 </aside>
 
 <style>
@@ -126,6 +128,15 @@
 				width: 100%;
 			}
 		}
+	}
+
+	.content {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 100%;
+		overflow-y: auto;
 	}
 
 	.pickers {

@@ -42,8 +42,7 @@
 
 <style>
 	.page {
-		/* TODO: why does it help and what to replace it with */
-		display: table;
+		overflow-y: auto;
 
 		:global {
 			:focus {
@@ -57,7 +56,6 @@
 		}
 	}
 	main {
-		height: 80%;
 		width: 85%;
 		margin: 0 auto;
 

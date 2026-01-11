@@ -10,7 +10,7 @@
 	import { output } from '$lib/actions/output';
 	// import { registerPlugin } from '$lib/plugins';
 	// import { examplePlugin } from '$lib/plugins/examplePlugin';
-
+	//
 	// registerPlugin(examplePlugin);
 
 	let contenteditable = $state(false);
