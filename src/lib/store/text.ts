@@ -1,4 +1,4 @@
-import { derived, writable } from 'svelte/store';
+import { derived, writable, type Readable } from 'svelte/store';
 import { taraskConfig } from './config';
 import { getOutputPlaceholder } from '$lib/alphabets';
 import { pipelines } from 'taraskevizer';
@@ -22,7 +22,7 @@ const getDefaultText = () => __DEFAULT_TEXT__;
 export const taraskText = localStorageWritableString('tarask_text', getDefaultText, 300);
 
 let lastText = '';
-export const outputText = derived(
+export const outputText: Readable<string> = derived(
 	[taraskText, taraskConfig, pipeline],
 	([$taraskText, $taraskConfig, $pipeline], set) => {
 		if (!$taraskText.trim()) {
