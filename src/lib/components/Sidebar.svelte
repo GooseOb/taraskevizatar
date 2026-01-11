@@ -8,6 +8,8 @@
 	import ContactsCard from './ContactsCard.svelte';
 	import { resolve } from '$app/paths';
 	import { taraskConfig } from '$lib/store/config';
+	import { plugins } from '$lib/plugins';
+	import Accordion from './Accordion.svelte';
 
 	let {
 		open = $bindable(),
@@ -70,6 +72,24 @@
 			options={ignoreCaps}
 			bind:value={$taraskConfig.doEscapeCapitalized}
 		></AccordionPicker>
+		{#each $plugins as { ui } (ui)}
+			{#if ui}
+				{#each ui as { getValue, setValue, title, options } (title)}
+					<AccordionPicker {title} {options} bind:value={getValue, setValue} />
+				{/each}
+			{/if}
+		{/each}
+		<!-- <Accordion open> -->
+		<!-- 	{#snippet title()} -->
+		<!-- 		<div>Плагіны (у распрацоўцы)</div> -->
+		<!-- 	{/snippet} -->
+		<!-- 	{#each $plugins as { description, name } (name)} -->
+		<!-- 		<div> -->
+		<!-- 			<strong>{name}</strong> -->
+		<!-- 			<p>{description}</p> -->
+		<!-- 		</div> -->
+		<!-- 	{/each} -->
+		<!-- </Accordion> -->
 	</div>
 	<ContactsCard />
 	<a href={resolve('/old')}> Перайсьці да старой вэрсіі </a>

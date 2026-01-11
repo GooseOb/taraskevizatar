@@ -7,6 +7,7 @@
 		title: titleValue,
 		options,
 		value = $bindable(),
+		onChange,
 		open = $bindable(true),
 	}: {
 		title: string;
@@ -20,6 +21,7 @@
 			};
 		}[];
 		value: TValue;
+		onChange?: (value: TValue) => void;
 		open?: boolean;
 	} = $props();
 
@@ -56,6 +58,7 @@
 								selectedOption = option;
 								value = option.value as TValue;
 								selectedOptionIndex = i;
+								onChange?.(value);
 							}}
 						/>
 						{option.label}
