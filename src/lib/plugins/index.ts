@@ -1,8 +1,8 @@
 import { writable } from 'svelte/store';
-import type { Pipeline } from 'taraskevizer/dist/lib';
+import type { AsyncPipeline, Pipeline } from 'taraskevizer/dist/lib';
 import { status } from '../store/status';
 
-type UIElement<T = unknown> = {
+type UIElement<T = any> = {
 	type: 'picker';
 	title: string;
 	options: readonly { label: string; value: T }[];
@@ -15,7 +15,7 @@ interface PluginValue {
 	compat?: { min?: number[]; max?: number[] };
 	description: string;
 	ui: UIElement[];
-	updateCurrentPipeline: (pipeline: Pipeline) => Pipeline;
+	updateCurrentPipeline: (pipeline: Pipeline) => Pipeline | AsyncPipeline;
 }
 
 interface PluginUI {

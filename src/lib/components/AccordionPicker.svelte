@@ -1,7 +1,6 @@
 <script lang="ts" generics="TOptionValue, TValue extends TOptionValue">
-	import { fade } from 'svelte/transition';
-	import Accordion from './Accordion.svelte';
 	import AnimationElement from './AnimationElement.svelte';
+	import SettingsAccordion from './SettingsAccordion.svelte';
 
 	let {
 		title: titleValue,
@@ -32,19 +31,12 @@
 </script>
 
 <div class="picker">
-	<Accordion bind:open>
-		{#snippet title()}
-			<div class="title">
-				{titleValue}
-				{#if !open && value !== undefined}
-					<div class="badge" transition:fade={{ duration: 200 }}>
-						{selectedOption.label}
-						{#if selectedOption.note?.include}
-							{selectedOption.note.label}
-						{/if}
-					</div>
-				{/if}
-			</div>
+	<SettingsAccordion bind:open title={titleValue}>
+		{#snippet badge()}
+			{selectedOption.label}
+			{#if selectedOption.note?.include}
+				{selectedOption.note.label}
+			{/if}
 		{/snippet}
 		<ul>
 			{#each options as option, i}
@@ -77,7 +69,7 @@
 				color="var(--tertiary)"
 			/>
 		</ul>
-	</Accordion>
+	</SettingsAccordion>
 </div>
 
 <style>
@@ -108,17 +100,6 @@
 	}
 	.small {
 		font-size: 0.75em;
-	}
-	.title {
-		display: flex;
-		width: 100%;
-	}
-	.badge {
-		background-color: var(--tertiary-light);
-		border-radius: 12px;
-		font-size: 0.8em;
-		padding: 2px 8px;
-		margin-left: auto;
 	}
 	ul {
 		position: relative;

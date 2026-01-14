@@ -1,15 +1,17 @@
 import { delay } from '$lib/utils/delay';
 import type { Plugin } from '.';
 
-export const examplePlugin: Plugin = (taraskevizer, ui) => {
-	const defaultValue = (s: string) => s;
+type StrFn = (s: string) => string;
 
-	const casePicker = ui.picker(
+export const examplePlugin: Plugin = (taraskevizer, ui) => {
+	const defaultValue: StrFn = (s) => s;
+
+	const casePicker = ui.picker<StrFn>(
 		'Case',
 		[
 			{ label: 'No Change', value: defaultValue },
-			{ label: 'Uppercase', value: (s: string) => s.toUpperCase() },
-			{ label: 'Lowercase', value: (s: string) => s.toLowerCase() },
+			{ label: 'Uppercase', value: (s) => s.toUpperCase() },
+			{ label: 'Lowercase', value: (s) => s.toLowerCase() },
 		],
 		defaultValue
 	);

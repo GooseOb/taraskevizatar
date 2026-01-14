@@ -9,7 +9,7 @@
 	import { resolve } from '$app/paths';
 	import { taraskConfig } from '$lib/store/config';
 	import { plugins } from '$lib/plugins';
-	import Accordion from './Accordion.svelte';
+	import PluginsAccordion from './PluginsAccordion.svelte';
 
 	let {
 		open = $bindable(),
@@ -80,17 +80,7 @@
 					{/each}
 				{/if}
 			{/each}
-			<!-- <Accordion open> -->
-			<!-- 	{#snippet title()} -->
-			<!-- 		<div>Плагіны (у распрацоўцы)</div> -->
-			<!-- 	{/snippet} -->
-			<!-- 	{#each $plugins as { description, name } (name)} -->
-			<!-- 		<div> -->
-			<!-- 			<strong>{name}</strong> -->
-			<!-- 			<p>{description}</p> -->
-			<!-- 		</div> -->
-			<!-- 	{/each} -->
-			<!-- </Accordion> -->
+			<PluginsAccordion />
 		</div>
 		<ContactsCard />
 		<a href={resolve('/old')}> Перайсьці да старой вэрсіі </a>
