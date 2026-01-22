@@ -4,6 +4,7 @@
 	import DownloadIcon from '$lib/icons/DownloadIcon.svelte';
 	import CloseIcon from '$lib/icons/CloseIcon.svelte';
 	import { getOnDownload } from '$lib/onDownload';
+	import Button from './Button.svelte';
 
 	const {
 		name,
@@ -39,12 +40,12 @@
 					{name}
 				</span>
 				<div class="actions">
-					<button class="icon" onclick={getOnDownload(name, value)} title="Спампаваць файл">
+					<Button icon onclick={getOnDownload(name, value)} title="Спампаваць файл">
 						<DownloadIcon />
-					</button>
-					<button class="icon" onclick={onRemove} title="Выдаліць">
+					</Button>
+					<Button icon onclick={onRemove} title="Выдаліць">
 						<CloseIcon />
-					</button>
+					</Button>
 				</div>
 			{/snippet}
 
@@ -77,25 +78,6 @@
 		padding-right: 0.5rem;
 	}
 
-	.icon {
-		box-sizing: border-box;
-		display: inline-flex;
-		width: 2rem;
-		height: 2rem;
-		padding: 0.25rem;
-		cursor: pointer;
-		color: var(--fg);
-		background-color: var(--primary);
-		transition: background-color 0.2s ease;
-		border-radius: 0.5rem;
-		border: none;
-
-		&:hover,
-		&:focus-visible {
-			background-color: var(--primary-dark);
-		}
-	}
-
 	.title {
 		margin-right: auto;
 		cursor: auto;
@@ -115,8 +97,8 @@
 				background-color: var(--secondary-dark);
 			}
 
-			&:has(.icon:hover),
-			&:has(.icon:focus) {
+			&:has(:global(.icon):hover),
+			&:has(:global(.icon):focus) {
 				background-color: var(--secondary);
 			}
 			::selection,

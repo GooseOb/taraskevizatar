@@ -1,12 +1,9 @@
-import { delay } from '$lib/utils/delay';
-import type { Plugin } from '.';
+/**@type {import('.').Plugin} */
+export default (taraskevizer, ui) => {
+	/**@param {string} s */
+	const defaultValue = (s) => s;
 
-type StrFn = (s: string) => string;
-
-export const examplePlugin: Plugin = (taraskevizer, ui) => {
-	const defaultValue: StrFn = (s) => s;
-
-	const casePicker = ui.picker<StrFn>(
+	const casePicker = ui.picker(
 		'Case',
 		[
 			{ label: 'No Change', value: defaultValue },
@@ -25,8 +22,6 @@ export const examplePlugin: Plugin = (taraskevizer, ui) => {
 			taraskevizer.lib.asyncPipe(
 				pipeline.steps.concat(
 					taraskevizer.lib.mutatingAsyncStep(async ({ text }) => {
-						// Simulate an asynchronous operation
-						await delay(1000);
 						return casePicker.getValue()(text);
 					})
 				)

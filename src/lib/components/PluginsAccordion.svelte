@@ -1,6 +1,23 @@
 <script lang="ts">
 	import { plugins } from '$lib/plugins';
+	import Button from './Button.svelte';
 	import SettingsAccordion from './SettingsAccordion.svelte';
+	import { pluginData } from '$lib/store/plugins';
+	import PluginCard from './PluginCard.svelte';
+
+	let url = $state('');
+	let code = $state('');
+	const onSubmit = () => {
+		url = url.trim();
+		code = code.trim();
+
+		if (url || code) {
+			pluginData.update((data) => {
+				data.push({ url, code, id: Math.random() });
+				return data;
+			});
+		}
+	};
 </script>
 
 <SettingsAccordion title="Плагіны">
@@ -8,28 +25,17 @@
 		{$plugins.length}
 	{/snippet}
 	<div class="item">
-		<strong>Дадаць плагін</strong>
-		<p>Спасылка: <input type="text" /></p>
-		<label><input type="checkbox" /> Абнаўляць аўтаматычна </label>
-		<p>Код: <textarea></textarea></p>
+		<span class="title">Дадаць плагін</span>
+		<p>Спасылка: <input type="text" bind:value={url} /></p>
+		<p>Спасылка будзе ўжытая каб абнаўляць код пасьля заходу на старонку</p>
+		<p>Код: <textarea bind:value={code}></textarea></p>
+		<Button onclick={onSubmit}>Дадаць</Button>
 	</div>
-	{#each $plugins as { description, name } (name)}
-		<div class="item">
-			<strong>{name}</strong>
-			<p class="description">{description}</p>
-			<p>Спасылка: <input type="text" /></p>
-			<label><input type="checkbox" /> Абнаўляць аўтаматычна </label>
-			<p>Код: <textarea></textarea></p>
-		</div>
+	{#each $pluginData as { url, code, value } (url)}
+		<PluginCard {url} {code} {value} />
 	{/each}
 </SettingsAccordion>
 
 <style>
-	.item {
-		padding: 0.5rem;
-	}
-
-	.description {
-		white-space: pre-wrap;
-	}
+	@import '$lib/styles/plugins.css';
 </style>

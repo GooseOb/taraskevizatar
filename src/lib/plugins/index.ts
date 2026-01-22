@@ -10,12 +10,13 @@ type UIElement<T = any> = {
 	setValue: (value: T) => void;
 };
 
-interface PluginValue {
+export interface PluginValue {
 	name: string;
 	compat?: { min?: number[]; max?: number[] };
 	description: string;
 	ui: UIElement[];
 	updateCurrentPipeline: (pipeline: Pipeline) => Pipeline | AsyncPipeline;
+	unload?: () => void;
 }
 
 interface PluginUI {
@@ -30,6 +31,7 @@ export type Plugin = (taraskevizer: typeof import('taraskevizer'), ui: PluginUI)
 
 const taraskevizer = await import('taraskevizer');
 
+const ids: number[] = [];
 export const plugins = writable<PluginValue[]>([]);
 
 const ui: PluginUI = {
@@ -47,8 +49,13 @@ const ui: PluginUI = {
 
 const taraskVersion = taraskevizer.version.split('.').map(Number);
 
-export const registerPlugin = (plugin: Plugin) => {
+export const registerPlugin = (id: number, plugin: Plugin) => {
 	const val = plugin(taraskevizer, ui);
+
+	if (!val.name || !val.description || !val.updateCurrentPipeline || !val.ui) {
+		status.set(`Памылка: плагін ${val.name} не мае неабходных уласьцівасьцяў.`);
+		return null;
+	}
 
 	if (val.compat) {
 		const { min = [], max = [] } = val.compat;
@@ -56,22 +63,31 @@ export const registerPlugin = (plugin: Plugin) => {
 			status.set(
 				`Памылка: плагін "${val.name}" не падтрымлівае вэрсію тарашкевізатара ${taraskevizer.version}`
 			);
-			return () => {};
+			return null;
 		}
 	}
 
-	plugins.update((plugins) => {
-		plugins.push(val);
-		return plugins;
-	});
-
-	return () => {
+	val.unload = () => {
 		plugins.update((plugins) => {
 			const index = plugins.indexOf(val);
 			if (index !== -1) {
 				plugins.splice(index, 1);
+				ids.splice(index, 1);
 			}
 			return plugins;
 		});
 	};
+
+	plugins.update((plugins) => {
+		if (ids.includes(id)) {
+			const i = ids.indexOf(id);
+			plugins[i] = val;
+		} else {
+			plugins.push(val);
+			ids.push(id);
+		}
+		return plugins;
+	});
+
+	return val;
 };

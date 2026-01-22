@@ -1,0 +1,28 @@
+.item {
+	display: flex;
+	flex-direction: column;
+	padding: 0.5rem;
+	gap: 0.5rem;
+}
+.title {
+	font-weight: bold;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.description {
+	white-space: pre-wrap;
+}
+
+p {
+	white-space: normal;
+}
+
+textarea,
+input {
+	border-radius: 0.5rem;
+	border: 2px solid var(--tertiary-dark);
+	color: var(--fg);
+	background-color: var(--anti-fg);
+}
