@@ -16,6 +16,8 @@
 				data.push({ url, code, id: Math.random() });
 				return data;
 			});
+			url = '';
+			code = '';
 		}
 	};
 </script>

@@ -34,7 +34,6 @@ pluginData.subscribe((data) => {
 		.filter((item) => !item.requested && item.url)
 		.map((item) => {
 			item.requested = true;
-			item.code = '// Загрузка плагіна...';
 			return fetch(item.url)
 				.then((res) => res.text())
 				.then((code) => {
@@ -46,7 +45,7 @@ pluginData.subscribe((data) => {
 		});
 
 	const imports = data
-		.filter((item) => (item.requested || !item.url) && !item.imported && item.code)
+		.filter((item) => ((item.requested && item.code) || !item.url) && !item.imported && item.code)
 		.map((item) => {
 			item.imported = true;
 			const blob = new Blob([item.code], { type: 'text/javascript' });
