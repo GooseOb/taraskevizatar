@@ -8,6 +8,7 @@
 	import { status } from '$lib/store/status';
 	import { avoidVirtualKeyboard } from '$lib/actions/avoidVirtualKeyboard';
 	import { output } from '$lib/actions/output';
+	import { currentPipelineItem } from '$lib/store/pipelines';
 
 	let contenteditable = $state(false);
 
@@ -15,7 +16,7 @@
 </script>
 
 <div class="page" use:avoidVirtualKeyboard>
-	<TextCard title="Афіцыйны" count={$taraskText.length}>
+	<TextCard title={$currentPipelineItem.inputTitle} count={$taraskText.length}>
 		<textarea
 			class="textfield"
 			bind:value={$taraskText}
@@ -45,7 +46,7 @@
 			</button>
 		{/snippet}
 	</TextCard>
-	<TextCard title="Клясычны" count={$outputTextLength}>
+	<TextCard title={$currentPipelineItem.outputTitle} count={$outputTextLength}>
 		<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 		<output class="textfield" bind:this={outputElement} {contenteditable} use:output use:syncScroll
 		></output>

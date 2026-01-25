@@ -7,6 +7,7 @@
 	import { taraskPlainTextConfig } from '$lib/store/config';
 	import { status } from '$lib/store/status';
 	import { getOnDownloadMany } from '$lib/onDownload';
+	import { currentPipeline } from '$lib/store/pipelines';
 
 	let areAllProcessed = $state(false);
 
@@ -28,7 +29,7 @@
 		for (let i = 0; i < fileList.length; i++) {
 			const file = fileList[i];
 			const text = await file.text();
-			const processed = pipelines.tarask(text, $taraskPlainTextConfig);
+			const processed = $currentPipeline(text, $taraskPlainTextConfig);
 
 			++processedCount;
 			status.set(`Апрацоўка файлаў... [${processedCount}/${total}]`);

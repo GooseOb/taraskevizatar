@@ -1,7 +1,5 @@
 <script lang="ts">
 	import AccordionPicker from './AccordionPicker.svelte';
-	import type { ComponentProps } from 'svelte';
-	import { dicts } from 'taraskevizer';
 	import Footer from './Footer.svelte';
 	import Navigation from './Navigation.svelte';
 	import { isMobile } from '$lib/utils/isMobile';
@@ -10,6 +8,9 @@
 	import { taraskConfig } from '$lib/store/config';
 	import { plugins } from '$lib/plugins';
 	import PluginsAccordion from './PluginsAccordion.svelte';
+	import { currentPipeline, pipelinesList } from '$lib/store/pipelines';
+	import type { PickerOption } from '$lib/types';
+	import { alphabetOptions } from '$lib/alphabets';
 
 	let {
 		open = $bindable(),
@@ -17,35 +18,19 @@
 		open: boolean;
 	} = $props();
 
-	type Options = ComponentProps<typeof AccordionPicker>['options'];
-
-	const alphabets = [
-		{ label: 'Кірылічны', value: dicts.alphabets.cyrillic },
-		{ label: 'Лацінскі', value: dicts.alphabets.latin },
-		{
-			label: 'Арабскі',
-			value: dicts.alphabets.arabic,
-			note: { label: '(не стандартызаваны)', small: true },
-		},
-		{
-			label: 'Лацінскі',
-			value: dicts.alphabets.latinJi,
-			note: { label: '(зь ji)', include: true },
-		},
-	] satisfies Options;
 	const iToJ = [
 		{ label: 'Ніколі', value: 'never' },
 		{ label: 'Выпадкова', value: 'random' },
 		{ label: 'Заўсёды', value: 'always' },
-	] satisfies Options;
+	] satisfies PickerOption<string>[];
 	const hToG = [
 		{ label: 'Не', value: false },
 		{ label: 'Так', value: true },
-	] satisfies Options;
+	] satisfies PickerOption<boolean>[];
 	const ignoreCaps = [
 		{ label: 'Не', value: false },
 		{ label: 'Так', value: true },
-	] satisfies Options;
+	] satisfies PickerOption<boolean>[];
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
@@ -62,7 +47,8 @@
 	<Navigation />
 	<div class="content">
 		<div class="pickers">
-			<AccordionPicker title="Альфабэт" options={alphabets} bind:value={$taraskConfig.abc}
+			<AccordionPicker title="Пайплайн" options={$pipelinesList} bind:value={$currentPipeline} />
+			<AccordionPicker title="Альфабэт" options={alphabetOptions} bind:value={$taraskConfig.abc}
 			></AccordionPicker>
 			<AccordionPicker title="і > й пасьля галосных" options={iToJ} bind:value={$taraskConfig.j}
 			></AccordionPicker>

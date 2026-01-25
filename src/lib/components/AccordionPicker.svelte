@@ -1,4 +1,5 @@
 <script lang="ts" generics="TOptionValue, TValue extends TOptionValue">
+	import type { PickerOption } from '$lib/types';
 	import AnimationElement from './AnimationElement.svelte';
 	import SettingsAccordion from './SettingsAccordion.svelte';
 
@@ -10,15 +11,7 @@
 		open = $bindable(true),
 	}: {
 		title: string;
-		options: readonly {
-			label: string;
-			value: TOptionValue;
-			note?: {
-				label: string;
-				include?: boolean;
-				small?: boolean;
-			};
-		}[];
+		options: readonly PickerOption<TOptionValue>[];
 		value: TValue;
 		onChange?: (value: TValue) => void;
 		open?: boolean;

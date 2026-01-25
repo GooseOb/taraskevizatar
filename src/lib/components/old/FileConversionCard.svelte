@@ -6,6 +6,7 @@
 	import { FileData, files } from '$lib/store/files';
 	import { setSnackbar } from '$lib/store/snackbar.old.svelte';
 	import { taraskPlainTextConfig } from '$lib/store/config';
+	import { currentPipeline } from '$lib/store/pipelines';
 
 	const onFileChange = ({ currentTarget }: { currentTarget: HTMLInputElement }) => {
 		const file = currentTarget.files![0];
@@ -16,9 +17,10 @@
 			$files[0].raw = text;
 			setSnackbar('Апрацоўка файлу...', 5000);
 			delay(1).then(() => {
-				const result = pipelines
-					.tarask($files[0].raw!, $taraskPlainTextConfig)
-					.replace(/\s([\n\t])\s/g, '$1');
+				const result = $currentPipeline($files[0].raw!, $taraskPlainTextConfig).replace(
+					/\s([\n\t])\s/g,
+					'$1'
+				);
 				$files[0].value = result;
 				setSnackbar('Файл гатовы да спампоўкі', 5000);
 			});
