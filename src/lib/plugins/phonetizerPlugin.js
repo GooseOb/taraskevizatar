@@ -1,4 +1,4 @@
-/**@type {import('.').Plugin} */
+/** @type {import('.').Plugin} */
 export default (taraskevizer) => {
 	const addStressStep = taraskevizer.lib.mutatingAsyncStep(({ text }) =>
 		fetch('https://bnkorpus.info/other/rest/conv/naciski', {
@@ -12,7 +12,8 @@ export default (taraskevizer) => {
 
 	return {
 		name: 'Фанэтызатар',
-		description: 'Плагін для фанэтызацыі тэксту.',
+		description:
+			'Плагін для фанэтызацыі тэксту.\nДадае новы пайплайн для фанэтычнага пераўтварэньня.',
 		compat: { min: [10] },
 		pipelines: [
 			{
@@ -21,6 +22,8 @@ export default (taraskevizer) => {
 					addStressStep,
 					...taraskevizer.pipelines.phonetic.steps,
 				]),
+				inputTitle: 'Зыходны тэкст',
+				outputTitle: 'Фанэтычны',
 			},
 		],
 	};

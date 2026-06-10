@@ -59,12 +59,32 @@
 				options={ignoreCaps}
 				bind:value={$taraskConfig.doEscapeCapitalized}
 			></AccordionPicker>
-			{#each $plugins as { ui } (ui)}
-				{#if ui}
-					{#each ui as { getValue, setValue, title, options } (title)}
-						<AccordionPicker {title} {options} bind:value={getValue, setValue} />
-					{/each}
-				{/if}
+			{#each $plugins as plugin (plugin.name)}
+				{#each plugin.getUI() as element (element.title)}
+					{#if element.type === 'picker'}
+						<AccordionPicker
+							title={element.title}
+							options={element.options}
+							bind:value={element.getValue, element.setValue}
+						/>
+					{:else if element.type === 'textinput'}
+						<label class="plugin-field">
+							<span class="plugin-field-title">{element.title}</span>
+							<input
+								type="text"
+								value={element.getValue()}
+								oninput={(e) => element.setValue((e.target as HTMLInputElement).value)}
+							/>
+						</label>
+					{:else if element.type === 'textarea'}
+						<label class="plugin-field">
+							<span class="plugin-field-title">{element.title}</span>
+							<textarea oninput={(e) => element.setValue((e.target as HTMLTextAreaElement).value)}
+								>{element.getValue()}</textarea
+							>
+						</label>
+					{/if}
+				{/each}
 			{/each}
 			<PluginsAccordion />
 		</div>
@@ -124,5 +144,35 @@
 
 	a {
 		margin: 0.75rem auto;
+	}
+
+	.plugin-field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding: 0.5rem;
+		background: var(--tertiary-light);
+		border-radius: 0.75rem;
+	}
+
+	.plugin-field-title {
+		font-weight: bold;
+		font-size: 0.9em;
+	}
+
+	.plugin-field :global(input),
+	.plugin-field :global(textarea) {
+		border-radius: 0.5rem;
+		border: 2px solid var(--tertiary-dark);
+		color: var(--fg);
+		background-color: var(--anti-fg);
+		padding: 0.4em;
+		font-family: inherit;
+		font-size: inherit;
+		resize: vertical;
+	}
+
+	.plugin-field :global(textarea) {
+		min-height: 3em;
 	}
 </style>

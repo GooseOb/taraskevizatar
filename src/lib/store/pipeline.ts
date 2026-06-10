@@ -5,6 +5,9 @@ import { currentPipeline } from './pipelines';
 
 export const pipeline: Readable<Pipeline> = derived(
 	[plugins, currentPipeline],
-	([$plugins, currentPipeline]) =>
-		$plugins.reduce((acc, { updateCurrentPipeline }) => updateCurrentPipeline(acc), currentPipeline)
+	([$plugins, $currentPipeline]) =>
+		$plugins.reduce(
+			(acc, p) => (p.updateCurrentPipeline ? (p.updateCurrentPipeline(acc) as Pipeline) : acc),
+			$currentPipeline
+		)
 );

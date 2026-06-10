@@ -15,27 +15,27 @@
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.1",
-		"@eslint/js": "^9.39.2",
+		"@eslint/js": "^9.39.4",
 		"@sveltejs/adapter-static": "^3.0.10",
-		"@sveltejs/kit": "^2.50.0",
+		"@sveltejs/kit": "^2.64.0",
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",
-		"@types/node": "^22.19.7",
-		"eslint": "^9.39.2",
+		"@types/node": "^22.19.20",
+		"eslint": "^9.39.4",
 		"eslint-config-prettier": "^10.1.8",
-		"eslint-plugin-svelte": "^3.14.0",
+		"eslint-plugin-svelte": "^3.19.0",
 		"globals": "^16.5.0",
-		"prettier": "^3.8.1",
-		"prettier-plugin-svelte": "^3.4.1",
-		"sass-embedded": "^1.97.3",
-		"svelte": "^5.47.1",
-		"svelte-check": "^4.3.5",
+		"prettier": "^3.8.4",
+		"prettier-plugin-svelte": "^3.5.2",
+		"sass-embedded": "^1.100.0",
+		"svelte": "^5.56.3",
+		"svelte-check": "^4.6.0",
 		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.53.1",
-		"vite": "^7.3.1",
-		"vite-bundle-analyzer": "^1.3.2"
+		"typescript-eslint": "^8.61.0",
+		"vite": "^7.3.5",
+		"vite-bundle-analyzer": "^1.3.8"
 	},
 	"dependencies": {
 		"jszip": "^3.10.1",
-		"taraskevizer": "^10.4.20"
+		"taraskevizer": "^10.4.21"
 	}
 }
