@@ -30,7 +30,7 @@
 		<span class="title">Дадаць плагін</span>
 		<p>Спасылка: <input type="text" bind:value={url} /></p>
 		<p>Спасылка будзе ўжытая каб абнаўляць код пасьля заходу на старонку</p>
-		<p>Код: <textarea bind:value={code}></textarea></p>
+		<p>Код: <textarea style:FontFace="monospace" bind:value={code}></textarea></p>
 		<Button onclick={onSubmit}>Дадаць</Button>
 	</div>
 	{#each $pluginData as { url, code, value } (url)}
