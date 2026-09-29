@@ -32,7 +32,9 @@ export const output: Action = (node) => {
 	});
 
 	const unsubConfig = taraskConfig.subscribe(({ abc }) => {
-		node.style.fontFamily = isArabic(abc) ? 'NotoSansArabic' : 'inherit';
+		const doApplyArabicStyle = isArabic(abc);
+		node.style.fontFamily = doApplyArabicStyle ? 'NotoSansArabic' : 'inherit';
+		node.style.direction = doApplyArabicStyle ? 'rtl' : 'ltr';
 	});
 
 	node.addEventListener('click', (e) => {
