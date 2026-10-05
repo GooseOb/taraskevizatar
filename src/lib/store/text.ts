@@ -21,12 +21,14 @@ const getDefaultText = () => __DEFAULT_TEXT__;
 export const taraskText = localStorageWritableString('tarask_text', getDefaultText, 300);
 
 let lastText = '';
+let firstRun = true;
 export const outputText: Readable<string> = derived(
 	[taraskText, taraskConfig, pipeline],
 	([$taraskText, $taraskConfig, $pipeline], set) => {
 		if (!$taraskText.trim()) {
 			set(getOutputPlaceholder($taraskConfig.abc));
 		} else {
+			if (firstRun) set('Апрацоўка...');
 			lastText = $taraskText;
 
 			$pipeline($taraskText, $taraskConfig)
@@ -42,6 +44,7 @@ export const outputText: Readable<string> = derived(
 					);
 				});
 		}
+		firstRun = false;
 	}
 );
 

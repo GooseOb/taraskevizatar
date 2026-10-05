@@ -1,6 +1,6 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
-import { version as pkgVersion } from '../taraskevizer/package.json';
+import { version as pkgVersion } from './node_modules/taraskevizer/package.json';
 import { readFile } from 'node:fs/promises';
 
 const base = process.env.BASE_PATH || '/';
