@@ -6,7 +6,7 @@
       "name": "taraskevizatar",
       "dependencies": {
         "jszip": "^3.10.2",
-        "taraskevizer": "^11.0.2",
+        "taraskevizer": "^11.0.3",
       },
       "devDependencies": {
         "@eslint/compat": "^1.4.1",
@@ -542,7 +542,7 @@
 
     "sync-message-port": ["sync-message-port@1.1.3", "", {}, "sha512-GTt8rSKje5FilG+wEdfCkOcLL7LWqpMlr2c3LRuKt/YXxcJ52aGSbGBAdI4L3aaqfrBt6y711El53ItyH1NWzg=="],
 
-    "taraskevizer": ["taraskevizer@11.0.2", "", { "bin": { "tarask": "dist/cli.js" } }, "sha512-R7u8R3695o3Rd9bi0wwSXVJxz/3tmC6La2iQGrgrr+1eXZ9mA6FVPPkIyBy3HNd+nOMejN217k6ZBRv1o0tmMg=="],
+    "taraskevizer": ["taraskevizer@11.0.3", "", { "bin": { "tarask": "dist/cli.js" } }, "sha512-mByZtAt62HaskXMhzjiEbUhVF/vxJMbjI5wOYvrWPV+3wwKd6iIGSeEsVxAYZkGrxgls1e8BNEQAe//bbHJObA=="],
 
     "tinyglobby": ["tinyglobby@0.2.15", "", { "dependencies": { "fdir": "^6.5.0", "picomatch": "^4.0.3" } }, "sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ=="],
 

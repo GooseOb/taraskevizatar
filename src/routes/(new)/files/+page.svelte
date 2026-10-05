@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { tarask } from '$lib/taraskevizer';
+	import { taraskParallel } from '$lib/workers/taraskPool';
 	import FileCard from '$lib/components/FileCard.svelte';
 	import { fade } from 'svelte/transition';
 	import { ofNewFiles } from '$lib/plurals';
@@ -25,25 +25,32 @@
 
 		status.set(`Апрацоўка файлаў... [0/${total}]`);
 
-		for (let i = 0; i < fileList.length; i++) {
-			const file = fileList[i];
-			const text = await file.text();
-			const processed = await tarask(text, $taraskPlainTextConfig);
+		const fileArray = Array.from(fileList);
+		const config = $taraskPlainTextConfig;
 
-			++processedCount;
-			status.set(`Апрацоўка файлаў... [${processedCount}/${total}]`);
+		// Read all files concurrently, then convert concurrently:
+		// small files each occupy one pool worker, big files are split
+		// into chunks inside taraskParallel and spread across the pool.
+		// Each entry is published as soon as its own conversion finishes.
+		await Promise.all(
+			fileArray.map(async (file, i) => {
+				const text = await file.text();
+				const processed = await taraskParallel(text, config);
+				processedCount++;
+				status.set(`Апрацоўка файлаў... [${processedCount}/${total}]`);
 
-			files.update((current) => {
-				const index = current.indexOf(newEntries[i]);
+				files.update((current) => {
+					const index = current.indexOf(newEntries[i]);
 
-				if (index !== -1) {
-					current[index].raw = text;
-					current[index].value = processed;
-				}
+					if (index !== -1) {
+						current[index].raw = text;
+						current[index].value = processed;
+					}
 
-				return current;
-			});
-		}
+					return current;
+				});
+			})
+		);
 
 		status.set(`Апрацавана: ${ofNewFiles(total)}`);
 

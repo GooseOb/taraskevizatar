@@ -36,6 +36,6 @@
 	},
 	"dependencies": {
 		"jszip": "^3.10.2",
-		"taraskevizer": "^11.0.2"
+		"taraskevizer": "^11.0.3"
 	}
 }

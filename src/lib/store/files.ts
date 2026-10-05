@@ -1,6 +1,6 @@
 import { get, writable } from 'svelte/store';
 import { taraskPlainTextConfig } from './config';
-import { tarask } from '$lib/taraskevizer';
+import { taraskParallel } from '$lib/workers/taraskPool';
 import { ofFiles } from '$lib/plurals';
 import { status } from './status';
 
@@ -28,11 +28,15 @@ taraskPlainTextConfig.subscribe((cfg) => {
 		return;
 	}
 	void (async () => {
-		for (const file of data) {
-			if (file.raw) {
-				file.value = await tarask(file.raw, cfg);
-			}
-		}
+		// Convert every file concurrently; big files are additionally
+		// split into chunks inside taraskParallel.
+		await Promise.all(
+			data.map(async (file) => {
+				if (file.raw) {
+					file.value = await taraskParallel(file.raw, cfg);
+				}
+			})
+		);
 		files.update((data) => data);
 		status.set(`Абноўлена: ${ofFiles(data.length)}`);
 	})();
