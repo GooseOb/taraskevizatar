@@ -1,13 +1,13 @@
-import { dicts } from 'taraskevizer';
+import type { TaraskAlphabet } from 'taraskevizer';
 
-export const alphabets = [
-	dicts.alphabets.cyrillic,
-	dicts.alphabets.latin,
-	dicts.alphabets.arabic,
-	dicts.alphabets.latinJi,
+export const alphabets: readonly TaraskAlphabet[] = [
+	'cyrillic',
+	'latin',
+	'arabic',
+	'latinJi',
 ] as const;
 
-export const isArabic = (alphabet: dicts.alphabets.Alphabet) => alphabet === dicts.alphabets.arabic;
+export const isArabic = (alphabet: TaraskAlphabet) => alphabet === 'arabic';
 
 const alphabetToPlaceholder = new Map(
 	(
@@ -21,5 +21,5 @@ const alphabetToPlaceholder = new Map(
 	).map((placeholder, index) => [alphabets[index], placeholder])
 );
 
-export const getOutputPlaceholder = (alphabet: dicts.alphabets.Alphabet) =>
+export const getOutputPlaceholder = (alphabet: TaraskAlphabet) =>
 	alphabetToPlaceholder.get(alphabet) ?? 'Text';

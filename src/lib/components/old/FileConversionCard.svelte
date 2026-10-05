@@ -1,6 +1,6 @@
 <script lang="ts">
 	import SettingsCard from './SettingsCard.svelte';
-	import { pipelines } from 'taraskevizer';
+	import { tarask } from '$lib/taraskevizer';
 	import { delay } from '$lib/utils/delay';
 	import { getOnDownload } from '$lib/onDownload';
 	import { FileData, files } from '$lib/store/files';
@@ -15,13 +15,12 @@
 		file.text().then((text) => {
 			$files[0].raw = text;
 			setSnackbar('Апрацоўка файлу...', 5000);
-			delay(1).then(() => {
-				const result = pipelines
-					.tarask($files[0].raw!, $taraskPlainTextConfig)
-					.replace(/\s([\n\t])\s/g, '$1');
-				$files[0].value = result;
-				setSnackbar('Файл гатовы да спампоўкі', 5000);
-			});
+			delay(1)
+				.then(() => tarask($files[0].raw!, $taraskPlainTextConfig))
+				.then((result) => {
+					$files[0].value = result.replace(/\s([\n\t])\s/g, '$1');
+					setSnackbar('Файл гатовы да спампоўкі', 5000);
+				});
 		});
 		currentTarget.value = '';
 	};

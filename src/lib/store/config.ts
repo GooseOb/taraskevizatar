@@ -1,50 +1,45 @@
-import { dicts, htmlConfigOptions, TaraskConfig } from 'taraskevizer';
 import { derived } from 'svelte/store';
 import { alphabets } from '$lib/alphabets';
+import {
+	htmlConfigOptions,
+	type TaraskAlphabet,
+	type TaraskJ,
+	type TaraskConfig,
+} from 'taraskevizer';
 import { localStorageWritable } from './localStorage';
 
-type SerializableConfig = Pick<TaraskConfig, 'j' | 'doEscapeCapitalized' | 'g'> & {
-	abc: number;
-};
+type SerializableConfig = Pick<TaraskConfig, 'j' | 'doEscapeCapitalized' | 'g' | 'abc'>;
 
 export const taraskConfig = localStorageWritable<TaraskConfig>(
 	'tarask_settings',
-	() =>
-		new TaraskConfig({
-			...htmlConfigOptions,
-			abc: dicts.alphabets.cyrillic,
-			j: 'never',
-			doEscapeCapitalized: true,
-			g: false,
-		}),
+	(): TaraskConfig => ({
+		...htmlConfigOptions(),
+		abc: 'cyrillic',
+		j: 'never',
+		doEscapeCapitalized: true,
+		g: false,
+	}),
 	(value) => {
-		const parsed: SerializableConfig = JSON.parse(value);
+		const { abc, j, doEscapeCapitalized, g }: SerializableConfig = JSON.parse(value);
 
-		return new TaraskConfig({
-			...htmlConfigOptions,
-			abc: alphabets[parsed.abc],
-			j: parsed.j,
-			doEscapeCapitalized: parsed.doEscapeCapitalized,
-			g: parsed.g,
-		});
+		return {
+			...htmlConfigOptions(),
+			abc: typeof abc === 'string' ? abc : (alphabets[abc] ?? 'cyrillic'),
+			j,
+			doEscapeCapitalized,
+			g,
+		};
 	},
-	(value) =>
+	({ j, doEscapeCapitalized, g, abc }) =>
 		JSON.stringify({
-			j: value.j,
-			doEscapeCapitalized: value.doEscapeCapitalized,
-			g: value.g,
-			abc: alphabets.indexOf(value.abc),
+			j,
+			doEscapeCapitalized,
+			g,
+			abc,
 		} satisfies SerializableConfig)
 );
 
-export const taraskPlainTextConfig = derived(
-	taraskConfig,
-	({ abc, j, g, doEscapeCapitalized }) =>
-		new TaraskConfig({
-			abc,
-			j,
-			g,
-			doEscapeCapitalized,
-			wrappers: null,
-		})
-);
+export const taraskPlainTextConfig = derived(taraskConfig, (config): TaraskConfig => ({
+	...config,
+	wrappers: 'none',
+}));

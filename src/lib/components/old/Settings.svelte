@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { dicts } from 'taraskevizer';
+	import type { TaraskAlphabet, TaraskJ } from 'taraskevizer';
 	import type { ComponentProps } from 'svelte';
 	import Selector from '$lib/components/old/Selector.svelte';
 	import SettingsCard from '$lib/components/old/SettingsCard.svelte';
@@ -11,35 +11,35 @@
 
 	let { open }: { open: boolean } = $props();
 
-	type Options = ComponentProps<typeof Selector>['options'];
+	type Options<T> = ComponentProps<typeof Selector<T>>['options'];
 
 	const alphabets = [
-		{ label: 'кірылічны', value: dicts.alphabets.cyrillic },
-		{ label: 'лацінскі', value: dicts.alphabets.latin },
+		{ label: 'кірылічны', value: 'cyrillic' },
+		{ label: 'лацінскі', value: 'latin' },
 		{
 			label: 'арабскі',
-			value: dicts.alphabets.arabic,
+			value: 'arabic',
 			note: '(не стандартызаваны)',
 		},
 		{
 			label: 'лацінскі',
-			value: dicts.alphabets.latinJi,
+			value: 'latinJi',
 			note: '(зь ji)',
 		},
-	] satisfies Options;
+	] satisfies Options<TaraskAlphabet>;
 	const iToJ = [
 		{ label: 'ніколі', value: 'never' },
 		{ label: 'выпадкова', value: 'random' },
 		{ label: 'заўсёды', value: 'always' },
-	] satisfies Options;
+	] satisfies Options<TaraskJ>;
 	const hToG = [
 		{ label: 'не', value: false },
 		{ label: 'так', value: true },
-	] satisfies Options;
+	] satisfies Options<boolean>;
 	const ignoreCaps = [
 		{ label: 'не', value: false },
 		{ label: 'так', value: true },
-	] satisfies Options;
+	] satisfies Options<boolean>;
 </script>
 
 <ul class:open>

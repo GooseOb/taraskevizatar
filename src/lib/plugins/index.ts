@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
-import type { Pipeline } from 'taraskevizer/dist/lib';
-import { status } from '../store/status';
+import type { Pipeline } from '$lib/taraskevizer';
+import * as taraskevizer from '$lib/taraskevizer';
 
 type UIElement<T = unknown> = {
 	type: 'picker';
@@ -12,9 +12,9 @@ type UIElement<T = unknown> = {
 
 interface PluginValue {
 	name: string;
-	compat?: { min?: number[]; max?: number[] };
 	description: string;
-	ui: UIElement[];
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	ui: UIElement<any>[];
 	updateCurrentPipeline: (pipeline: Pipeline) => Pipeline;
 }
 
@@ -26,9 +26,10 @@ interface PluginUI {
 	) => UIElement<T>;
 }
 
-export type Plugin = (taraskevizer: typeof import('taraskevizer'), ui: PluginUI) => PluginValue;
-
-const taraskevizer = await import('taraskevizer');
+export type Plugin = (
+	taraskevizer: typeof import('$lib/taraskevizer'),
+	ui: PluginUI
+) => PluginValue;
 
 export const plugins = writable<PluginValue[]>([]);
 
@@ -45,20 +46,8 @@ const ui: PluginUI = {
 	}),
 };
 
-const taraskVersion = taraskevizer.version.split('.').map(Number);
-
 export const registerPlugin = (plugin: Plugin) => {
 	const val = plugin(taraskevizer, ui);
-
-	if (val.compat) {
-		const { min = [], max = [] } = val.compat;
-		if (taraskVersion.some((num, i) => (min[i] ?? 0) > num || (max[i] ?? Infinity) < num)) {
-			status.set(
-				`Памылка: плагін "${val.name}" не падтрымлівае вэрсію тарашкевізатара ${taraskevizer.version}`
-			);
-			return () => {};
-		}
-	}
 
 	plugins.update((plugins) => {
 		plugins.push(val);

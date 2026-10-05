@@ -1,7 +1,7 @@
 <script lang="ts">
 	import AccordionPicker from './AccordionPicker.svelte';
 	import type { ComponentProps } from 'svelte';
-	import { dicts } from 'taraskevizer';
+	import type { TaraskAlphabet } from 'taraskevizer';
 	import Footer from './Footer.svelte';
 	import Navigation from './Navigation.svelte';
 	import { isMobile } from '$lib/utils/isMobile';
@@ -20,16 +20,16 @@
 	type Options = ComponentProps<typeof AccordionPicker>['options'];
 
 	const alphabets = [
-		{ label: 'Кірылічны', value: dicts.alphabets.cyrillic },
-		{ label: 'Лацінскі', value: dicts.alphabets.latin },
+		{ label: 'Кірылічны', value: 'cyrillic' as TaraskAlphabet },
+		{ label: 'Лацінскі', value: 'latin' as TaraskAlphabet },
 		{
 			label: 'Арабскі',
-			value: dicts.alphabets.arabic,
+			value: 'arabic' as TaraskAlphabet,
 			note: { label: '(не стандартызаваны)', small: true },
 		},
 		{
 			label: 'Лацінскі',
-			value: dicts.alphabets.latinJi,
+			value: 'latinJi' as TaraskAlphabet,
 			note: { label: '(зь ji)', include: true },
 		},
 	] satisfies Options;

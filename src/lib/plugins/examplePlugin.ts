@@ -1,7 +1,7 @@
 import { delay } from '$lib/utils/delay';
 import type { Plugin } from '.';
 
-export const examplePlugin: Plugin = (taraskevizer, ui) => {
+export const examplePlugin: Plugin = (_taraskevizer, ui) => {
 	const defaultValue = (s: string) => s;
 
 	const casePicker = ui.picker(
@@ -17,17 +17,12 @@ export const examplePlugin: Plugin = (taraskevizer, ui) => {
 	return {
 		name: 'change-case-plugin',
 		description: 'A plugin to change text case asynchronously.',
-		compat: { min: [10, 4, 0], max: [10] },
 		ui: [casePicker],
-		updateCurrentPipeline: (pipeline) =>
-			taraskevizer.lib.asyncPipe(
-				pipeline.steps.concat(
-					taraskevizer.lib.mutatingAsyncStep(async ({ text }) => {
-						// Simulate an asynchronous operation
-						await delay(1000);
-						return casePicker.getValue()(text);
-					})
-				)
-			),
+		updateCurrentPipeline: (pipeline) => async (text, config) => {
+			const converted = await pipeline(text, config);
+			// Simulate an asynchronous operation
+			await delay(1000);
+			return casePicker.getValue()(converted);
+		},
 	};
 };

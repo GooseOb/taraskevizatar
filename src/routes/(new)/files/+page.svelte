@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { pipelines } from 'taraskevizer';
+	import { tarask } from '$lib/taraskevizer';
 	import FileCard from '$lib/components/FileCard.svelte';
 	import { fade } from 'svelte/transition';
 	import { ofNewFiles } from '$lib/plurals';
@@ -28,7 +28,7 @@
 		for (let i = 0; i < fileList.length; i++) {
 			const file = fileList[i];
 			const text = await file.text();
-			const processed = pipelines.tarask(text, $taraskPlainTextConfig);
+			const processed = await tarask(text, $taraskPlainTextConfig);
 
 			++processedCount;
 			status.set(`Апрацоўка файлаў... [${processedCount}/${total}]`);

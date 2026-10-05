@@ -1,6 +1,6 @@
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import { taraskPlainTextConfig } from './config';
-import { pipelines } from 'taraskevizer';
+import { tarask } from '$lib/taraskevizer';
 import { ofFiles } from '$lib/plurals';
 import { status } from './status';
 
@@ -23,20 +23,17 @@ export interface FileDataProcessed extends FileData {
 export const files = writable<FileData[]>([]);
 
 taraskPlainTextConfig.subscribe((cfg) => {
-	files.update((data) => {
-		if (data.length === 0) {
-			return data;
-		}
-		// TODO: fix that commented code doesn't update UI as processing is synchronous
-		// status.set(`Абнаўленьне файлаў... [0/${data.length}]`);
-		for (let i = 0; i < data.length; i++) {
-			const file = data[i];
+	const data = get(files);
+	if (data.length === 0) {
+		return;
+	}
+	void (async () => {
+		for (const file of data) {
 			if (file.raw) {
-				file.value = pipelines.tarask(file.raw!, cfg);
+				file.value = await tarask(file.raw, cfg);
 			}
-			// status.set(`Абнаўленьне файлаў... [${i + 1}/${data.length}]`);
 		}
+		files.update((data) => data);
 		status.set(`Абноўлена: ${ofFiles(data.length)}`);
-		return data;
-	});
+	})();
 });

@@ -1,7 +1,6 @@
 import { derived, writable, type Readable } from 'svelte/store';
 import { taraskConfig } from './config';
 import { getOutputPlaceholder } from '$lib/alphabets';
-import { pipelines } from 'taraskevizer';
 import { localStorageWritableString } from './localStorage';
 import { pipeline } from './pipeline';
 
