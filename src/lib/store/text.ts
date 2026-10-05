@@ -26,22 +26,22 @@ export const outputText: Readable<string> = derived(
 	([$taraskText, $taraskConfig, $pipeline], set) => {
 		if (!$taraskText.trim()) {
 			set(getOutputPlaceholder($taraskConfig.abc));
+		} else {
+			lastText = $taraskText;
+
+			$pipeline($taraskText, $taraskConfig)
+				.then((val) => {
+					if (lastText === $taraskText) {
+						set(val);
+					}
+				})
+				.catch((e) => {
+					set(
+						(e as Error).toString() +
+							'<br><br>Калі ласка, дашліце памылку на адзін з кантактаў "Для памылак і прапановаў"'
+					);
+				});
 		}
-
-		lastText = $taraskText;
-
-		Promise.resolve($pipeline($taraskText, $taraskConfig))
-			.then((val) => {
-				if (lastText === $taraskText) {
-					set(val);
-				}
-			})
-			.catch((e) => {
-				set(
-					(e as Error).toString() +
-						'<br><br>Калі ласка, дашліце памылку на адзін з кантактаў "Для памылак і прапановаў"'
-				);
-			});
 	}
 );
 
