@@ -1,8 +1,8 @@
+import { BUILD_INFO } from './buildInfo';
+
 const list = [
 	'<tarL class="demo">Гэтыя часьціны</tarL> можна зьмяняць, націскаючы на іх',
-	`Апошняе абнаўленьне: ${new Date(
-		__BUILD_TIME__
-	).toLocaleString()}. Вэрсія тарашкевізатара: ${__VERSION__}`,
+	BUILD_INFO,
 ] as const;
 
 let i = 0;

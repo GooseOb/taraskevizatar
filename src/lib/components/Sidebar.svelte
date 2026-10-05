@@ -9,7 +9,7 @@
 	import { resolve } from '$app/paths';
 	import { taraskConfig } from '$lib/store/config';
 	import { plugins } from '$lib/plugins';
-	import Accordion from './Accordion.svelte';
+	// import Accordion from './Accordion.svelte';
 
 	let {
 		open = $bindable(),
