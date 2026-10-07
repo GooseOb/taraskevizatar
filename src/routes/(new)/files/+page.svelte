@@ -128,5 +128,9 @@
 		&:has(input:focus-visible) {
 			background-color: var(--primary-dark);
 		}
+		&:disabled:hover {
+			background-color: var(--primary);
+			cursor: not-allowed;
+		}
 	}
 </style>
