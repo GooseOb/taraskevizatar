@@ -8,10 +8,12 @@
 	const {
 		name,
 		value,
+		id,
 		onRemove,
 	}: {
 		name: string;
 		value: string | null;
+		id: string;
 		onRemove?: () => void;
 	} = $props();
 
@@ -20,7 +22,7 @@
 
 <div class="wrapper" class:open>
 	{#if value === null}
-		<Accordion bind:open>
+		<Accordion bind:open {id}>
 			{#snippet title()}
 				<span class="title">
 					{name}
@@ -33,7 +35,7 @@
 			</div>
 		</Accordion>
 	{:else}
-		<Accordion bind:open>
+		<Accordion bind:open {id}>
 			{#snippet title()}
 				<span class="title">
 					{name}

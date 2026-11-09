@@ -27,17 +27,14 @@ taraskPlainTextConfig.subscribe((cfg) => {
 	if (data.length === 0) {
 		return;
 	}
-	void (async () => {
-		// Convert every file concurrently; big files are additionally
-		// split into chunks inside taraskParallel.
-		await Promise.all(
-			data.map(async (file) => {
-				if (file.raw) {
-					file.value = await taraskParallel(file.raw, cfg);
-				}
-			})
-		);
+	Promise.all(
+		data.map(async (file) => {
+			if (file.raw) {
+				file.value = await taraskParallel(file.raw, cfg);
+			}
+		})
+	).then(() => {
 		files.update((data) => data);
 		status.set(`Абноўлена: ${ofFiles(data.length)}`);
-	})();
+	});
 });

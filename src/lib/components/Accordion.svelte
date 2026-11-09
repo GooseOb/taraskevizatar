@@ -4,10 +4,12 @@
 	let {
 		title,
 		children,
+		id: idValue,
 		open: openValue = $bindable(false),
 	}: {
 		title: () => any;
 		children: () => any;
+		id: string;
 		open?: boolean;
 	} = $props();
 
@@ -30,7 +32,7 @@
 
 	let open = $state(openValue);
 
-	const id = `accordion-${Math.random().toString(36)}`;
+	const id = $derived('accordion-' + idValue);
 </script>
 
 <div class="accordion">

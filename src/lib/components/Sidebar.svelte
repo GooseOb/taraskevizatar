@@ -62,13 +62,18 @@
 	<Navigation />
 	<div class="content">
 		<div class="pickers">
-			<AccordionPicker title="Альфабэт" options={alphabets} bind:value={$taraskConfig.abc}
-			></AccordionPicker>
-			<AccordionPicker title="і > й пасьля галосных" options={iToJ} bind:value={$taraskConfig.j}
-			></AccordionPicker>
-			<AccordionPicker title="Адразу г > ґ" options={hToG} bind:value={$taraskConfig.g}
+			<AccordionPicker id="abc" title="Альфабэт" options={alphabets} bind:value={$taraskConfig.abc}
 			></AccordionPicker>
 			<AccordionPicker
+				id="j"
+				title="і > й пасьля галосных"
+				options={iToJ}
+				bind:value={$taraskConfig.j}
+			></AccordionPicker>
+			<AccordionPicker id="g" title="Адразу г > ґ" options={hToG} bind:value={$taraskConfig.g}
+			></AccordionPicker>
+			<AccordionPicker
+				id="caps"
 				title="Ігнараваць caps"
 				options={ignoreCaps}
 				bind:value={$taraskConfig.doEscapeCapitalized}
@@ -76,7 +81,7 @@
 			{#each $plugins as { ui } (ui)}
 				{#if ui}
 					{#each ui as { getValue, setValue, title, options } (title)}
-						<AccordionPicker {title} {options} bind:value={getValue, setValue} />
+						<AccordionPicker id={title} {title} {options} bind:value={getValue, setValue} />
 					{/each}
 				{/if}
 			{/each}

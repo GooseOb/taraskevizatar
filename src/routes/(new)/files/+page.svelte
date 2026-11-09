@@ -81,6 +81,7 @@
 	{#each $files as { name, value, id }, i (id)}
 		<div in:fade={{ duration: 400 }} out:fade={{ duration: 200 }}>
 			<FileCard
+				id={'file-card-' + id}
 				{name}
 				{value}
 				onRemove={() => {

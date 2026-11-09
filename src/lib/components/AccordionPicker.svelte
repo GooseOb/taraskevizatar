@@ -4,12 +4,14 @@
 	import AnimationElement from './AnimationElement.svelte';
 
 	let {
+		id,
 		title: titleValue,
 		options,
 		value = $bindable(),
 		onChange,
 		open = $bindable(true),
 	}: {
+		id: string;
 		title: string;
 		options: readonly {
 			label: string;
@@ -32,7 +34,7 @@
 </script>
 
 <div class="picker">
-	<Accordion bind:open>
+	<Accordion bind:open {id}>
 		{#snippet title()}
 			<div class="title">
 				{titleValue}
