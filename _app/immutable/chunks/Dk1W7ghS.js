@@ -1,0 +1,1 @@
+import{g as n,u,r as d,G as p,H as c,w as i}from"./CnR15s3E.js";function y(f,o,e){n(()=>{var a=u(()=>o(f,e?.())||{});if(e&&a?.update){var s=!1,t={};d(()=>{var r=e();p(r),s&&c(t,r)&&(t=r,a.update(r))}),s=!0}if(a?.destroy)return()=>a.destroy()})}const _=i([]);export{y as a,_ as p};

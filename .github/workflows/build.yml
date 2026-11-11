@@ -1,0 +1,37 @@
+name: Deploy to Github Pages
+on:
+  push:
+    branches: main
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: Runner to use
+        type: choice
+        default: ubuntu-latest
+        options:
+          - ubuntu-latest
+          - self-hosted
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-deploy:
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun i --frozen-lockfile
+      - run: bun update taraskevizer
+      - run: bun run build
+        env:
+          BASE_PATH: '/${{ github.event.repository.name }}'
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./build
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
