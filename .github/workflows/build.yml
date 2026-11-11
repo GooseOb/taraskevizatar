@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   build-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
