@@ -3,6 +3,14 @@ on:
   push:
     branches: main
   workflow_dispatch:
+    inputs:
+      runner:
+        description: Runner to use
+        type: choice
+        default: ubuntu-latest
+        options:
+          - ubuntu-latest
+          - self-hosted
 
 permissions:
   contents: read
